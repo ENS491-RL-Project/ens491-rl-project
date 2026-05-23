@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\" -Recurse -Force | ForEach-Object { $_.FullName })",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(\"C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe\" -m pytest tests/ -v)",
+      "Bash(C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe *)",
+      "Bash(\"C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe\" -m pip list)",
+      "Bash(findstr /i \"tensor\")",
+      "Bash(\"C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe\" -m pytest tests/ -v --tb=short)",
+      "Bash(New-Item -ItemType Directory -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\\\\runs\" -Force)",
+      "Bash(New-Item -ItemType File -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\\\\runs\\\\.gitkeep\" -Force)"
+    ]
+  }
+}
