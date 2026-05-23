@@ -36,7 +36,6 @@ Before writing any code, read the relevant doc:
 
 - `docs/ENS491_Module_Interfaces.md` — input/output contracts for every module. **Do not deviate from these interfaces.**
 - `docs/ENS491_Recursive_Hierarchy_Design.md` — formal hierarchy design, {n,m} notation, recursive structure.
-- `docs/ENS491_Project_State.md` — roadmap, story points, current status.
 
 ---
 
@@ -73,19 +72,17 @@ Before writing any code, read the relevant doc:
 
 ---
 
-## Current Status
+## What To Build
 
-**Done:**
-- PPO baseline on Empty-8x8 (`sandbox/minigrid-basics/train_ppo.py`)
-- Catastrophic forgetting demonstrated
-- Doric PN test (`sandbox/progressive-networks/doric_test.py`)
+Four modules, all empty right now. Fill them in this order:
 
-**Next (critical path):**
-1. `src/continual_learning/` — custom PN, 2 columns, lateral connections, PPO training
-2. `src/task_detection/` — AE (MLP, 147→64→32→64→147) + GRU (hidden=64, N=20)
-3. `src/options/` — Option wrapper + PPO MetaController (Discrete action space)
-4. Integration script
-5. `src/gui/` — Streamlit: reconstruction error, active column, option history
+1. `src/continual_learning/` — Progressive Networks (2 columns, lateral connections, PPO training)
+2. `src/task_detection/` — Autoencoder (MLP, 147→64→32→64→147) + GRU task identifier (hidden=64, N=20, supervised)
+3. `src/options/` — Option wrapper + MetaController (SB3 PPO, Discrete action space)
+4. Integration script — AE → GRU → MetaController → Option → env pipeline
+5. `src/gui/` — Streamlit: reconstruction error curve, active column, option selection history
+
+Each module's exact interface is in `docs/ENS491_Module_Interfaces.md`. Build to that spec.
 
 ---
 

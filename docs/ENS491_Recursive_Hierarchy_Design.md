@@ -1,228 +1,227 @@
-# ENS 491 — Recursive Hierarchy Tasarım Dokümanı
+# ENS 491 — Recursive Hierarchy Design
 
-> Bu doküman PN-3'e (mimari-özgün custom PN) başlamadan önce yazılması gereken kağıt tasarımı.  
-> **🔒 Kilitli:** Supervisor onaylı veya tasarım toplantısında netleştirilmiş kararlar.  
-> **⚠️ Açık:** Supervisor onayı bekleniyor veya empirik olarak netleşecek.  
-> **❓ Belirsiz:** Henüz tartışılmadı, ilerleyen aşamada ele alınacak.
+> This document is the paper design required before starting PN-3 (architecture-specific custom PN).  
+> **🔒 Locked:** Decided and agreed upon — not open for debate.  
+> **⚠️ Open:** Pending supervisor confirmation or empirical resolution.  
+> **❓ Unclear:** Not yet discussed, to be addressed in a later phase.
 
 ---
 
-## 1. Temel Notasyon
+## 1. Notation
 
-**`{n, m}`** — sistemdeki herhangi bir sütunu tanımlar.
+**`{n, m}`** — identifies any column in the system.
 
-- `n` → katman indeksi. `n=0` en alt seviye (primitive skills). `n` arttıkça soyutlama artar.
-- `m` → o katmandaki sütun sırası. `m=1`'den başlar, soldan sağa büyür.
+- `n` → layer index. `n=0` is the lowest level (primitive skills). Higher `n` = higher abstraction.
+- `m` → column position within the layer. Starts at `m=1`, grows left to right.
 
-Her iki boyut da **runtime'da büyür** — sistem başlatılırken sabit bir derinlik veya genişlik tanımlanmaz.
+Both dimensions **grow at runtime** — no fixed depth or width is defined at startup.
 
 ```
-Katman n=1:   {1,1}         {1,2}         {1,3}  ...
+Layer n=1:   {1,1}         {1,2}         {1,3}  ...
                ↑              ↑              ↑
-Katman n=0:  {0,1}  {0,2}  {0,3}  {0,4}  {0,5}  ...
+Layer n=0:  {0,1}  {0,2}  {0,3}  {0,4}  {0,5}  ...
 ```
 
 ---
 
-## 2. Sütunun Çift Rolü
+## 2. The Dual Role of a Column
 
-Her `{n, m}` sütunu **aynı anda** iki şeydir:
+Every `{n, m}` column is **simultaneously** two things:
 
-1. **Standalone policy** — kendi katmanındaki görev için bağımsız bir PPO politikası.
-2. **Option** — bir üst katmanın meta-controller'ı tarafından çağrılabilecek macro-action.
+1. **Standalone policy** — an independent PPO policy for its task at its layer.
+2. **Option** — a macro-action that can be called by the meta-controller of the layer above.
 
-Bu çift rol mimarinin temelidir. Bir sütun önce policy olarak eğitilir, stabilize olunca bir üst katmana option olarak sunulur.
-
----
-
-## 3. Hiyerarşi Yapısı
-
-### 3.1 Neden DAG, ağaç değil ⚠️
-
-Aynı primitive sütun (`{0, m}`) birden fazla üst katman meta-controller'ı tarafından paylaşılabilir. Örneğin "kapıya git" becerisi hem DoorKey hem KeyCorridor görevlerinde kullanılıyorsa aynı `{0, m}` sütununa bağlı iki ayrı meta-controller olabilir.
-
-Bu yapı ağaç değil **Directed Acyclic Graph (DAG)**:
-- **Directed:** Bağlantılar her zaman düşük `n`'den yüksek `n`'e (alt katmandan üst katmana).
-- **Acyclic:** Öğrenme tek yönlü — yeni sütunlar eski sütunlara bakabilir, tersi mümkün değil. Acyclic özelliği yapısal olarak garanti altında.
-
-> **⚠️ Supervisor onayı bekleniyor.** DAG varsayımı üzerine tasarım yapılıyor ama kesinleştirilmedi.
-
-### 3.2 Meta-controller'ın görüş alanı 🔒
-
-Her katmandaki meta-controller **yalnızca kendi katmanını** görür:
-- Mevcut ortam gözlemi
-- Kendi katmanındaki mevcut aktif option'ların durumu
-
-Bir üst ya da alt katmanın iç durumuna doğrudan erişimi yoktur.
+This dual role is fundamental to the architecture. A column is first trained as a policy, then once stabilized it is offered as an option to the layer above.
 
 ---
 
-## 4. Lateral Bağlantılar
+## 3. Hierarchy Structure
 
-### 4.1 Tanım 🔒
+### 3.1 Tree structure 🔒
 
-Lateral bağlantılar **aynı katman içinde, soldan sağa** tanımlıdır:
+The hierarchy is implemented as a **tree**. Each primitive column belongs to exactly one meta-controller.
+
+```
+MC(n=1)
+├── {0,1}
+├── {0,2}
+└── {0,3}
+```
+
+**Why tree, not DAG:**
+- At the scale of Phase 1-2 (2-4 tasks, single MC layer) there are no primitive columns to share — DAG provides zero benefit at this scale.
+- Python object references naturally allow DAG if needed later. Implementing as tree does not prevent DAG; we are simply not enforcing it now.
+- Avoids unnecessary complexity.
+
+Connections always flow from lower `n` to higher `n` — learning is one-directional, acyclic property is structurally guaranteed.
+
+### 3.2 Meta-controller scope 🔒
+
+Each meta-controller **only sees its own layer**:
+- Current environment observation
+- Status of options currently available at its layer
+
+It has no direct access to the internal state of layers above or below.
+
+---
+
+## 4. Lateral Connections
+
+### 4.1 Definition 🔒
+
+Lateral connections are defined **within a layer, left to right**:
 
 ```
 {n, m-1}  →  {n, m}
 ```
 
-`{n, m}` sütunu eğitilirken `{n, m-1}` sütununun ara katman aktivasyonlarına erişebilir. Bu transfer mekanizmasıdır — yeni sütun eski sütundan öğrenir.
+While `{n, m}` is being trained, it can access the intermediate layer activations of `{n, m-1}`. This is the transfer mechanism — the new column learns from the old one.
 
-### 4.2 Kapsam kısıtlaması 🔒
+### 4.2 Scope constraint 🔒
 
-Lateral bağlantı yalnızca **aynı meta-controller'ın çocukları arasında** geçerlidir. Farklı meta-controller'lara bağlı sütunlar arasında lateral bağlantı yoktur — cross-MC bilgi transferi hiyerarşi seviyesinde, option mekanizmasıyla gerçekleşir.
+Lateral connections only exist **between columns managed by the same meta-controller**. There are no lateral connections between columns belonging to different meta-controllers — cross-MC knowledge transfer happens at the hierarchy level, via the option mechanism.
 
-### 4.3 Inference sırasında lateral bağlantılar ⚠️
+### 4.3 Lateral connections during inference ⚠️
 
-Dondurulan `{n, m-1}` sütunu bir üst katmanın option'ı olarak çağrıldığında lateral bağlantıları aktif kalır mı?
+When a frozen `{n, m-1}` column is called as an option by an upper layer, do its lateral connections remain active?
 
-**Mevcut tasarım görüşümüz:** Evet — frozen sütun forward pass yapar, aktivasyonları `{n, m}` tarafından okunur. Donma sadece gradient'ı keser, forward pass'ı değil.
+**Current design position:** Yes — the frozen column runs a forward pass and its activations are read by `{n, m}`. Freezing only blocks gradients, not the forward pass.
 
-> **⚠️ Supervisor onayı bekleniyor.**
+> **⚠️ Pending supervisor confirmation.**
 
 ---
 
 ## 5. Option Wrapping
 
-### 5.1 Bir sütun ne zaman option olur? 🔒
+### 5.1 When does a column become an option? 🔒
 
-Eğitim ve stabilizasyon sonrasında. "Stabilize" kriteri:
+After training and stabilization. "Stabilized" means:
 
-- Reward curve plateau'ya ulaşmış
-- Performans belirli bir eşiğin üzerinde tutarlı
+- Reward curve has reached a plateau
+- Performance is consistently above a defined threshold
 
-Stabilize olmamış sütun meta-controller'a option olarak sunulmaz.
+An unstabilized column is never added to a MetaController as an option.
 
-### 5.2 Option'ın bileşenleri (Sutton et al. 1999)
+### 5.2 Option components (Sutton et al. 1999)
 
-Her option üç parçadan oluşur:
-
-| Bileşen | İçerik |
+| Component | Content |
 |---|---|
-| **Initiation set** | Option'ın başlatılabileceği state'ler. Şimdilik tüm state uzayı (her yerden çağrılabilir). ❓ Kısıtlanmalı mı? |
-| **Policy** | Sütunun eğitilmiş PPO politikası. Frozen. |
-| **Termination condition** | Ne zaman durulacak. ⚠️ Bakınız Bölüm 6. |
+| **Initiation set** | States from which the option can be started. Currently the full state space (callable from anywhere). ❓ Should this be restricted? |
+| **Policy** | The column's trained PPO policy. Frozen. |
+| **Termination condition** | When to stop. ⚠️ See Section 6. |
 
 ---
 
-## 6. Termination ve Recursive Çağrı
+## 6. Termination and Recursive Calling
 
-### 6.1 Tek seviye çağrı
+### 6.1 Single-level call
 
 ```
-Meta-controller (n=1)  →  option {0, m} çağır
-{0, m} çalışır
+MetaController (n=1)  →  calls option {0, m}
+{0, m} runs
 {0, m} terminates
-Meta-controller (n=1) kontrolü geri alır
+MetaController (n=1) regains control
 ```
 
-### 6.2 Recursive çağrı ⚠️
+### 6.2 Recursive call ⚠️
 
 ```
-Meta-controller (n=2)  →  option {1, k} çağır
-{1, k} kendi içinde meta-controller gibi davranır
-{1, k}  →  option {0, m} çağır
-{0, m} terminates → {1, k}'ya sinyal
-{1, k} terminates → MC(n=2)'ye sinyal
-MC(n=2) kontrolü geri alır
+MetaController (n=2)  →  calls option {1, k}
+{1, k} acts as a meta-controller internally
+{1, k}  →  calls option {0, m}
+{0, m} terminates → signals {1, k}
+{1, k} terminates → signals MC(n=2)
+MC(n=2) regains control
 ```
 
-Termination **aşağıdan yukarıya propagate eder.** Her seviye kendi termination kararını verir, bir üst seviyeyi bilgilendirir.
+Termination **propagates bottom-up.** Each level makes its own termination decision and signals the level above.
 
-**Termination alternatifleri (empirik karşılaştırılacak):**
+**Termination strategies (to be compared empirically):**
 
-| Strateji | Mekanizma | Risk |
+| Strategy | Mechanism | Risk |
 |---|---|---|
-| Sabit adım limiti | Option en fazla K adım çalışır | K'nın göreve göre ayarlanması gerekiyor |
-| Öğrenilen termination | Option-Critic tarzı — termination ağı karar verir | Eğitim instabilitesi |
-| GRU task-change sinyali | GRU yeni görev algılayınca mevcut option'ı sonlandır | Modüller arası bağımlılık artar |
+| Fixed step limit | Option runs for at most K steps | K needs to be tuned per task |
+| Learned termination | Option-Critic style — termination network decides | Training instability |
+| GRU task-change signal | Terminate current option when GRU detects task switch | Increases inter-module coupling |
 
-> **⚠️ Recursive termination propagation'ın tam mekaniği supervisor toplantısında netleştirilecek.**
-
----
-
-## 7. Runtime Growth: Yeni Sütun mu, Yeni Katman mı?
-
-### 7.1 Yeni sütun açma (mevcut katmanda genişleme)
-
-Tetik: AE reconstruction error threshold'u aşıldı **ve/veya** mevcut policy reward plateau'da.
-
-```
-{n, m} → sistem yeni görevi algılar → {n, m+1} sütun açılır → eğitilir → stabilize → option'a eklenir
-```
-
-### 7.2 Yeni katman açma (hiyerarşi derinleşiyor)
-
-Tetik: Mevcut görev, mevcut katmandaki primitive option'ların **kombinasyonunu** gerektiriyor.
-
-**Mevcut görüş:** Bu "category detection" problemi — hangi sinyalin yeni katman açacağını belirlemek açık bir araştırma sorusudur. Düşünülen yaklaşımlar:
-
-- Mevcut katmanın meta-controller'ı option'lar arası geçişi çok sık yapıyorsa (yüksek switching) → soyutlama eksik → yeni katman
-- Reward decomposition: alt katman ödüllendirilip üst katman ödüllendirilmiyorsa → ara soyutlama gerekiyor
-- World model tabanlı karar (Phase 3 / scope dışı şimdilik)
-
-> **⚠️ Supervisor toplantısında tartışılacak.** Şimdilik yeni katman açma kararı manuel / explicit olacak — Phase 1-2 boyunca yeni katman açılmayacak, Phase 3'te ele alınacak.
+> **⚠️ Exact mechanics of recursive termination propagation to be confirmed with supervisor.**
 
 ---
 
-## 8. Inference Akışı — Uçtan Uca
+## 7. Runtime Growth: New Column vs New Layer
 
-Sistemin bir adımı şöyle işler:
+### 7.1 Opening a new column (expanding within current layer)
+
+Trigger: AE reconstruction error exceeds threshold **and/or** current policy reward has plateaued.
 
 ```
-1. Ortamdan gözlem al: obs_t
+{n, m} → system detects new task → {n, m+1} opens → trains → stabilizes → added as option
+```
+
+### 7.2 Opening a new layer (hierarchy deepens)
+
+Trigger: Current task requires a **combination** of primitive options from the current layer.
+
+**Current position:** This is the "category detection" problem — determining which signal should open a new layer is an open research question. New layer decisions will be **manual/explicit** throughout Phase 1-2. Addressed in Phase 3.
+
+> **⚠️ To be discussed with supervisor.**
+
+---
+
+## 8. End-to-End Inference Flow
+
+```
+1. Receive observation: obs_t
 
 2. AE: reconstruction_error(obs_t)
-   - Yüksekse → yeni görev → yeni sütun süreci başlat
-   - Düşükse → adım 3'e geç
+   - High → new task → start new column process
+   - Low  → proceed to step 3
 
 3. GRU: task_id = classify(obs_{t-N:t})
-   - Hangi görevdeyiz?
+   - Which task are we in?
 
-4. Meta-controller (en üst aktif katman):
-   - State: obs_t + task context
-   - Çıktı: hangi option çağırılacak
+4. MetaController (topmost active layer):
+   - Input: obs_t + task context
+   - Output: which option to call
 
-5. Seçilen option çalışır:
-   - Kendi içinde recursive olarak aynı akışı yapabilir
-   - Termination condition sağlanınca durur
+5. Selected option runs:
+   - Can recursively run the same flow internally
+   - Stops when termination condition is met
 
-6. Reward, meta-controller'a döner
-   - Alt katmandaki reward sinyali ile meta-controller reward sinyali AYRI tutulur
-   - Merge edilmez
+6. Reward returned to MetaController
+   - Sub-layer reward signal and MetaController reward signal kept SEPARATE
+   - Never merged
 ```
 
 ---
 
-## 9. Implementasyon Gereksinimleri (PN-3 için)
+## 9. Implementation Requirements (for PN-3)
 
-Bu tasarımı kodlamak için `Column` sınıfının şu özellikleri taşıması gerekiyor:
+The `Column` class must carry the following fields to implement this design:
 
 ```python
 class Column:
-    n: int                    # katman indeksi
-    m: int                    # sütun sırası
-    policy: PPOPolicy         # eğitilmiş politika
-    frozen: bool              # True ise gradient yok
-    lateral_source: Column | None  # {n, m-1} referansı
-    is_option: bool           # meta-controller'a sunuldu mu?
-    sub_layer: MetaController | None  # None ise leaf (n=0)
+    n: int                              # layer index
+    m: int                              # column position
+    policy: PPOPolicy                   # trained policy
+    frozen: bool                        # True = no gradient
+    lateral_source: Column | None       # ref to {n, m-1}
+    is_option: bool                     # has been added to MetaController?
+    sub_layer: MetaController | None    # None = leaf (n=0)
 ```
 
 `sub_layer = None` → primitive column (leaf node)  
-`sub_layer = MetaController(...)` → bu sütun hem policy hem üst meta-controller
+`sub_layer = MetaController(...)` → this column is both a policy and a hierarchy manager
 
-Bu yapı recursive tanım — sütun kendi içinde bir alt meta-controller barındırabilir. Baştan böyle tasarlanmazsa PN-3 sonrasında rewrite gerekir.
+This is a recursive definition — a column can contain a sub-MetaController, which manages more columns. If this is not designed in from the start, PN-3 will require a rewrite later.
 
 ---
 
-## 10. Açık Sorular — Supervisor Toplantısı Gündemi
+## 10. Open Questions — Supervisor Meeting Agenda
 
-| # | Soru | Neden kritik |
+| # | Question | Why it matters |
 |---|---|---|
-| H-1 | DAG yapısı doğru mu? Aynı primitive sütun birden fazla MC'ye bağlanabilir mi? | Tüm mimari buna göre şekilleniyor |
-| H-2 | Recursive MC→MC option çağrısında termination propagation tam olarak nasıl? | PN-3 implementasyonu bunu varsayıyor |
-| H-3 | Lateral bağlantılar frozen sütun inference sırasında aktif kalıyor mu? | Forward pass davranışı değişir |
-| H-4 | Yeni katman açma sinyali ne olacak? Manuel mi, otomatik mi? | Phase 2 scope'unu belirliyor |
-| H-5 | Option initiation set kısıtlanacak mı, yoksa everywhere başlatılabilir mi? | Meta-controller exploration'ını etkiliyor |
+| H-2 | How exactly does termination propagation work in recursive MC→MC option calls? | PN-3 implementation depends on this |
+| H-3 | Do lateral connections remain active when a frozen column is used as an option during inference? | Changes forward pass behavior |
+| H-4 | What signal triggers a new layer? Manual or automatic? | Determines Phase 2 scope |
+| H-5 | Should the option initiation set be restricted, or is everywhere-initiation acceptable? | Affects MetaController exploration |
