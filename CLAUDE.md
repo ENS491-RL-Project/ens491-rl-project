@@ -70,7 +70,7 @@ docs/                   # Architecture and design documents (read these first)
 sandbox/                # Reference only — do not modify
 ```
 
-All four `src/` modules are currently empty. Build them in the order listed above.
+All four `src/` modules are implemented (Phase 1). The MetaController uses epsilon-greedy selection in Phase 1 — PPO-based MC is deferred to Phase 2 due to dynamic action space complexity.
 
 ---
 
