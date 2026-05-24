@@ -146,7 +146,15 @@ def main() -> None:
                         help="Global random seed for controlled-seed reproducibility (default: 42)")
     parser.add_argument("--out-dir", type=str, default="runs/pn4",
                         help="Output directory for checkpoints and visualizations (default: runs/pn4)")
+    parser.add_argument("--device", choices=["auto", "cuda", "cpu"], default="auto",
+                        help="Training device for SB3 PPO. Default: auto.")
     args = parser.parse_args()
+
+    if args.device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            "--device cuda requested but CUDA is not available on this machine. "
+            "Use --device cpu or --device auto."
+        )
 
     # Seed all RNGs for controlled-seed reproducibility.
     # Note: bitwise-identical results across different hardware are not guaranteed
@@ -185,6 +193,7 @@ def main() -> None:
         reward_threshold=0.85,
         std_threshold=0.05,
         seed=args.seed,
+        device=args.device,
     )
     trainer1.train_until_stable(chunk_size=chunk_size, max_total=max_total_col1)
     col1.freeze()
@@ -205,6 +214,7 @@ def main() -> None:
         reward_threshold=0.75,
         std_threshold=0.05,
         seed=args.seed,
+        device=args.device,
     )
     trainer2.train_until_stable(chunk_size=chunk_size, max_total=max_total_col2)
     trainer2.save(out_dir / "col02")

@@ -53,12 +53,14 @@ class ColumnTrainer:
         reward_threshold: float = 0.85,
         std_threshold: float = 0.05,
         seed: int = 42,
+        device: str = "auto",
     ) -> None:
         self.column = column
         self.env_id = env_id
         self.total_timesteps = total_timesteps
         self.verbose = verbose
         self.seed = seed
+        self.device = device
         self._monitor = StabilizationMonitor(
             reward_threshold=reward_threshold,
             std_threshold=std_threshold,
@@ -85,7 +87,9 @@ class ColumnTrainer:
                 policy_kwargs=policy_kwargs,
                 verbose=self.verbose,
                 seed=self.seed,
+                device=self.device,
             )
+            print(f"SB3 device: {self._model.device}")
 
     def train_until_stable(
         self,
@@ -158,7 +162,8 @@ class ColumnTrainer:
             "env_id": self.env_id,
             "reward_threshold": self._monitor.reward_threshold,
             "std_threshold": self._monitor.std_threshold,
-            "device": "cuda" if torch.cuda.is_available() else "cpu",
+            "requested_device": self.device,
+            "actual_device": str(self._model.device),
             "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
         (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
