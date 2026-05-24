@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -51,11 +52,13 @@ class ColumnTrainer:
         verbose: int = 0,
         reward_threshold: float = 0.85,
         std_threshold: float = 0.05,
+        seed: int = 42,
     ) -> None:
         self.column = column
         self.env_id = env_id
         self.total_timesteps = total_timesteps
         self.verbose = verbose
+        self.seed = seed
         self._monitor = StabilizationMonitor(
             reward_threshold=reward_threshold,
             std_threshold=std_threshold,
@@ -67,12 +70,22 @@ class ColumnTrainer:
         # Monitor is explicit here — do not rely on SB3 auto-wrapping for episode info.
         env = gym.make(self.env_id)
         env = FlattenObservation(ImgObsWrapper(env))
-        return Monitor(env)
+        env = Monitor(env)
+        # Seed the env for controlled-seed reproducibility (not bitwise deterministic).
+        env.reset(seed=self.seed)
+        env.action_space.seed(self.seed)
+        env.observation_space.seed(self.seed)
+        return env
 
     def _init_model(self, env: gym.Env) -> None:
         if self._model is None:
             policy_kwargs = {"lateral_source_column": self.column.lateral_source}
-            self._model = PPO(ColumnPolicy, env, policy_kwargs=policy_kwargs, verbose=self.verbose)
+            self._model = PPO(
+                ColumnPolicy, env,
+                policy_kwargs=policy_kwargs,
+                verbose=self.verbose,
+                seed=self.seed,
+            )
 
     def train_until_stable(
         self,
@@ -137,8 +150,18 @@ class ColumnTrainer:
         run_dir.mkdir(parents=True, exist_ok=True)
         self._model.save(run_dir / "model")  # SB3 appends .zip → model.zip
         torch.save(self._model.policy.state_dict(), run_dir / "policy_state_dict.pt")
-        meta = {"n": self.column.n, "m": self.column.m, "frozen": self.column.frozen}
-        (run_dir / "meta.json").write_text(json.dumps(meta))
+        meta = {
+            "n": self.column.n,
+            "m": self.column.m,
+            "frozen": self.column.frozen,
+            "seed": self.seed,
+            "env_id": self.env_id,
+            "reward_threshold": self._monitor.reward_threshold,
+            "std_threshold": self._monitor.std_threshold,
+            "device": "cuda" if torch.cuda.is_available() else "cpu",
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
 
     @staticmethod
     def load_policy_into(column: Column, run_dir, env_id: str) -> None:

@@ -15,6 +15,7 @@ Verification (run with PYTHONNOUSERSITE to avoid user-site package conflicts):
 from __future__ import annotations
 
 import argparse
+import random
 import sys
 from pathlib import Path
 
@@ -141,7 +142,23 @@ def _visualize(col1: Column, col2: Column, out_dir: Path, n_obs: int = 200) -> N
 def main() -> None:
     parser = argparse.ArgumentParser(description="PN-4 progressive network training")
     parser.add_argument("--smoke", action="store_true", help="Quick pipeline check (20k steps per task)")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Global random seed for controlled-seed reproducibility (default: 42)")
+    parser.add_argument("--out-dir", type=str, default="runs/pn4",
+                        help="Output directory for checkpoints and visualizations (default: runs/pn4)")
     args = parser.parse_args()
+
+    # Seed all RNGs for controlled-seed reproducibility.
+    # Note: bitwise-identical results across different hardware are not guaranteed
+    # due to non-deterministic CUDA operations. cudnn.deterministic reduces (but
+    # does not eliminate) sources of non-determinism on the same machine.
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
     if args.smoke:
         chunk_size = 5_000
@@ -152,7 +169,7 @@ def main() -> None:
         max_total_col1 = 500_000
         max_total_col2 = 2_000_000
 
-    out_dir = Path("runs/pn4")
+    out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------------
@@ -167,6 +184,7 @@ def main() -> None:
         verbose=0,
         reward_threshold=0.85,
         std_threshold=0.05,
+        seed=args.seed,
     )
     trainer1.train_until_stable(chunk_size=chunk_size, max_total=max_total_col1)
     col1.freeze()
@@ -186,6 +204,7 @@ def main() -> None:
         verbose=0,
         reward_threshold=0.75,
         std_threshold=0.05,
+        seed=args.seed,
     )
     trainer2.train_until_stable(chunk_size=chunk_size, max_total=max_total_col2)
     trainer2.save(out_dir / "col02")
