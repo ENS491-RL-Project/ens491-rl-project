@@ -205,7 +205,7 @@ def fig1_architecture():
               bbox_to_anchor=(0.0, 0.0))
 
     ax.set_title(
-        "Figure 1 — System Architecture: Observation-to-Action Pipeline",
+        "System Architecture: Observation-to-Action Pipeline",
         fontsize=12, fontweight="bold", pad=8, color=BLUE
     )
 
@@ -337,7 +337,7 @@ def fig2_training_curves():
     ax2.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{int(x/1e6):.1f}M" if x >= 1e6 else f"{int(x/1000)}k"))
     ax2.grid(axis="y", color=LGRAY, linewidth=0.5, alpha=0.7)
 
-    fig.suptitle("Figure 2 — PN-4 Training Curves: Progressive Network Column Training",
+    fig.suptitle("PN-4 Training Curves: Progressive Network Column Training",
                  fontsize=12, fontweight="bold", color=BLUE, y=1.01)
     fig.tight_layout()
     fig.savefig(OUT / "fig2_training_curves.pdf", dpi=150, bbox_inches="tight")
@@ -440,7 +440,7 @@ def fig3_experiment_pipeline():
           PURPLE)
 
     # Title & phase labels
-    ax.set_title("Figure 3 — PN-4 Experiment Pipeline: Column Training and Artifact Generation",
+    ax.set_title("PN-4 Experiment Pipeline: Column Training and Artifact Generation",
                  fontsize=12, fontweight="bold", color=BLUE, pad=10)
 
     # Phase label strip
@@ -532,7 +532,7 @@ def fig5_test_summary():
     ax.legend(handles=legend_handles, fontsize=8, loc="upper left",
               framealpha=0.9, ncol=2)
 
-    ax.set_title("Figure 5 — Test Coverage Summary: 58 / 58 Tests Passed  (pytest, Python 3.10)",
+    ax.set_title("Test Coverage Summary: 58 / 58 Tests Passed  (pytest, Python 3.10)",
                  fontsize=11, fontweight="bold", color=BLUE, pad=10)
 
     ax.spines["left"].set_color(LGRAY)
@@ -661,7 +661,7 @@ def fig6_milestone_timeline():
               framealpha=0.95, edgecolor=LGRAY, ncol=5,
               bbox_to_anchor=(0.5, -0.04))
 
-    ax.set_title("Figure 6 — Development Milestone Timeline (Progress Report I)",
+    ax.set_title("Development Milestone Timeline (Progress Report I)",
                  fontsize=12, fontweight="bold", color=BLUE, pad=10)
 
     fig.tight_layout(pad=0.5)
