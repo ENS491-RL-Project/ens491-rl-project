@@ -12,7 +12,14 @@
       "Bash(findstr /i \"tensor\")",
       "Bash(\"C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe\" -m pytest tests/ -v --tb=short)",
       "Bash(New-Item -ItemType Directory -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\\\\runs\" -Force)",
-      "Bash(New-Item -ItemType File -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\\\\runs\\\\.gitkeep\" -Force)"
+      "Bash(New-Item -ItemType File -Path \"C:\\\\Users\\\\Emir\\\\Desktop\\\\ACADEMY\\\\ens491\\\\ens491-rl-project\\\\runs\\\\.gitkeep\" -Force)",
+      "Bash(\"C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe\" scripts/demo_run.py)",
+      "Bash('C:\\\\Users\\\\Emir\\\\miniconda3\\\\envs\\\\ens491\\\\python.exe' -c ' *)",
+      "Bash(conda run * \nand before doing that answer whether you remember these: \"\"\"Also apply these extra revisions before implementation:\r\r1. Wrap training environments with stable_baselines3.common.monitor.Monitor so EpisodeRewardCallback can reliably read infos[\"episode\"].\r\r2. Save both:\r   - SB3 model.zip via self._model.save\\(...\\)\r   - policy_state_dict.pt\r   - meta.json\r\r3. Make stabilization thresholds configurable per environment. Empty can use 0.85, but FourRooms should allow a lower threshold such as 0.70 or 0.75 for the first PN-4 milestone.\r\r4. In the visualization, do not call col2 activations \"direct path\" if they already include lateral contribution. Rename it to \"post-lateral activation norm\", unless pre-lateral activations are explicitly stored.\r\r5. Use PYTHONNOUSERSITE=1 in verification commands:\r   $env:PYTHONNOUSERSITE=\"1\"\r   python -m pytest tests/test_pn_trainer_iterative.py -v\r   python scripts/train_pn4.py --smoke\"\"\")",
+      "Bash(conda run *)",
+      "Bash(dir runs\\\\pn4 /s /b)",
+      "Bash(PYTHONNOUSERSITE=1 conda run -n ens491 python -m pytest tests/test_pn_trainer_iterative.py -v)",
+      "Bash(PYTHONNOUSERSITE=1 conda run -n ens491 python scripts/train_pn4.py --smoke)"
     ]
   }
 }

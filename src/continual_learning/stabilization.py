@@ -6,11 +6,15 @@ class StabilizationMonitor:
     """Tracks episode rewards and signals when a column has stabilised."""
 
     WINDOW = 50
-    REWARD_THRESHOLD = 0.85
-    STD_THRESHOLD = 0.05
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        reward_threshold: float = 0.85,
+        std_threshold: float = 0.05,
+    ) -> None:
         self._rewards: deque[float] = deque(maxlen=self.WINDOW)
+        self.reward_threshold = reward_threshold
+        self.std_threshold = std_threshold
 
     def update(self, episode_reward: float) -> None:
         self._rewards.append(episode_reward)
@@ -20,7 +24,7 @@ class StabilizationMonitor:
             return False
         mean = statistics.mean(self._rewards)
         std = statistics.stdev(self._rewards)
-        return mean >= self.REWARD_THRESHOLD and std <= self.STD_THRESHOLD
+        return mean >= self.reward_threshold and std <= self.std_threshold
 
     def reset(self) -> None:
         self._rewards.clear()
