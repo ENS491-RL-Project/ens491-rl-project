@@ -84,6 +84,12 @@ class OptionEnv(gym.Wrapper):
         self.action_space = Discrete(len(node.children))
         self.steps = 0
         self.decisions = 0
+        # Cumulative across episodes and never reset [v2 §11, H-6 A.4]. `steps`
+        # is per-episode and is what the reward uses; this one is the training
+        # cost of the node, which is the number a flat baseline is compared
+        # against. Without it a composite's env-step cost is simply unmeasured --
+        # `runs/v2/unlock_door.json` has no such field for exactly that reason.
+        self.total_env_steps = 0
         self.version = 0
         self.obs: Any = None
         self.sv = None
@@ -107,6 +113,18 @@ class OptionEnv(gym.Wrapper):
                 ok = bool(c.initiation(self.sv))
             out.append(ok)
         return out
+
+    # -- accounting ------------------------------------------------------
+
+    def get_total_env_steps(self) -> int:
+        """
+        Env steps consumed by this env since it was created, across episodes.
+
+        A method rather than a bare attribute so `DummyVecEnv.env_method` can
+        reach it; see `MaskableMonitor.get_total_env_steps` for why the attribute
+        alone is not enough.
+        """
+        return self.total_env_steps
 
     # -- gym API ---------------------------------------------------------
 
@@ -154,6 +172,7 @@ class OptionEnv(gym.Wrapper):
                 break
 
         self.steps += k
+        self.total_env_steps += k
         self.decisions += 1
 
         reached = bool(self.node.goal(self.sv))
@@ -227,3 +246,7 @@ class MaskableMonitor(gym.Wrapper):
 
     def action_masks(self) -> list[bool]:
         return self._option_env.action_masks()
+
+    def get_total_env_steps(self) -> int:
+        """Same passthrough reason as `action_masks` [H-6 A.4]."""
+        return self._option_env.get_total_env_steps()

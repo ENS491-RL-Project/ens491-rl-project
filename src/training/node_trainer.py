@@ -470,6 +470,10 @@ def train_composite(
     model.learn(total_timesteps=total_timesteps, callback=callback, progress_bar=False)
     wall = time.perf_counter() - t0
     decisions = model.num_timesteps
+    # [H-6 A.4] Read the counters BEFORE closing the vec env. One SMDP decision
+    # is a whole child execution, so decisions say nothing about env-step cost --
+    # and env steps are the unit a flat baseline is measured in.
+    env_steps_own = int(sum(vec.env_method("get_total_env_steps")))
     vec.close()
 
     report = {
@@ -491,6 +495,13 @@ def train_composite(
         "ppo": ppo_kwargs,
         "budget_decisions": total_timesteps,
         "decisions_trained": decisions,
+        # [H-6 A.4] The three fields v2 §11 now requires of every composite.
+        "env_steps_own": env_steps_own,
+        "env_steps_per_decision": (
+            round(env_steps_own / decisions, 2) if decisions else None
+        ),
+        "env_steps_children": children_env_steps(node),
+        "env_steps_total": env_steps_own + children_env_steps(node),
         "wall_seconds": round(wall, 1),
         "decisions_per_second": round(decisions / wall, 1) if wall > 0 else None,
         "stable": criterion.is_stable,
@@ -547,3 +558,87 @@ def load_frozen_primitive(
                                 normalize=normalize, device=device)
     registry.load_into(node, require_frozen=True)
     return node
+
+
+def children_env_steps(node: SkillNode) -> int:
+    """
+    Pretraining cost of everything below `node`, in env steps [H-6 A.4].
+
+    Walks the transitive closure (`descendants()` already de-duplicates a DAG's
+    shared children, so a node reached by two parents is counted once) and reads
+    each child's recorded training cost out of the `meta` the registry persisted.
+    A primitive records `steps_trained`; a composite records `env_steps_own`.
+
+    Returns 0 for a child whose meta carries neither, rather than guessing. That
+    is visible in the report as an understated total, which is preferable to a
+    fabricated one; `{1,1} unlock_door` was in exactly that state until H-6.2
+    retrained it with the counter in place.
+    """
+    total = 0
+    for child in node.descendants():
+        meta = child.meta or {}
+        if "env_steps_own" in meta:
+            total += int(meta["env_steps_own"])
+        elif "steps_trained" in meta:
+            total += int(meta["steps_trained"])
+    return total
+
+
+def load_frozen_composite(
+    node: SkillNode,
+    registry,
+    env_id: str,
+    reset_hook: ResetHook = NO_HOOK,
+    *,
+    normalize: bool = True,
+    device: str = "cpu",
+    initiation_masking: bool = False,
+) -> SkillNode:
+    """
+    The composite analogue of `load_frozen_primitive`.
+
+    A composite's policy shape comes from `OptionEnv` -- `Discrete(len(children))`
+    over the 147-dim observation -- so a throwaway `MaskablePPO` is built exactly
+    as the trainer would build it, and the weights are loaded into that. The
+    children must already be FROZEN and loaded: `spec_hash` recurses into their
+    hashes, so a parent cannot be verified before its children are [A: F18].
+    """
+    from sb3_contrib import MaskablePPO
+
+    if node.is_primitive:
+        raise ValueError(f"{node.id}: use load_frozen_primitive for a primitive node")
+    for child in node.children:
+        if child.status is not NodeStatus.FROZEN:
+            raise RuntimeError(
+                f"{node.id}: child {child.id} is {child.status.value}; load the "
+                "children before the parent (v2 §9)"
+            )
+
+    vec = DummyVecEnv([
+        option_env_factory(node, env_id, reset_hook, normalize=normalize,
+                           monitor=False, initiation_masking=initiation_masking)
+    ])
+    try:
+        model = MaskablePPO("MlpPolicy", vec, device=resolve_device(device), verbose=0)
+        node.policy = CompositePolicyAdapter(model.policy)
+    finally:
+        vec.close()
+
+    registry.load_into(node, require_frozen=True)
+    return node
+
+
+def set_torch_threads(n: int) -> int:
+    """
+    Cap torch's intra-op threads so several runs can share the machine.
+
+    A `DummyVecEnv` run is almost entirely single-threaded Python, but torch
+    defaults to one thread per core (16 here), so three concurrent seeds would
+    contend for every core instead of using one each. Call this before building
+    any model. Returns the value actually set.
+    """
+    import torch
+
+    n = max(1, int(n))
+    torch.set_num_threads(n)
+    return torch.get_num_threads()
