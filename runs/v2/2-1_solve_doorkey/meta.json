@@ -1,0 +1,130 @@
+{
+  "budget_decisions": 20000,
+  "children": [
+    "{1,1} unlock_door",
+    "{0,3} go_to_goal"
+  ],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 256.82,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.4,
+        "successes": 20,
+        "timeouts": 30,
+        "wilson_lower": 0.2761,
+        "wilson_upper": 0.5382
+      },
+      {
+        "mean_length": 256.82,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.4,
+        "successes": 20,
+        "timeouts": 30,
+        "wilson_lower": 0.2761,
+        "wilson_upper": 0.5382
+      },
+      {
+        "mean_length": 13.76,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      },
+      {
+        "mean_length": 13.76,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "decisions_per_second": 31.6,
+  "decisions_to_stable": 4000,
+  "decisions_trained": 4000,
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-DoorKey-6x6-v0"
+  ],
+  "env_steps_children": 611817,
+  "env_steps_own": 162138,
+  "env_steps_per_decision": 40.53,
+  "env_steps_total": 773955,
+  "eval_every": 1000,
+  "heldout": {
+    "mean_length": 14.24,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 1.0,
+    "successes": 50,
+    "timeouts": 0,
+    "wilson_lower": 0.9287,
+    "wilson_upper": 1.0
+  },
+  "id": "{2,1} solve_doorkey",
+  "initiation_masking": false,
+  "kind": "composite",
+  "lateral_sources": [],
+  "level_n": 2,
+  "m": 1,
+  "max_decisions": 8,
+  "n": 2,
+  "n_envs": 8,
+  "node_id": "{2,1} solve_doorkey",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "none",
+  "seed": 42,
+  "spec": {
+    "children": [
+      "5e4108da044c9f99",
+      "18196cad9cb78356"
+    ],
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "goal": "agent:on_goal",
+    "id": "{2,1} solve_doorkey",
+    "initiation": "door:locked",
+    "lateral_sources": [],
+    "max_decisions": 8,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 360,
+    "train_hook": "none"
+  },
+  "spec_hash": "d9ad7b6aaffc65c6",
+  "stable": true,
+  "status": "frozen",
+  "timeout": 360,
+  "wall_seconds": 126.5
+}

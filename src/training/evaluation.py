@@ -56,15 +56,35 @@ def heldout_seeds(n: int = DEFAULT_N_EVAL) -> list[int]:
     return fixed_seeds(n, HELDOUT_SEED_BASE)
 
 
-def wilson_lower(successes: int, n: int, z: float = 1.959963985) -> float:
-    """Wilson score interval, lower bound. 0.0 for n == 0."""
-    if n <= 0:
-        return 0.0
+def _wilson(successes: int, n: int, z: float) -> tuple[float, float]:
     p = successes / n
     denom = 1.0 + z * z / n
     centre = (p + z * z / (2 * n)) / denom
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom
+    return centre, half
+
+
+def wilson_lower(successes: int, n: int, z: float = 1.959963985) -> float:
+    """Wilson score interval, lower bound. 0.0 for n == 0."""
+    if n <= 0:
+        return 0.0
+    centre, half = _wilson(successes, n, z)
     return max(0.0, centre - half)
+
+
+def wilson_upper(successes: int, n: int, z: float = 1.959963985) -> float:
+    """
+    Wilson score interval, upper bound. 1.0 for n == 0.
+
+    Needed by H-6's choice-task gate, which asks whether a learned arm and a
+    control are separated rather than whether one number is above a threshold:
+    two arms whose 95% intervals overlap are not distinguishable at N=50, and
+    quoting the point estimates alone would hide that.
+    """
+    if n <= 0:
+        return 1.0
+    centre, half = _wilson(successes, n, z)
+    return min(1.0, centre + half)
 
 
 @dataclass
@@ -86,12 +106,17 @@ class EvalResult:
     def wilson_lower(self) -> float:
         return wilson_lower(self.successes, self.n_episodes)
 
+    @property
+    def wilson_upper(self) -> float:
+        return wilson_upper(self.successes, self.n_episodes)
+
     def as_dict(self) -> dict:
         return {
             "n_episodes": self.n_episodes,
             "successes": self.successes,
             "success_rate": round(self.success_rate, 4),
             "wilson_lower": round(self.wilson_lower, 4),
+            "wilson_upper": round(self.wilson_upper, 4),
             "mean_length": round(self.mean_length, 2),
             "seed_base": self.seed_base,
             "timeouts": self.timeouts,
