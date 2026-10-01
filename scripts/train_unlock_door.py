@@ -31,7 +31,7 @@ sys.path.insert(0, str(REPO))
 
 from src.envs.subgoal_env import NO_HOOK  # noqa: E402
 from src.skills.node import SkillNode  # noqa: E402
-from src.skills.predicates import door_open  # noqa: E402
+from src.skills.predicates import door_locked, door_open  # noqa: E402
 from src.skills.registry import NodeRegistry  # noqa: E402
 from src.training.device import describe  # noqa: E402
 from src.training.evaluation import evaluate_node, heldout_seeds, stopping_seeds  # noqa: E402
@@ -40,6 +40,7 @@ from src.training.node_trainer import (  # noqa: E402
     execution_env_factory,
     load_frozen_primitive,
     pooled_eval_fn,
+    set_torch_threads,
     train_composite,
 )
 from src.types import NodeStatus  # noqa: E402
@@ -76,6 +77,17 @@ def build_t3(children):
         "{1,1} unlock_door",
         children=children,
         goal=door_open(),
+        # [H-6 A.3] v2 §2 requires initial conditions on every node, not only on
+        # primitives, and H-5 measured what the ALWAYS default costs: the strict
+        # mask then differed from the goal-only mask in 0 of 304 decisions and
+        # the C1 masking ablation on this node was vacuous. There is nothing to
+        # unlock unless the door is locked.
+        #
+        # Declaring it changes this node's spec_hash, so the H-5 checkpoint is
+        # correctly refused by the registry (F18) and the node is retrained
+        # (H-6.2). `initiation` does not mask under goal-only training, so the
+        # trajectory is expected to be identical.
+        initiation=door_locked(),
         timeout=T3_TIMEOUT,
         max_decisions=T3_MAX_DECISIONS,
         env_ids=[UNLOCK],
@@ -103,12 +115,16 @@ def main() -> int:
     ap.add_argument("--eval-every", type=int, default=2_000)
     ap.add_argument("--n-eval", type=int, default=50)
     ap.add_argument("--skip-ablation", action="store_true")
+    ap.add_argument("--torch-threads", type=int, default=2)
+    ap.add_argument("--out-name", default=None,
+                    help="output file name; defaults to unlock_door[_smoke].json")
     args = ap.parse_args()
 
     if args.smoke:
         args.budget, args.eval_every, args.n_envs, args.n_eval = 600, 200, 2, 10
 
     print(describe())
+    print(f"torch threads: {set_torch_threads(args.torch_threads)}")
     registry = NodeRegistry(RUNS)
     print("loading frozen children:")
     children = load_children(registry, device=args.device)
@@ -162,7 +178,8 @@ def main() -> int:
         print(f"  decisions={abl_report['decisions_trained']:,} "
               f"stable={abl_report['stable']}")
 
-    path = RUNS / ("unlock_door_smoke.json" if args.smoke else "unlock_door.json")
+    default_name = "unlock_door_smoke.json" if args.smoke else "unlock_door.json"
+    path = RUNS / (args.out_name or default_name)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(f"\nwrote {path.relative_to(REPO)}")

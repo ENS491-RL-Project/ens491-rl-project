@@ -1,0 +1,113 @@
+{
+  "control_random_over_available": {
+    "n_episodes": 10,
+    "successes": 8,
+    "success_rate": 0.8,
+    "wilson_lower": 0.4902,
+    "mean_length": 109.8,
+    "seed_base": 20000,
+    "timeouts": 2,
+    "reselections": 0
+  },
+  "composite": {
+    "node_id": "{1,1} unlock_door",
+    "kind": "composite",
+    "children": [
+      "{0,1} get_key",
+      "{0,2} open_door"
+    ],
+    "level_n": 1,
+    "env_ids": [
+      "MiniGrid-Unlock-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 240,
+    "max_decisions": 8,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 2,
+    "eval_every": 200,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 600,
+    "decisions_trained": 1024,
+    "env_steps_own": 27638,
+    "env_steps_per_decision": 26.99,
+    "env_steps_children": 280000,
+    "env_steps_total": 307638,
+    "wall_seconds": 22.8,
+    "decisions_per_second": 44.9,
+    "stable": false,
+    "decisions_to_stable": null,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 0,
+      "is_stable": false,
+      "history": [
+        {
+          "n_episodes": 10,
+          "successes": 3,
+          "success_rate": 0.3,
+          "wilson_lower": 0.1078,
+          "mean_length": 173.8,
+          "seed_base": 10000,
+          "timeouts": 7,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 10,
+          "successes": 3,
+          "success_rate": 0.3,
+          "wilson_lower": 0.1078,
+          "mean_length": 173.8,
+          "seed_base": 10000,
+          "timeouts": 7,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 10,
+          "successes": 10,
+          "success_rate": 1.0,
+          "wilson_lower": 0.7225,
+          "mean_length": 16.1,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 10,
+          "successes": 10,
+          "success_rate": 1.0,
+          "wilson_lower": 0.7225,
+          "mean_length": 16.1,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 10,
+          "successes": 10,
+          "success_rate": 1.0,
+          "wilson_lower": 0.7225,
+          "mean_length": 16.1,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    }
+  }
+}
