@@ -114,6 +114,7 @@ def run_episode(
     execution_mode: str = DETERMINISTIC,
     max_env_steps: Optional[int] = None,
     prepare: Optional[Callable] = None,
+    initiation_masking: bool = False,
 ) -> tuple[bool, int, Executor]:
     """
     One evaluation episode, driven through the Executor (v2 §5.3: 'execution mode').
@@ -128,7 +129,8 @@ def run_episode(
         obs = prepare(env, obs)
     version = 0
     sv = build_state_view(env, version)
-    ex = Executor(node, gamma=gamma, execution_mode=execution_mode)
+    ex = Executor(node, gamma=gamma, execution_mode=execution_mode,
+                  initiation_masking=initiation_masking)
 
     limit = max_env_steps if max_env_steps is not None else node.timeout
     steps = 0
@@ -158,6 +160,7 @@ def evaluate_node(
     execution_mode: str = DETERMINISTIC,
     max_env_steps: Optional[int] = None,
     prepare: Optional[Callable] = None,
+    initiation_masking: bool = False,
 ) -> EvalResult:
     """
     Run `n_episodes` on a fixed seed set and report the success rate.
@@ -175,6 +178,7 @@ def evaluate_node(
                 node, env, seed,
                 gamma=gamma, execution_mode=execution_mode,
                 max_env_steps=max_env_steps, prepare=prepare,
+                initiation_masking=initiation_masking,
             )
             outcomes.append(ok)
             lengths.append(steps)

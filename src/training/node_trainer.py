@@ -123,6 +123,7 @@ def pooled_eval_fn(
     seed_base: Optional[int] = None,
     prepare: Optional[Callable] = None,
     env_factory_fn: Optional[Callable] = None,
+    initiation_masking: bool = False,
 ) -> Callable[[], EvalResult]:
     """
     Evaluate on every training layout and pool the episodes into one score.
@@ -150,6 +151,7 @@ def pooled_eval_fn(
                 build(env_id, reset_hook, normalize=normalize),
                 seeds=seeds,
                 prepare=prepare,
+                initiation_masking=initiation_masking,
             )
             successes += res.successes
             lengths.extend(res.lengths)
@@ -452,9 +454,12 @@ def train_composite(
     node.policy = CompositePolicyAdapter(model.policy)
 
     criterion = StabilityCriterion()
+    # The ablation must be SCORED under the mask it was TRAINED with, or the
+    # two C1 arms are not comparable [A: F1].
     eval_fn = pooled_eval_fn(
         node, env_ids, reset_hook, n_episodes=n_eval, normalize=normalize,
         env_factory_fn=execution_env_factory,
+        initiation_masking=initiation_masking,
     )
     callback = EvaluationCallback(
         node, env_factory=None, eval_fn=eval_fn,
@@ -489,6 +494,11 @@ def train_composite(
         "wall_seconds": round(wall, 1),
         "decisions_per_second": round(decisions / wall, 1) if wall > 0 else None,
         "stable": criterion.is_stable,
+        # Evaluations happen every `eval_every` decisions, so the decision count
+        # at the evaluation that completed the streak is simply how many ran.
+        "decisions_to_stable": (
+            len(criterion.history) * eval_every if criterion.is_stable else None
+        ),
         "criterion": criterion.as_dict(),
     }
     if criterion.is_stable:

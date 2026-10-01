@@ -1,4 +1,242 @@
 {
+  "get_key": {
+    "node_id": "{0,1} get_key",
+    "env_ids": [
+      "MiniGrid-Unlock-v0",
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "randomize_agent_pose:key",
+    "timeout": 120,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 20000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget": 800000,
+    "steps_trained": 180000,
+    "wall_seconds": 173.2,
+    "steps_per_second": 1039.1,
+    "stable": true,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 3,
+          "success_rate": 0.06,
+          "wilson_lower": 0.0206,
+          "mean_length": 112.86,
+          "seed_base": 10000,
+          "timeouts": 47,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 11,
+          "success_rate": 0.22,
+          "wilson_lower": 0.1275,
+          "mean_length": 94.7,
+          "seed_base": 10000,
+          "timeouts": 39,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 33,
+          "success_rate": 0.66,
+          "wilson_lower": 0.5215,
+          "mean_length": 44.52,
+          "seed_base": 10000,
+          "timeouts": 17,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 43,
+          "success_rate": 0.86,
+          "wilson_lower": 0.7381,
+          "mean_length": 22.74,
+          "seed_base": 10000,
+          "timeouts": 7,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 42,
+          "success_rate": 0.84,
+          "wilson_lower": 0.7149,
+          "mean_length": 24.8,
+          "seed_base": 10000,
+          "timeouts": 8,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 39,
+          "success_rate": 0.78,
+          "wilson_lower": 0.6476,
+          "mean_length": 31.46,
+          "seed_base": 10000,
+          "timeouts": 11,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 45,
+          "success_rate": 0.9,
+          "wilson_lower": 0.7864,
+          "mean_length": 18.7,
+          "seed_base": 10000,
+          "timeouts": 5,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 49,
+          "success_rate": 0.98,
+          "wilson_lower": 0.895,
+          "mean_length": 9.34,
+          "seed_base": 10000,
+          "timeouts": 1,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "mean_length": 5.88,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 5.82,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "open_door": {
+    "node_id": "{0,2} open_door",
+    "env_ids": [
+      "MiniGrid-Unlock-v0",
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "give_key+randomize_agent_pose:any",
+    "timeout": 60,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 20000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget": 800000,
+    "steps_trained": 100000,
+    "wall_seconds": 89.6,
+    "steps_per_second": 1116.5,
+    "stable": true,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 3,
+          "success_rate": 0.06,
+          "wilson_lower": 0.0206,
+          "mean_length": 56.48,
+          "seed_base": 10000,
+          "timeouts": 47,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 4,
+          "success_rate": 0.08,
+          "wilson_lower": 0.0315,
+          "mean_length": 55.36,
+          "seed_base": 10000,
+          "timeouts": 46,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 30,
+          "success_rate": 0.6,
+          "wilson_lower": 0.4618,
+          "mean_length": 26.76,
+          "seed_base": 10000,
+          "timeouts": 20,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "mean_length": 5.84,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "mean_length": 5.32,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 6.16,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
   "go_to_goal": {
     "node_id": "{0,3} go_to_goal",
     "env_ids": [
@@ -24,8 +262,8 @@
     },
     "budget": 800000,
     "steps_trained": 200000,
-    "wall_seconds": 187.6,
-    "steps_per_second": 1066.0,
+    "wall_seconds": 179.0,
+    "steps_per_second": 1117.1,
     "stable": true,
     "criterion": {
       "min_success_rate": 0.9,

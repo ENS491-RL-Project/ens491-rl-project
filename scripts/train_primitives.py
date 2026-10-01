@@ -42,7 +42,13 @@ from src.envs.subgoal_env import (  # noqa: E402
     randomize_carrying,
 )
 from src.skills.node import SkillNode  # noqa: E402
-from src.skills.predicates import carrying, door_open, on_goal_tile  # noqa: E402
+from src.skills.node import ALWAYS  # noqa: E402
+from src.skills.predicates import (  # noqa: E402
+    carrying,
+    carrying_nothing,
+    door_open,
+    on_goal_tile,
+)
 from src.skills.registry import NodeRegistry  # noqa: E402
 from src.training.device import describe, resolve_device  # noqa: E402
 from src.training.node_trainer import freeze_and_save, train_primitive  # noqa: E402
@@ -54,10 +60,18 @@ RUNS = REPO / "runs" / "v2"
 
 def specs():
     return {
+        # `initiation` is the other half of the task representation v2 §2 asks
+        # for ("initial conditions + terminal conditions + a policy"). It does
+        # NOT mask [A: F1] -- it records the conditions the skill was defined
+        # under, drives the reset hook, and is what the C1 masking ablation
+        # switches back on. Leaving it at the ALWAYS default made that ablation
+        # vacuous: the strict mask differed from the goal-only mask in 0 of 304
+        # decisions.
         "get_key": dict(
             node_id="{0,1} get_key",
             m=1,
             goal=carrying("key"),
+            initiation=carrying_nothing(),
             timeout=120,
             env_ids=[UNLOCK, DOORKEY],
             hook=randomize_agent_pose(anchor="key"),
@@ -66,6 +80,7 @@ def specs():
             node_id="{0,2} open_door",
             m=2,
             goal=door_open(),
+            initiation=carrying("key"),
             timeout=60,
             env_ids=[UNLOCK, DOORKEY],
             hook=compose(give_key(), randomize_agent_pose(anchor=None)),
@@ -74,6 +89,7 @@ def specs():
             node_id="{0,3} go_to_goal",
             m=3,
             goal=on_goal_tile(),
+            initiation=door_open(),
             timeout=120,
             env_ids=[DOORKEY],
             # randomize_carrying: unlock_door hands this node control while the
@@ -88,9 +104,11 @@ def build_node(spec, normalize=True):
     return SkillNode(
         spec["node_id"],
         goal=spec["goal"],
+        initiation=spec.get("initiation", ALWAYS),
         timeout=spec["timeout"],
         env_ids=spec["env_ids"],
         normalize_obs=normalize,
+        train_hook=spec["hook"].spec,
         m=spec["m"],
     )
 

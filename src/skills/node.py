@@ -86,6 +86,7 @@ class SkillNode:
         env_ids: Sequence[str] = (),
         obs_pipeline: str = "ImgObs+Flatten+ChannelNormalize",
         normalize_obs: bool = True,
+        train_hook: str = "none",
         lateral_sources: Iterable["SkillNode"] = (),
         policy: Any = None,
         m: int = 1,
@@ -99,6 +100,11 @@ class SkillNode:
         self.env_ids = tuple(env_ids)
         self.obs_pipeline = obs_pipeline
         self.normalize_obs = bool(normalize_obs)
+        # The reset hook is the operational form of `initiation` (v2 §5.1) and
+        # it determines the state distribution the policy was trained on, so it
+        # belongs in the identity: two nodes with the same goal and timeout but
+        # different hooks are NOT interchangeable [A: F18].
+        self.train_hook = train_hook
         self.lateral_sources = tuple(lateral_sources)
         self.policy = policy
         self.m = int(m)
@@ -248,6 +254,7 @@ class SkillNode:
             "max_decisions": self.max_decisions,
             "obs_pipeline": self.obs_pipeline,
             "normalize_obs": self.normalize_obs,
+            "train_hook": self.train_hook,
             "children": [c.spec_hash() for c in self._children],
             "lateral_sources": [s.spec_hash() for s in self.lateral_sources],
         }

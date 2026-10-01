@@ -318,3 +318,35 @@ def test_reset_hook_env_regenerates_the_observation():
     obs, _ = env.reset(seed=0)
     agent_cell = obs.reshape(7, 7, 3)[3, 6]
     assert agent_cell[0] == pytest.approx(5 / 10), "the held key is not in the obs"
+
+
+def test_ablation_is_scored_under_the_mask_it_was_trained_with():
+    """
+    The two C1 arms are only comparable if the strict mask applies to evaluation
+    as well as training. Training with it and scoring without it made both arms
+    produce byte-identical numbers in the first smoke run.
+    """
+    from src.skills.state import build_state_view
+    from src.training.evaluation import run_episode
+    from src.training.node_trainer import execution_env_factory
+
+    node = unlock_door_node()
+    chosen = []
+
+    class Recorder:
+        def select(self, obs, mask, deterministic=True):
+            chosen.append(list(mask))
+            return next(i for i, ok in enumerate(mask) if ok)
+
+    node.policy = Recorder()
+    env = execution_env_factory(UNLOCK)()
+
+    chosen.clear()
+    run_episode(node, env, seed=0, initiation_masking=False)
+    assert [True, True] in chosen, "default evaluation must offer both children"
+
+    chosen.clear()
+    run_episode(node, env, seed=0, initiation_masking=True)
+    assert all(m == [True, False] or m == [False, True] or not m[1] or not m[0]
+               for m in chosen[:1]), "strict evaluation must withhold open_door"
+    assert chosen[0] == [True, False]
