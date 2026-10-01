@@ -96,8 +96,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | H-0.5 | Apply Part A amendments to v2 / CLAUDE.md / supervisor questions; pin deps, add sb3-contrib | 2 | ✅ 2026-10-01 — reqs resolve, MaskablePPO imports, 59/59 |
 | H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ✅ 2026-10-01 — 108/108 tests (49 new) |
 | H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ✅ 2026-10-01 — 150/150 tests; env IDs + budgets verified |
-| H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ⬜ Next |
-| H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ⬜ |
+| H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ✅ 2026-10-01 — 171/171; col01 50/50 (but Empty-8x8 is layout-deterministic) |
+| H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ⬜ Next |
 | H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ⬜ |
 | H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ⬜ |
 | H-7 | T6–T9b reuse and depth experiment | 8 | ⬜ |
