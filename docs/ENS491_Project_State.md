@@ -79,7 +79,7 @@ No predetermined correct answer. Implement each alternative and compare. Section
 - The MetaController never learns (ε-greedy; greedy choice is always option 0).
 - Options stop after a fixed 200 steps; no initiation or goal conditions.
 - Single-level execution only; `Column.sub_layer` is never used; new columns are always opened at n=0 and nothing trains them.
-- `Column.forward` uses `deterministic=not self.frozen`, so frozen columns act stochastically (bug, H-0).
+- ~~`Column.forward` uses `deterministic=not self.frozen`, so frozen columns act stochastically.~~ Fixed in H-0 (2026-10-01).
 - `scripts/demo_run.py` and the GUI run on mock policies and random observations; real checkpoints are never loaded by the pipeline.
 
 ---
@@ -92,8 +92,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 
 | # | Task | SP | Status |
 |---|---|---|---|
-| H-0 | Fix deterministic flag; document 0.75 / 0.85 mismatch | 1 | ⬜ Next |
-| H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ⬜ |
+| H-0 | Fix deterministic flag; document 0.75 / 0.85 mismatch | 1 | ✅ 2026-10-01 — 59/59 tests pass |
+| H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ⬜ Next |
 | H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ⬜ |
 | H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ⬜ |
 | H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ⬜ |

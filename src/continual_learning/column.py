@@ -54,7 +54,9 @@ class Column:
         obs_t = _to_tensor(obs)
         obs_np = obs_t.cpu().numpy()
 
-        action, _ = self.policy.predict(obs_np, deterministic=not self.frozen)
+        # v2 §5.4: frozen nodes act deterministically; a node still training samples
+        # so PPO keeps exploring. v1 had this inverted (deterministic=not self.frozen).
+        action, _ = self.policy.predict(obs_np, deterministic=self.frozen)
         action = int(action)
 
         params = list(self.policy.parameters())

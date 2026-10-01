@@ -17,7 +17,8 @@ class LateralMlpExtractor(nn.Module):
 
     Architecture: obs(147) → fc1(64) → fc2(64)
     Lateral: a linear projection from each of the source's hidden layers is
-    added element-wise before the ReLU activation.
+    added element-wise to the receiving hidden layer *after* its ReLU, i.e.
+    h = relu(W x) + lat(h_source), matching v2 §7 and CLAUDE.md.
 
     SB3 2.x contract: must expose forward(), forward_actor(), forward_critic().
     - forward(features) → (pi_features, vf_features)  [called during PPO update]
