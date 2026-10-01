@@ -97,8 +97,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ✅ 2026-10-01 — 108/108 tests (49 new) |
 | H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ✅ 2026-10-01 — 150/150 tests; env IDs + budgets verified |
 | H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ✅ 2026-10-01 — 171/171; col01 50/50 (but Empty-8x8 is layout-deterministic) |
-| H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ⬜ Next |
-| H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ⬜ |
+| H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ✅ 2026-10-01 — all three FROZEN; held-out 1.00 / 1.00 / 0.92; F29 gate passed after retraining go_to_goal |
+| H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ⬜ Next |
 | H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ⬜ |
 | H-7 | T6–T9b reuse and depth experiment | 8 | ⬜ |
 

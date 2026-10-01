@@ -116,6 +116,35 @@ def clear_blocker() -> ResetHook:
     return ResetHook("clear_blocker", fn)
 
 
+def randomize_carrying(prob: float = 0.5, type_: str = "key") -> ResetHook:
+    """
+    With probability `prob`, start the episode already holding the object.
+
+    [A: F29] MiniGrid writes the carried object into the agent's OWN cell of the
+    observation -- `gen_obs_grid` sets grid[3, 6] to `self.carrying`. A primitive
+    whose reset hook never gives it anything to hold therefore sees object index
+    1 at (3,6) in every single training state, and reads 5 the moment a parent
+    hands it control after `get_key`. That is a systematic shift in an input the
+    policy has never varied over, and it cost `go_to_goal` 0.96 -> 0.52 between
+    its own hook distribution and the state `unlock_door` actually produces.
+
+    Randomizing it makes the policy invariant instead of tying it to one parent.
+    """
+
+    def fn(env):
+        u = env.unwrapped
+        if u.carrying is not None or not u._rand_bool():
+            return
+        pos, obj = _find(u, type_)
+        if obj is None:
+            return
+        u.grid.set(pos[0], pos[1], None)
+        u.carrying = obj
+        u.carrying.cur_pos = np.array([-1, -1])
+
+    return ResetHook(f"randomize_carrying:{type_}:{prob}", fn)
+
+
 def _traversable(cell) -> bool:
     return cell is None or cell.can_overlap()
 

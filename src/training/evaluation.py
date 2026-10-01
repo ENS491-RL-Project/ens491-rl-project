@@ -113,9 +113,19 @@ def run_episode(
     gamma: float = 0.99,
     execution_mode: str = DETERMINISTIC,
     max_env_steps: Optional[int] = None,
+    prepare: Optional[Callable] = None,
 ) -> tuple[bool, int, Executor]:
-    """One evaluation episode, driven through the Executor (v2 §5.3: 'execution mode')."""
+    """
+    One evaluation episode, driven through the Executor (v2 §5.3: 'execution mode').
+
+    `prepare(env, obs) -> obs` runs after reset and before the node starts. It is
+    how a node is scored from **parent-reachable** states rather than only from
+    its own reset hook [A: F29]: pass a function that rolls an earlier frozen
+    node forward to the state a parent would hand this one.
+    """
     obs, _ = env.reset(seed=seed)
+    if prepare is not None:
+        obs = prepare(env, obs)
     version = 0
     sv = build_state_view(env, version)
     ex = Executor(node, gamma=gamma, execution_mode=execution_mode)
@@ -147,6 +157,7 @@ def evaluate_node(
     gamma: float = 0.99,
     execution_mode: str = DETERMINISTIC,
     max_env_steps: Optional[int] = None,
+    prepare: Optional[Callable] = None,
 ) -> EvalResult:
     """
     Run `n_episodes` on a fixed seed set and report the success rate.
@@ -162,7 +173,8 @@ def evaluate_node(
         for seed in seed_list:
             ok, steps, ex = run_episode(
                 node, env, seed,
-                gamma=gamma, execution_mode=execution_mode, max_env_steps=max_env_steps,
+                gamma=gamma, execution_mode=execution_mode,
+                max_env_steps=max_env_steps, prepare=prepare,
             )
             outcomes.append(ok)
             lengths.append(steps)
@@ -240,8 +252,9 @@ class EvaluationCallback(BaseCallback):
     def __init__(
         self,
         node: SkillNode,
-        env_factory: Callable[[], object],
+        env_factory: Optional[Callable[[], object]] = None,
         *,
+        eval_fn: Optional[Callable[[], EvalResult]] = None,
         eval_every: int = 10_000,
         n_episodes: int = DEFAULT_N_EVAL,
         criterion: Optional[StabilityCriterion] = None,
@@ -249,8 +262,11 @@ class EvaluationCallback(BaseCallback):
         verbose: int = 1,
     ) -> None:
         super().__init__(verbose)
+        if env_factory is None and eval_fn is None:
+            raise ValueError("EvaluationCallback needs env_factory or eval_fn")
         self.node = node
         self.env_factory = env_factory
+        self.eval_fn = eval_fn
         self.eval_every = eval_every
         self.n_episodes = n_episodes
         self.criterion = criterion or StabilityCriterion()
@@ -258,10 +274,13 @@ class EvaluationCallback(BaseCallback):
         self._next_eval = eval_every
 
     def _run_eval(self) -> EvalResult:
-        result = evaluate_node(
-            self.node, self.env_factory,
-            n_episodes=self.n_episodes, execution_mode=self.execution_mode,
-        )
+        if self.eval_fn is not None:
+            result = self.eval_fn()
+        else:
+            result = evaluate_node(
+                self.node, self.env_factory,
+                n_episodes=self.n_episodes, execution_mode=self.execution_mode,
+            )
         stable = self.criterion.update(result)
         if self.verbose:
             print(

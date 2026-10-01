@@ -71,6 +71,7 @@ class Executor:
         gamma: float = 0.99,                 # [A: F8] not a module global
         execution_mode: str = DETERMINISTIC,  # [A: F17]
         max_decisions: Optional[int] = None,  # [A: F2] mandatory; defaults to the node's
+        initiation_masking: bool = False,     # C1 ablation only; see below
     ) -> None:
         self.root = root
         self.gamma = float(gamma)
@@ -78,6 +79,11 @@ class Executor:
         self.max_decisions = int(
             max_decisions if max_decisions is not None else root.max_decisions
         )
+        # [A: F1] v2 masks on goal only. Switching this on restores v2-as-locked
+        # behaviour and is one of the two mandatory C1 controls: it measures how
+        # much of a composite's score comes from masking rather than from
+        # composition. It is never on in a normal run.
+        self.initiation_masking = initiation_masking
 
         self.stack: list[Frame] = [Frame(root)]
         self.decisions = 0
@@ -140,7 +146,7 @@ class Executor:
                 self._close_from(0, Outcome.TIMEOUT, sv)
                 return None
 
-            mask = [c.available(sv, self._cache) for c in top.children]
+            mask = [self._child_mask(c, sv) for c in top.children]
             if not any(mask):
                 # [A: F3] Never hand an empty mask to a policy. Close this frame
                 # and let its parent choose again.
@@ -189,6 +195,12 @@ class Executor:
         return [e.node_id for e in self.trace if e.event == "SELECT"]
 
     # -- internals -------------------------------------------------------
+
+    def _child_mask(self, child, sv: StateView) -> bool:
+        ok = child.available(sv, self._cache)
+        if ok and self.initiation_masking:
+            ok = bool(child.initiation(sv))
+        return ok
 
     def _refresh_cache(self, sv: StateView) -> None:
         """[A: F4] The availability cache is valid for exactly one env step."""
