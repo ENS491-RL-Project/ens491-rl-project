@@ -93,6 +93,7 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | # | Task | SP | Status |
 |---|---|---|---|
 | H-0 | Fix deterministic flag; document 0.75 / 0.85 mismatch | 1 | ✅ 2026-10-01 — 59/59 tests pass |
+| H-0.5 | Apply Part A amendments to v2 / CLAUDE.md / supervisor questions; pin deps, add sb3-contrib | 2 | ✅ 2026-10-01 — reqs resolve, MaskablePPO imports, 59/59 |
 | H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ⬜ Next |
 | H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ⬜ |
 | H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ⬜ |

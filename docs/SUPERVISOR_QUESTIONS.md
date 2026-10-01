@@ -16,6 +16,19 @@
 - [ ] **Q5 — Initiation sets.** Default: a skill may start anywhere; unusable choices are masked (goal already reached, or a required item missing). Should initiation conditions be explicit predicates for every skill?
 - [ ] **Q6 — Evaluation tasks.** Proposed curriculum: Unlock → DoorKey → UnlockPickup → BlockedUnlockPickup, decomposed into get_key, open_door, go_to_goal, pickup_box, move_blocker. FourRooms is dropped from the main sequence. Are these environments appropriate?
 - [ ] **Q7 — GRU continual training.** When a new task is added, retrain the GRU on stored sequences from all tasks, or use EWC on the GRU?
+- [ ] **Q8 — How much of the result is masking?** A skill is offered to its parent only when its goal is
+  not already satisfied. In the planned curriculum that alone almost fixes the order: once the key is
+  held, "get the key" is withdrawn and only "open the door" remains. We therefore removed the
+  *initial-condition* half of the filter, so the parent may pick a skill that cannot work yet and must
+  learn that it fails; and we report two controls beside every composite — a parent choosing at random
+  among the offered skills, and the same run with the stricter filter restored. Is that the right way
+  to show that composition, and not the filtering, is doing the work?
+- [ ] **Q9 — Rescaling the observations invalidates the old column.** MiniGrid observations are small
+  integers (object 0–10, colour 0–5, state 0–2) and were fed to the network raw; we now divide each
+  channel by its maximum, which the autoencoder needed anyway. The consequence is that `{0,1}`, the
+  Empty-8x8 column from PN-4, was trained on the old scale and can no longer serve as the transfer
+  source for the Progressive-Network comparison without being retrained (~40k steps). We plan to
+  retrain it. Do you agree, or would you rather we keep the raw scale for that one comparison?
 
 ---
 
