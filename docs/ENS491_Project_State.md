@@ -94,8 +94,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 |---|---|---|---|
 | H-0 | Fix deterministic flag; document 0.75 / 0.85 mismatch | 1 | ✅ 2026-10-01 — 59/59 tests pass |
 | H-0.5 | Apply Part A amendments to v2 / CLAUDE.md / supervisor questions; pin deps, add sb3-contrib | 2 | ✅ 2026-10-01 — reqs resolve, MaskablePPO imports, 59/59 |
-| H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ⬜ Next |
-| H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ⬜ |
+| H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ✅ 2026-10-01 — 108/108 tests (49 new) |
+| H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ⬜ Next |
 | H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ⬜ |
 | H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ⬜ |
 | H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ⬜ |
