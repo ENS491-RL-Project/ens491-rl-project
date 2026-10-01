@@ -515,13 +515,21 @@ Tests: existing v1 tests stay green until the module they cover is replaced; eac
 
 All env-step counts include steps executed inside frozen children. Pretraining cost of reused children is reported separately (it is amortized across every task that reuses them).
 
+Every composite reports **three** env-step numbers, so the two honest framings of its cost cannot drift apart (amended 2026-10-02, H-6 Part A.4):
+
+- `env_steps_own` — env steps consumed while training this node, including steps executed inside its frozen children
+- `env_steps_children` — the sum of `env_steps_own` over the transitive closure of its children
+- `env_steps_total` — the two added
+
+`env_steps_own` is the cost of acquiring *this* task once a skill library exists; `env_steps_total` is the honest total for a learner starting from nothing. Both are reported beside every flat baseline and neither is presented as "the" number.
+
 **Reported metrics are success rate and episode length [A: F12].** Reward is a training signal whose
 scale depends on each node's timeout, so it is never compared across nodes or against a flat baseline.
 Every success rate quoted is the freeze-time score on the held-out seed set of §5.3.
 
 | Claim | Experiment | Metric | Baselines |
 |---|---|---|---|
-| **C1 Composition helps.** A composite over frozen skills learns a task faster than learning it flat. | `{2,1} solve_doorkey` on DoorKey | success rate vs env steps; steps to STABLE | flat PPO on DoorKey; flat composite over the three primitives; **plus two mandatory controls [A: F1]:** (a) uniform random choice over the available children, (b) the same run with initiation masking switched on |
+| **C1 Composition helps.** A composite over frozen skills learns a task faster than learning it flat, and on a task with a real choice it learns something no mask encodes. | `{2,1} solve_doorkey` on DoorKey; **and `{1,2} unlock_matching` on the two-key DoorKey variant** | success rate vs env steps; steps to STABLE; first-decision choice accuracy conditioned on door colour | flat PPO on DoorKey (primary); flat composite over the three primitives; **plus two mandatory controls [A: F1]:** (a) uniform random choice over the available children, (b) the same run with initiation masking switched on |
 | **C2 Reuse across tasks and depth (unbounded).** A skill learned once is reused by later tasks, and deeper composition reuses intermediate skills. | UnlockPickup and BlockedUnlockPickup reusing `unlock_door`; BlockedUnlockPickup variant A (level 2) vs variant B (level 3) | same as C1; stack depth reached | composite from primitives only; flat PPO |
 | **C3 Task recognition.** The AE separates known from novel tasks; the GRU identifies known tasks. | observations from all curriculum envs | AE ROC-AUC per task pair; GRU accuracy and latency vs N; recognition accuracy on old tasks after each new task | single vs per-task AE |
 | **C4 Continual learning.** Skills are retained; laterals give forward transfer. | re-evaluate every FROZEN node after each new task (**a regression test, not evidence — [A: F26]**); primitives with vs without laterals | retention (unchanged by construction; a change means a bug); steps to STABLE | no laterals; (optional) EWC fine-tuning |
@@ -558,7 +566,23 @@ not only from hook states.
 | T9a | `{2,3}` | composite | T8, T3, T6 | `MiniGrid-BlockedUnlockPickup-v0` | env success |
 | T9b | `{3,1}` | composite | T8, T7 | same | env success |
 
+`initiation` is stated for composites too, not only primitives (amended 2026-10-02, H-6 Part A.3): T3 `{1,1} unlock_door` and T5 `{2,1} solve_doorkey` carry `I: door locked`. §2 requires it of every node, and H-5 measured what leaving it at the `ALWAYS` default costs — the strict mask then differs from the goal-only mask in 0 of 304 decisions and the C1 masking ablation is vacuous. Declaring it changes T3's `spec_hash`, so its H-5 checkpoint is correctly refused by the registry (F18) and T3 is retrained in H-6.2.
+
+**H-6 additions (2026-10-02).** Three experiment nodes and two baseline nodes, kept below the curriculum so T1–T9b stays readable. T10a/T10b/T11 are the genuine-choice task required by the C1 row; the two `{·,B}` nodes are baselines only, are registered under `runs/v2/baselines/`, and may never be used as a child of a curriculum node.
+
+| # | Node | Kind | Children | Env | Goal predicate |
+|---|---|---|---|---|---|
+| T10a | `{0,6} get_key_yellow` | primitive (I: carrying nothing) | — | DoorKey-6x6 + two-key hook | agent carries a **yellow** key |
+| T10b | `{0,7} get_key_blue` | primitive (I: carrying nothing) | — | DoorKey-6x6 + two-key hook | agent carries a **blue** key |
+| T11 | `{1,2} unlock_matching` | composite (I: door locked, carrying nothing) | T10a, T10b, T2 | DoorKey-6x6 + two-key hook | door open |
+| — | `{0,B} flat_doorkey_ppo` | primitive, **baseline only** | — | `MiniGrid-DoorKey-6x6-v0` | agent on goal tile |
+| — | `{1,B} flat_doorkey_options` | composite, **baseline only** | T1, T2, T4 | `MiniGrid-DoorKey-6x6-v0` | agent on goal tile |
+
+The two-key hook recolours the DoorKey door and its key to one of two colours drawn per episode, adds a decoy key of the other colour, randomizes the agent's position, and faces the agent so the door is inside its 7×7 view. It is built from reset hooks only — no new env class — so it inherits `spec_hash` coverage and seed reproducibility. `Door.toggle` opens a locked door only for a key of the matching colour, and MiniGrid `pickup` needs an empty hand, so a wrong first pick is unrecoverable within the episode: the choice separates success rate, not merely episode length. Facing is pinned because the door is inside the agent's view in only 163/300 resets with a random facing and 300/300 facing the door (measured on minigrid 3.1.0) — a feedforward policy cannot condition on a signal it cannot see, and without this the experiment would measure partial observability instead of composition.
+
 T5 already exercises a mixed-level DAG and a depth-3 stack (`solve_doorkey → unlock_door → get_key`). T9a vs T9b is the depth-reuse comparison. 🧪 Primitive generality: train primitives on a mix of the layouts where their goal predicate is defined, so they work inside every parent task.
+
+**Why C1 needs the choice task (amended 2026-10-02, H-6 Part A.2).** On Unlock and DoorKey the subgoal order is strict, so the initiation mask *is* the task's ordering constraint: H-5 measured a random policy under that mask attaining `{1,1} unlock_door`'s score exactly (0.98, 19.2 steps, byte-identical to the learned composite). Success rate on a strict-order task therefore cannot separate composition from masking, however deep the hierarchy. What the learned composite demonstrably adds there is that it *discovers* the ordering under the goal-only mask — measured as the divergence count, 146 of 146 decisions where the strict mask would have withheld a child and the policy had already declined it — and executes 4.4× more efficiently than random choice. `{1,2} unlock_matching` is the complement: two children stay valid under the strict mask and the correct one is fixed by the door's colour in the observation, so no state-independent mask can substitute and a masked random policy is capped near 0.50 by construction.
 
 FourRooms is no longer part of the curriculum. It survives only as a diagnostic (C-1).
 
@@ -669,3 +693,15 @@ was written; the full rationale is in `plans/2026-10-01_v2_H0-H5_plan.md` Part A
 | — | acyclicity asserted at construction; empty mask impossible; `info["k"]` always logged; `DummyVecEnv` only; single lateral source | F21, F3, F14, F15, F20 |
 
 **Unchanged and still locked:** AE and reward signals are never merged; frozen means no gradients but a running forward pass; only stabilized nodes are reused; Python 3.10, PyTorch, MiniGrid, Gymnasium, SB3, W&B, Streamlit; never `CnnPolicy`; nothing hardcodes depth or width.
+
+### Amendments applied 2026-10-02 (H-6)
+
+Each follows from a measurement taken after H-5, not from a preference. Full rationale in
+`plans/2026-10-02_H6_plan.md` Part A and Part C.
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| §11 states `initiation` for primitives only | It is stated for composites too: T3 and T5 carry `I: door locked`, T11 `I: door locked and carrying nothing` | §2 requires it of every node, and the `ALWAYS` default made H-5's masking ablation differ from the goal-only mask in 0 of 304 decisions |
+| C1 = `solve_doorkey` vs flat baselines | C1 also runs `{1,2} unlock_matching`, a task with a genuine choice | On a strict-order task the initiation mask *is* the ordering constraint, so success rate cannot separate composition from masking — measured, not conjectured |
+| "env-step counts include steps inside frozen children" | Three named fields: `env_steps_own`, `env_steps_children`, `env_steps_total`, all three reported | The amortized and from-scratch framings of a composite's cost are both legitimate and must not be allowed to drift |
+| §11 node table ends at T9b | Adds T10a, T10b, T11 and two explicitly non-curriculum baseline nodes | The choice task needs colour-specific key primitives; baselines need node ids but must never be reusable children |
