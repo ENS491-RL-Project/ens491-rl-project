@@ -213,4 +213,10 @@ __marimo__/
 
 runs/*
 !runs/.gitkeep
+# The v2 node checkpoints and run reports are records, not scratch artifacts:
+# H-6 loads the frozen H-5 nodes as children, so the whole set has to be
+# reproducible from the repo. They are small (policy_state_dict.pt is ~40 KB).
+# SB3 model.zip files are not -- those stay ignored.
+!runs/v2/
+runs/v2/**/model.zip
 .claude/
