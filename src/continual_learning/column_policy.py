@@ -46,43 +46,60 @@ class LateralMlpExtractor(nn.Module):
 
         self._acts: dict[int, torch.Tensor] = {}
 
-    def _extract(self, features: torch.Tensor) -> torch.Tensor:
-        """Core MLP + lateral computation. Stores activations; returns h2."""
+    def extract_with_acts(
+        self, features: torch.Tensor
+    ) -> tuple[torch.Tensor, dict[int, torch.Tensor]]:
+        """
+        Core MLP + lateral computation. Returns (h2, activations).
+
+        [A: F15] Activations are *returned*, not stashed on the module. A frozen
+        node is a single shared `nn.Module` referenced by every `OptionEnv` copy
+        in a vectorized run, so a `self._acts` dict is last-writer-wins: one env
+        could read activations another env had just overwritten. `_acts` is still
+        updated, but only as a convenience cache for the GUI -- nothing in the
+        forward path reads it.
+        """
         features = features.to(self.fc1.weight.device)
         lat_acts: dict[int, torch.Tensor] = {}
         if self.lateral_source_column is not None:
-            # Re-run frozen source on this batch to get matching activations.
-            # Source has requires_grad_(False) so no gradient flows into it.
+            # Re-run the frozen source on this batch so activations match it.
+            # The source has requires_grad_(False), so no gradient flows into it.
             with torch.no_grad():
-                self.lateral_source_column.policy.mlp_extractor._extract(features)
-            lat_acts = self.lateral_source_column.policy.mlp_extractor._acts
+                _, lat_acts = self.lateral_source_column.policy.mlp_extractor.extract_with_acts(
+                    features
+                )
 
         h1 = F.relu(self.fc1(features))
-        if lat_acts and 0 in lat_acts:
+        if 0 in lat_acts:
             h1 = h1 + self.lat1(lat_acts[0])
-        self._acts[0] = h1.detach()
 
         h2 = F.relu(self.fc2(h1))
-        if lat_acts and 1 in lat_acts:
+        if 1 in lat_acts:
             h2 = h2 + self.lat2(lat_acts[1])
-        self._acts[1] = h2.detach()
 
-        return h2
+        acts = {0: h1.detach(), 1: h2.detach()}
+        self._acts = acts  # GUI cache only; never read by the forward path
+        return h2, acts
+
+    def _extract(self, features: torch.Tensor) -> torch.Tensor:
+        """Backwards-compatible shim: the h2 half of `extract_with_acts`."""
+        return self.extract_with_acts(features)[0]
 
     def forward(self, features: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """SB3 2.x: called during PPO evaluate_actions(). Returns (pi, vf)."""
-        h = self._extract(features)
+        h, _ = self.extract_with_acts(features)
         return h, h
 
     def forward_actor(self, features: torch.Tensor) -> torch.Tensor:
         """SB3 2.x: called during predict() / get_distribution()."""
-        return self._extract(features)
+        return self.extract_with_acts(features)[0]
 
     def forward_critic(self, features: torch.Tensor) -> torch.Tensor:
         """SB3 2.x: called during predict_values()."""
-        return self._extract(features)
+        return self.extract_with_acts(features)[0]
 
     def get_activations(self) -> dict[int, torch.Tensor]:
+        """The last computed activations. For the GUI; see `extract_with_acts`."""
         return self._acts
 
 

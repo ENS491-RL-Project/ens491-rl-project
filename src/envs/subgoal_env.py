@@ -1,0 +1,294 @@
+"""
+SubgoalEnv: the MDP a primitive node is trained on.
+
+Target Architecture v2 §5.1. `reset()` applies the node's initial-condition hook
+and `step()` rewards the node's own goal -- never the environment's reward
+[A: F10].
+
+Wrapping order matters. SubgoalEnv wraps the *raw* MiniGrid env and the
+observation wrappers go outside it:
+
+    gym.make -> SubgoalEnv -> ImgObs -> Flatten -> ChannelNormalize -> Monitor
+
+A reset hook mutates the grid (puts the key in the agent's hand, opens the door),
+so the observation has to be regenerated afterwards. Keeping SubgoalEnv inside
+the observation wrappers means it hands out a fresh `gen_obs()` dict and the
+wrappers above convert it, instead of SubgoalEnv having to re-run the pipeline
+itself.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Callable, Optional, Sequence
+
+import gymnasium as gym
+import numpy as np
+
+from src.envs.obs import apply_obs_pipeline, obs_pipeline_name
+from src.skills.node import SkillNode
+from src.skills.state import StateView, build_state_view
+
+MAX_RESET_TRIES = 50
+
+
+# --------------------------------------------------------------------------
+# Reset hooks
+# --------------------------------------------------------------------------
+
+class ResetHook:
+    """A named mutation of a freshly reset env. The name goes into `spec_hash`."""
+
+    __slots__ = ("spec", "_fn")
+
+    def __init__(self, spec: str, fn: Callable[[gym.Env], None]) -> None:
+        self.spec = spec
+        self._fn = fn
+
+    def __call__(self, env: gym.Env) -> None:
+        self._fn(env)
+
+    def __repr__(self) -> str:
+        return f"ResetHook({self.spec!r})"
+
+
+def compose(*hooks: ResetHook) -> ResetHook:
+    spec = "+".join(h.spec for h in hooks) if hooks else "none"
+
+    def fn(env):
+        for h in hooks:
+            h(env)
+
+    return ResetHook(spec, fn)
+
+
+NO_HOOK = ResetHook("none", lambda env: None)
+
+
+def _find(u, type_: str):
+    for x in range(u.width):
+        for y in range(u.height):
+            c = u.grid.get(x, y)
+            if c is not None and c.type == type_:
+                return (x, y), c
+    return None, None
+
+
+def give_key() -> ResetHook:
+    """Put the key in the agent's hand (T2 `open_door` starts holding it)."""
+
+    def fn(env):
+        u = env.unwrapped
+        if u.carrying is not None:
+            return
+        pos, key = _find(u, "key")
+        if key is None:
+            raise RuntimeError("give_key: no key in this layout")
+        u.grid.set(pos[0], pos[1], None)
+        u.carrying = key
+        u.carrying.cur_pos = np.array([-1, -1])
+
+    return ResetHook("give_key", fn)
+
+
+def open_door() -> ResetHook:
+    """Unlock and open the door (T4 `go_to_goal` starts with it open)."""
+
+    def fn(env):
+        u = env.unwrapped
+        _, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("open_door: no door in this layout")
+        door.is_locked = False
+        door.is_open = True
+
+    return ResetHook("open_door", fn)
+
+
+def clear_blocker() -> ResetHook:
+    """Remove the ball blocking the door (BlockedUnlockPickup)."""
+
+    def fn(env):
+        u = env.unwrapped
+        pos, ball = _find(u, "ball")
+        if ball is not None:
+            u.grid.set(pos[0], pos[1], None)
+
+    return ResetHook("clear_blocker", fn)
+
+
+def _traversable(cell) -> bool:
+    return cell is None or cell.can_overlap()
+
+
+def reachable_cells(u, start: tuple[int, int]) -> list[tuple[int, int]]:
+    """
+    Flood fill from `start`, treating closed or locked doors as walls.
+
+    This is what makes `randomize_agent_pose` work for both env families without
+    branching on the env [A: F30]. `RoomGrid.place_agent(i, j)` takes room
+    coordinates while `MiniGridEnv.place_agent(top, size)` takes a rectangle, and
+    neither understands "the side of the door the key is on" -- so neither is
+    used. Spawning the agent behind a locked door would make the episode
+    unsolvable and look like a learning failure.
+    """
+    seen = {start}
+    stack = [start]
+    out: list[tuple[int, int]] = []
+    while stack:
+        x, y = stack.pop()
+        cell = u.grid.get(x, y)
+        if _traversable(cell):
+            out.append((x, y))
+        for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if not (0 <= nx < u.width and 0 <= ny < u.height) or (nx, ny) in seen:
+                continue
+            seen.add((nx, ny))
+            if _traversable(u.grid.get(nx, ny)):
+                stack.append((nx, ny))
+    return out
+
+
+def randomize_agent_pose(anchor: Optional[str] = None) -> ResetHook:
+    """
+    Place the agent at a random pose in the region reachable from `anchor`.
+
+    [A: F29] A primitive trained from one fixed start pose only ever sees the
+    states that pose produces, but a parent hands it whatever state it reached.
+    Randomizing the start is the cheap half of closing that gap.
+
+    `anchor` is an object type ("key", "box", "goal") whose region the agent must
+    share; None means anywhere reachable from where the agent already is.
+    """
+    spec = f"randomize_agent_pose:{anchor or 'any'}"
+
+    def fn(env):
+        u = env.unwrapped
+        if anchor == "goal":
+            start, obj = _find(u, "goal")
+        elif anchor is not None:
+            start, obj = _find(u, anchor)
+        else:
+            start, obj = (int(u.agent_pos[0]), int(u.agent_pos[1])), True
+
+        if start is None or obj is None:
+            start = (int(u.agent_pos[0]), int(u.agent_pos[1]))
+
+        cells = [c for c in reachable_cells(u, start) if u.grid.get(*c) is None]
+        if not cells:
+            return
+        idx = u._rand_int(0, len(cells))
+        u.agent_pos = np.array(cells[idx])
+        u.agent_dir = u._rand_int(0, 4)
+
+    return ResetHook(spec, fn)
+
+
+# --------------------------------------------------------------------------
+# SubgoalEnv
+# --------------------------------------------------------------------------
+
+class SubgoalEnv(gym.Wrapper):
+    """
+    One primitive node's training MDP.
+
+    reward  = 1 - 0.9 * steps / timeout when the node's goal becomes true, else 0
+    terminated = node.goal(s)
+    truncated  = node timeout, or the base env ending without the goal
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        node: SkillNode,
+        reset_hook: ResetHook = NO_HOOK,
+        *,
+        max_reset_tries: int = MAX_RESET_TRIES,
+    ) -> None:
+        super().__init__(env)
+        self.node = node
+        self.reset_hook = reset_hook
+        self.max_reset_tries = max_reset_tries
+        self.steps = 0
+        self.version = 0
+        self.sv: Optional[StateView] = None
+
+    # -- gym API ---------------------------------------------------------
+
+    def reset(self, *, seed=None, options=None):
+        obs, info = self.env.reset(seed=seed, options=options)
+
+        for attempt in range(self.max_reset_tries):
+            self.reset_hook(self.env)
+            self.version = 0
+            self.sv = build_state_view(self.env, version=0)
+            # [A: F7] If the goal already holds, the episode would terminate at
+            # step 0 with SUCCESS and silently inflate the success rate.
+            if not self.node.goal(self.sv):
+                break
+            obs, info = self.env.reset()
+        else:
+            raise RuntimeError(
+                f"{self.node.id}: goal held at reset in {self.max_reset_tries} "
+                f"consecutive layouts -- check the goal predicate against the hook "
+                f"({self.reset_hook.spec})"
+            )
+
+        self.steps = 0
+        return self.env.unwrapped.gen_obs(), info
+
+    def step(self, action):
+        # [A: F10] The env's own reward is discarded; this node is paid for its
+        # own goal and nothing else.
+        _, _, env_term, env_trunc, info = self.env.step(action)
+        self.steps += 1
+        self.version += 1
+        self.sv = build_state_view(self.env, version=self.version)
+
+        reached = bool(self.node.goal(self.sv))
+        reward = 1.0 - 0.9 * (self.steps / self.node.timeout) if reached else 0.0
+        truncated = (not reached) and (
+            self.steps >= self.node.timeout or env_term or env_trunc
+        )
+
+        info = dict(info)
+        info["subgoal_reached"] = reached
+        info["subgoal_steps"] = self.steps
+        return self.env.unwrapped.gen_obs(), reward, reached, truncated, info
+
+    @property
+    def state_view(self) -> StateView:
+        if self.sv is None:
+            raise RuntimeError("reset() first")
+        return self.sv
+
+
+def make_subgoal_env(
+    node: SkillNode,
+    env_id: str,
+    reset_hook: ResetHook = NO_HOOK,
+    *,
+    seed: Optional[int] = None,
+    normalize: bool = True,
+    monitor: bool = True,
+) -> gym.Env:
+    """`gym.make -> SubgoalEnv -> ImgObs -> Flatten -> ChannelNormalize -> Monitor`."""
+    from stable_baselines3.common.monitor import Monitor
+
+    env = gym.make(env_id)
+    env = SubgoalEnv(env, node, reset_hook)
+    env = apply_obs_pipeline(env, normalize=normalize)
+    if monitor:
+        env = Monitor(env)
+    if seed is not None:
+        env.reset(seed=seed)
+        env.action_space.seed(seed)
+        env.observation_space.seed(seed)
+    return env
+
+
+def hook_spec(reset_hook: ResetHook) -> str:
+    return reset_hook.spec
+
+
+def pipeline_spec(normalize: bool = True) -> str:
+    return obs_pipeline_name(normalize)
