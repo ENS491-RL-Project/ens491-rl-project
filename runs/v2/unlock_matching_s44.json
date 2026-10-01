@@ -1,0 +1,427 @@
+{
+  "seed": 44,
+  "node_id": "{1,2} unlock_matching",
+  "env_id": "MiniGrid-DoorKey-6x6-v0",
+  "hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door",
+  "children": [
+    {
+      "id": "{0,6} get_key_yellow",
+      "spec_hash": "d5d8cec8c48fe728"
+    },
+    {
+      "id": "{0,7} get_key_blue",
+      "spec_hash": "5d981c88fd65b0bf"
+    },
+    {
+      "id": "{0,8} open_door_tk",
+      "spec_hash": "b1f8d1a511fa44b0"
+    }
+  ],
+  "composite": {
+    "node_id": "{1,2} unlock_matching",
+    "kind": "composite",
+    "children": [
+      "{0,6} get_key_yellow",
+      "{0,7} get_key_blue",
+      "{0,8} open_door_tk"
+    ],
+    "level_n": 1,
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door",
+    "timeout": 240,
+    "max_decisions": 6,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 44,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 1000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 20000,
+    "decisions_trained": 20480,
+    "env_steps_own": 571912,
+    "env_steps_per_decision": 27.93,
+    "env_steps_children": 560000,
+    "env_steps_total": 1131912,
+    "wall_seconds": 434.1,
+    "decisions_per_second": 47.2,
+    "stable": false,
+    "decisions_to_stable": null,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 0,
+      "is_stable": false,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 22,
+          "success_rate": 0.44,
+          "wilson_lower": 0.3116,
+          "wilson_upper": 0.5769,
+          "mean_length": 121.3,
+          "seed_base": 10000,
+          "timeouts": 28,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 22,
+          "success_rate": 0.44,
+          "wilson_lower": 0.3116,
+          "wilson_upper": 0.5769,
+          "mean_length": 121.3,
+          "seed_base": 10000,
+          "timeouts": 28,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 31,
+          "success_rate": 0.62,
+          "wilson_lower": 0.4815,
+          "wilson_upper": 0.7414,
+          "mean_length": 137.3,
+          "seed_base": 10000,
+          "timeouts": 19,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 31,
+          "success_rate": 0.62,
+          "wilson_lower": 0.4815,
+          "wilson_upper": 0.7414,
+          "mean_length": 137.3,
+          "seed_base": 10000,
+          "timeouts": 19,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 118.76,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 118.76,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 112.36,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 112.36,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 39,
+          "success_rate": 0.78,
+          "wilson_lower": 0.6476,
+          "wilson_upper": 0.8725,
+          "mean_length": 93.4,
+          "seed_base": 10000,
+          "timeouts": 11,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 39,
+          "success_rate": 0.78,
+          "wilson_lower": 0.6476,
+          "wilson_upper": 0.8725,
+          "mean_length": 93.4,
+          "seed_base": 10000,
+          "timeouts": 11,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 99.96,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 36,
+          "success_rate": 0.72,
+          "wilson_lower": 0.5833,
+          "wilson_upper": 0.8253,
+          "mean_length": 99.96,
+          "seed_base": 10000,
+          "timeouts": 14,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 40,
+          "success_rate": 0.8,
+          "wilson_lower": 0.6696,
+          "wilson_upper": 0.8876,
+          "mean_length": 82.24,
+          "seed_base": 10000,
+          "timeouts": 10,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 40,
+          "success_rate": 0.8,
+          "wilson_lower": 0.6696,
+          "wilson_upper": 0.8876,
+          "mean_length": 82.24,
+          "seed_base": 10000,
+          "timeouts": 10,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 40,
+          "success_rate": 0.8,
+          "wilson_lower": 0.6696,
+          "wilson_upper": 0.8876,
+          "mean_length": 85.36,
+          "seed_base": 10000,
+          "timeouts": 10,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 40,
+          "success_rate": 0.8,
+          "wilson_lower": 0.6696,
+          "wilson_upper": 0.8876,
+          "mean_length": 85.36,
+          "seed_base": 10000,
+          "timeouts": 10,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 38,
+          "success_rate": 0.76,
+          "wilson_lower": 0.6259,
+          "wilson_upper": 0.857,
+          "mean_length": 90.34,
+          "seed_base": 10000,
+          "timeouts": 12,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 38,
+          "success_rate": 0.76,
+          "wilson_lower": 0.6259,
+          "wilson_upper": 0.857,
+          "mean_length": 90.34,
+          "seed_base": 10000,
+          "timeouts": 12,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 42,
+          "success_rate": 0.84,
+          "wilson_lower": 0.7149,
+          "wilson_upper": 0.9166,
+          "mean_length": 75.2,
+          "seed_base": 10000,
+          "timeouts": 8,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 42,
+          "success_rate": 0.84,
+          "wilson_lower": 0.7149,
+          "wilson_upper": 0.9166,
+          "mean_length": 75.2,
+          "seed_base": 10000,
+          "timeouts": 8,
+          "reselections": 0
+        }
+      ]
+    }
+  },
+  "arms": {
+    "random_over_all": {
+      "label": "random over all children (mask clipped)",
+      "n_episodes": 50,
+      "successes": 28,
+      "success_rate": 0.56,
+      "wilson_lower": 0.4231,
+      "wilson_upper": 0.6884,
+      "mean_length": 112.16,
+      "seed_base": 20000,
+      "timeouts": 22,
+      "reselections": 16
+    },
+    "random_over_available": {
+      "label": "random over available children",
+      "n_episodes": 50,
+      "successes": 26,
+      "success_rate": 0.52,
+      "wilson_lower": 0.3851,
+      "wilson_upper": 0.652,
+      "mean_length": 128.58,
+      "seed_base": 20000,
+      "timeouts": 24,
+      "reselections": 27
+    },
+    "random_strict_mask": {
+      "label": "random, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 26,
+      "success_rate": 0.52,
+      "wilson_lower": 0.3851,
+      "wilson_upper": 0.652,
+      "mean_length": 122.6,
+      "seed_base": 20000,
+      "timeouts": 24,
+      "reselections": 68
+    },
+    "learned": {
+      "label": "learned composite",
+      "n_episodes": 50,
+      "successes": 41,
+      "success_rate": 0.82,
+      "wilson_lower": 0.692,
+      "wilson_upper": 0.9023,
+      "mean_length": 73.92,
+      "seed_base": 20000,
+      "timeouts": 9,
+      "reselections": 4
+    },
+    "learned_strict_mask": {
+      "label": "learned composite, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 22,
+      "success_rate": 0.44,
+      "wilson_lower": 0.3116,
+      "wilson_upper": 0.5769,
+      "mean_length": 138.2,
+      "seed_base": 20000,
+      "timeouts": 28,
+      "reselections": 78
+    }
+  },
+  "gate": {
+    "learned_wilson_lower": 0.692,
+    "masked_random_wilson_upper": 0.652,
+    "separated_at_95": true
+  },
+  "first_decision": {
+    "n": 50,
+    "correct": 22,
+    "accuracy": 0.44,
+    "episodes_with_no_key_pick": 0,
+    "by_colour": {
+      "blue": {
+        "n": 27,
+        "correct": 3,
+        "accuracy": 0.1111
+      },
+      "yellow": {
+        "n": 23,
+        "correct": 19,
+        "accuracy": 0.8261
+      }
+    },
+    "first_child_selected": {
+      "{0,6} get_key_yellow": 43,
+      "{0,7} get_key_blue": 7
+    }
+  },
+  "mask_divergence": {
+    "episodes": 20,
+    "decisions": 66,
+    "masks_differ": 66,
+    "would_have_blocked_learned_choice": 15
+  },
+  "trace": {
+    "seed": 20000,
+    "env_id": "MiniGrid-DoorKey-6x6-v0",
+    "success": false,
+    "env_steps": 240,
+    "max_stack_depth": 2,
+    "levels_selected": [
+      0
+    ],
+    "selected_children": [
+      "{0,6} get_key_yellow",
+      "{0,6} get_key_yellow"
+    ],
+    "trace": [
+      {
+        "depth": 2,
+        "node_id": "{0,6} get_key_yellow",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,6} get_key_yellow",
+        "event": "CLOSE",
+        "outcome": "timeout",
+        "steps": 120,
+        "version": 120
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,6} get_key_yellow",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 120
+      }
+    ]
+  }
+}

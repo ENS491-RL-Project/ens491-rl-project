@@ -1,0 +1,26 @@
+{
+  "node": "{0,8} open_door_tk",
+  "spec_hash": "b1f8d1a511fa44b0",
+  "env_id": "MiniGrid-DoorKey-6x6-v0",
+  "hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door",
+  "rows": [
+    {
+      "start_state": "[GATE] holding the matching key",
+      "gate": true,
+      "n_episodes": 46,
+      "successes": 45,
+      "success_rate": 0.9783,
+      "key_primitive_failed": 4
+    },
+    {
+      "start_state": "[expected fail] holding the decoy key",
+      "gate": false,
+      "n_episodes": 44,
+      "successes": 0,
+      "success_rate": 0.0,
+      "key_primitive_failed": 6
+    }
+  ],
+  "gate_threshold": 0.9,
+  "gate_passed": true
+}

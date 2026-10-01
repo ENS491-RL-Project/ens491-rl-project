@@ -1,0 +1,106 @@
+{
+  "open_door_tk": {
+    "node_id": "{0,8} open_door_tk",
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door+give_key_of:matching+randomize_agent_pose:any",
+    "timeout": 60,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 20000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget": 600000,
+    "steps_trained": 100000,
+    "wall_seconds": 127.7,
+    "steps_per_second": 782.8,
+    "stable": true,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 0,
+          "success_rate": 0.0,
+          "wilson_lower": 0.0,
+          "wilson_upper": 0.0713,
+          "mean_length": 60.0,
+          "seed_base": 10000,
+          "timeouts": 50,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 0,
+          "success_rate": 0.0,
+          "wilson_lower": 0.0,
+          "wilson_upper": 0.0713,
+          "mean_length": 60.0,
+          "seed_base": 10000,
+          "timeouts": 50,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 35,
+          "success_rate": 0.7,
+          "wilson_lower": 0.5625,
+          "wilson_upper": 0.809,
+          "mean_length": 21.64,
+          "seed_base": 10000,
+          "timeouts": 15,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 49,
+          "success_rate": 0.98,
+          "wilson_lower": 0.895,
+          "wilson_upper": 0.9965,
+          "mean_length": 5.58,
+          "seed_base": 10000,
+          "timeouts": 1,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 4.38,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 47,
+      "success_rate": 0.94,
+      "wilson_lower": 0.8378,
+      "wilson_upper": 0.9794,
+      "mean_length": 7.6,
+      "seed_base": 20000,
+      "timeouts": 3,
+      "reselections": 0
+    }
+  }
+}

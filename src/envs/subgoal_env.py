@@ -216,6 +216,31 @@ def _standable(u, cell: tuple[int, int], start: tuple[int, int]) -> bool:
                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
 
 
+def _door_approachable(u, door_pos: tuple[int, int], start: tuple[int, int]) -> bool:
+    """
+    Can the agent still reach a cell it could toggle the door from?
+
+    Keeping a key off the approach cell is not enough: in a one-column room a key
+    between the agent and that cell blocks the path without occupying it, and the
+    door is unopenable for any policy. Measured before this check existed: 3 of
+    the 50 stopping seeds and 4 of the 50 held-out seeds, which is exactly the
+    gap between {0,8} open_door_tk's 0.94 stopping score and the 0.84 it
+    generalized to -- 4 of its 8 held-out failures were episodes no policy could
+    have solved.
+    """
+    dx, dy = door_pos
+    reach = set(reachable_cells(u, start)) | {start}
+    for nx, ny in ((dx - 1, dy), (dx + 1, dy), (dx, dy - 1), (dx, dy + 1)):
+        if not (0 <= nx < u.width and 0 <= ny < u.height):
+            continue
+        cell = u.grid.get(nx, ny)
+        if cell is not None and cell.type == "wall":
+            continue
+        if (nx, ny) in reach:
+            return True
+    return False
+
+
 def _dir_sees(u, direction: int, object_idx: int) -> bool:
     u.agent_dir = direction
     return bool((u.gen_obs()["image"][:, :, 0] == object_idx).any())
@@ -240,13 +265,18 @@ def place_two_keys(
     a standable neighbour once the other key is on the grid. Layouts where no
     pair works raise `UnsuitableLayout` and the caller draws another.
     """
-    spec = "place_two_keys:" + "|".join(colors)
+    # ':door_clear' is in the spec string on purpose. spec_hash hashes a hook's
+    # NAME, not its implementation [A: F18], so tightening the acceptance rule
+    # without renaming it would leave every existing checkpoint loadable while
+    # the distribution it was trained on had silently changed. Renaming makes the
+    # registry refuse them, which is the behaviour F18 exists for.
+    spec = "place_two_keys:" + "|".join(colors) + ":door_clear"
 
     def fn(env):
         from minigrid.core.world_object import Key
 
         u = env.unwrapped
-        _, door = _find(u, "door")
+        door_pos, door = _find(u, "door")
         if door is None:
             raise RuntimeError("place_two_keys: no door in this layout")
         others = [c for c in colors if c != door.color]
@@ -255,8 +285,17 @@ def place_two_keys(
         decoy_colour = others[u._rand_int(0, len(others))]
 
         start = (int(u.agent_pos[0]), int(u.agent_pos[1]))
+        # Never block the door's approach. MiniGrid `toggle` acts on
+        # `front_pos`, so the door can only be opened from a cell orthogonally
+        # adjacent to it, and in DoorKey's vertical wall there is exactly ONE
+        # such cell on the agent's side. A key there makes the door impossible to
+        # open for any policy. Measured before this guard existed: 59 of 400
+        # layouts (14.7%), which capped every door-opening primitive at ~0.85 and
+        # was misread as a learning limit until the failures were inspected.
+        dx, dy = door_pos
+        forbidden = {(dx, dy), (dx - 1, dy), (dx + 1, dy), (dx, dy - 1), (dx, dy + 1)}
         free = [c for c in reachable_cells(u, start)
-                if u.grid.get(*c) is None and c != start]
+                if u.grid.get(*c) is None and c != start and c not in forbidden]
         if len(free) < 2:
             raise UnsuitableLayout(
                 f"place_two_keys: {len(free)} free reachable cells, need 2"
@@ -270,7 +309,8 @@ def place_two_keys(
             a, b = free[i], free[j]
             u.grid.set(a[0], a[1], Key(door.color))
             u.grid.set(b[0], b[1], Key(decoy_colour))
-            if _standable(u, a, start) and _standable(u, b, start):
+            if (_standable(u, a, start) and _standable(u, b, start)
+                    and _door_approachable(u, door_pos, start)):
                 return
             u.grid.set(a[0], a[1], None)
             u.grid.set(b[0], b[1], None)
@@ -279,6 +319,45 @@ def place_two_keys(
             f"place_two_keys: no pair of independently reachable cells in "
             f"{tries} tries ({len(free)} free cells)"
         )
+
+    return ResetHook(spec, fn)
+
+
+def give_key_of(which: str = "matching") -> ResetHook:
+    """
+    Put one specific key in the agent's hand, leaving the other on the floor.
+
+    `which` is "matching" (the door's colour) or "decoy" (any other). Used to
+    reproduce the state the choice task's parent hands `open_door`: a key in
+    hand, a second key still lying on the grid, and a door that may be either
+    colour. [A: F29] `{0,2} open_door` scored 0.73 from that state despite
+    scoring 1.00 on its own hook distribution -- it had never seen a spare key on
+    the floor -- which is why `{0,8} open_door_tk` is trained with this hook.
+
+    "decoy" is how the expected-failure case is measured: the door must NOT open,
+    and that failure is the signal the composite learns from.
+    """
+    spec = f"give_key_of:{which}"
+
+    def fn(env):
+        u = env.unwrapped
+        if u.carrying is not None:
+            return
+        _, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("give_key_of: no door in this layout")
+        want_match = which == "matching"
+        for x in range(u.width):
+            for y in range(u.height):
+                cell = u.grid.get(x, y)
+                if cell is None or cell.type != "key":
+                    continue
+                if (cell.color == door.color) == want_match:
+                    u.grid.set(x, y, None)
+                    u.carrying = cell
+                    u.carrying.cur_pos = np.array([-1, -1])
+                    return
+        raise UnsuitableLayout(f"give_key_of: no {which} key in this layout")
 
     return ResetHook(spec, fn)
 

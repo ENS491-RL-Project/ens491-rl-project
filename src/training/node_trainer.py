@@ -218,9 +218,19 @@ def train_primitive(
     lateral_source=None,
     normalize: bool = True,
     ppo_overrides: Optional[dict] = None,
+    criterion: Optional[StabilityCriterion] = None,
     verbose: int = 0,
 ) -> dict:
-    """Train one primitive node to STABLE (or to the budget). Returns a report."""
+    """
+    Train one primitive node to STABLE (or to the budget). Returns a report.
+
+    `criterion` overrides the default stopping rule. CLAUDE.md: the thresholds
+    are experiment parameters, recorded in each run's meta.json -- so a node on a
+    harder task may be held to a stricter stop, as long as the stop it was held
+    to is in its report. {0,8} open_door_tk needed this: it cleared the default
+    rule on a single 46/50 pair (Wilson LB 0.812, barely over the 0.80 bar) and
+    then generalized at 0.82 on the held-out seeds.
+    """
     dev = resolve_device(device)
     node.status = NodeStatus.TRAINING
 
@@ -240,7 +250,7 @@ def train_primitive(
     )
     node.policy = PrimitivePolicyAdapter(model.policy)
 
-    criterion = StabilityCriterion()
+    criterion = criterion or StabilityCriterion()
     callback = EvaluationCallback(
         node,
         env_factory=None,
@@ -418,6 +428,7 @@ def train_composite(
     normalize: bool = True,
     initiation_masking: bool = False,
     ppo_overrides: Optional[dict] = None,
+    criterion: Optional[StabilityCriterion] = None,
     verbose: int = 0,
 ) -> tuple[dict, object]:
     """
@@ -453,7 +464,7 @@ def train_composite(
     model = MaskablePPO("MlpPolicy", vec, seed=seed, device=dev, verbose=0, **ppo_kwargs)
     node.policy = CompositePolicyAdapter(model.policy)
 
-    criterion = StabilityCriterion()
+    criterion = criterion or StabilityCriterion()
     # The ablation must be SCORED under the mask it was TRAINED with, or the
     # two C1 arms are not comparable [A: F1].
     eval_fn = pooled_eval_fn(

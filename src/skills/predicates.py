@@ -13,6 +13,18 @@ from src.skills.node import Predicate
 from src.skills.state import StateView
 
 
+def all_of(*preds: Predicate) -> Predicate:
+    """
+    Conjunction of predicates, with a spec string that names every conjunct.
+
+    The spec matters as much as the behaviour: it is what goes into a node's
+    spec_hash [A: F18], so two nodes whose initial conditions differ must get
+    different hashes. Sorted, so the hash does not depend on argument order.
+    """
+    spec = "and(" + ",".join(sorted(p.spec for p in preds)) + ")"
+    return Predicate(spec, lambda sv: all(p(sv) for p in preds))
+
+
 def carrying(type_: str, color: Optional[str] = None) -> Predicate:
     """The agent holds an object of this type (T1 `get_key`, T6 `pickup_box`)."""
     spec = f"carrying:{type_}" + (f":{color}" if color else "")
