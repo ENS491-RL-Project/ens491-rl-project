@@ -58,6 +58,17 @@ No predetermined correct answer. Implement each alternative and compare. Section
 
 ---
 
+### Answered by H-6 (2026-10-02)
+
+| Question | Answer |
+|---|---|
+| **Q8 — how to frame the masking contribution** | On the §11 curriculum, success rate **cannot** separate composition from masking at any depth: every composite's subgoal order is strict, the initiation mask encodes exactly that order, and a random policy under it ties the learned composite (0.98 at depth 1 in H-5, 1.00 at depth 2 in H-6.3). The report states that as a property of the curriculum and quantifies the learned policy's contribution two other ways: the **divergence count** (0 of 20 withheld choices taken, so the ordering was discovered rather than given) and **efficiency** (14.2 env steps vs 113–143 for random-over-available, 8×). A dedicated choice task was built to escape this and failed — see H-6 summary §4 |
+| **Primitive training distribution** | The mix matters, measured both ways. The three H-4 primitives, trained on two layouts with randomized poses, transfer into DoorKey at 1.00 from real handoff states. `{0,2} open_door`, trained on a narrower mix, scores **0.73** in the two-key variant and had to be replaced by a node trained on the parent's own distribution |
+| **Composite depth** | First data point. `{2,1} solve_doorkey` (depth 2) vs `{1,B} flat_doorkey_options` (depth 1, same three skills): same 4,000 decisions, 152–162k vs 185–187k own env steps. Small but consistent over 3 seeds. The decisive comparison is still T9a vs T9b in H-7 |
+| **Does reuse pay?** | **Not answered, and H-6 cannot answer it.** One task cannot distinguish amortisation from arithmetic. H-7 |
+
+---
+
 ## Current Status (2026-10-01)
 
 ### ✅ Done (v1 phase, Feb–May 2026)
@@ -99,8 +110,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ✅ 2026-10-01 — 171/171; col01 50/50 (but Empty-8x8 is layout-deterministic) |
 | H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ✅ 2026-10-01 — all three FROZEN; held-out 1.00 / 1.00 / 0.92; F29 gate passed after retraining go_to_goal |
 | H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ✅ 2026-10-01 — `{1,1} unlock_door` FROZEN, held-out 0.98 in 6k decisions; both C1 controls run |
-| H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ⬜ Next |
-| H-7 | T6–T9b reuse and depth experiment | 8 | ⬜ |
+| H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ✅ 2026-10-02 — `{2,1} solve_doorkey` FROZEN, held-out **1.00** on 3 seeds, depth-3 stack confirmed. Flat PPO 300–450k env steps vs the composite's 152–162k own / 764–774k with children. The genuine-choice task was built and gives a **negative** result (§4 of the summary) |
+| H-7 | T6–T9b reuse and depth experiment | 8 | ⬜ Next — plan at `plans/2026-10-02_H7_plan.md`; §7 of the H-6 summary lists six pre-flight checks H-6 showed are needed |
 
 ### Track C — Continual learning / PN
 
