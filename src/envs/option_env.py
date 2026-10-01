@@ -26,7 +26,7 @@ import numpy as np
 from gymnasium.spaces import Discrete
 
 from src.envs.obs import apply_obs_pipeline
-from src.envs.subgoal_env import NO_HOOK, ResetHook
+from src.envs.subgoal_env import NO_HOOK, ResetHook, UnsuitableLayout
 from src.skills.executor import DETERMINISTIC, Executor
 from src.skills.node import SkillNode
 from src.skills.state import build_state_view
@@ -42,13 +42,29 @@ class ResetHookEnv(gym.Wrapper):
     machinery without inheriting the primitive reward logic.
     """
 
-    def __init__(self, env: gym.Env, reset_hook: ResetHook = NO_HOOK) -> None:
+    def __init__(self, env: gym.Env, reset_hook: ResetHook = NO_HOOK,
+                 *, max_reset_tries: int = MAX_RESET_TRIES) -> None:
         super().__init__(env)
         self.reset_hook = reset_hook
+        self.max_reset_tries = max_reset_tries
 
     def reset(self, *, seed=None, options=None):
         _, info = self.env.reset(seed=seed, options=options)
-        self.reset_hook(self.env)
+        # Some layouts cannot host the hook's initial conditions at all; draw
+        # the next one rather than crash. Same contract as SubgoalEnv.reset, and
+        # it has to be here too because evaluation and OptionEnv both come
+        # through this wrapper, not through SubgoalEnv.
+        for _ in range(self.max_reset_tries):
+            try:
+                self.reset_hook(self.env)
+                break
+            except UnsuitableLayout:
+                _, info = self.env.reset()
+        else:
+            raise RuntimeError(
+                f'{self.reset_hook.spec}: no suitable layout in '
+                f'{self.max_reset_tries} draws'
+            )
         return self.env.unwrapped.gen_obs(), info
 
 

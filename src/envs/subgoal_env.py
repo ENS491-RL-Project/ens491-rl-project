@@ -145,6 +145,199 @@ def randomize_carrying(prob: float = 0.5, type_: str = "key") -> ResetHook:
     return ResetHook(f"randomize_carrying:{type_}:{prob}", fn)
 
 
+class UnsuitableLayout(RuntimeError):
+    """
+    This layout cannot host the node's initial conditions; draw another one.
+
+    Distinct from a plain `RuntimeError`, which means the hook is wrong. A reset
+    hook defines a node's initial-condition distribution, and some randomly
+    generated layouts simply cannot satisfy it -- DoorKey-6x6 draws its splitting
+    wall at x=2 or x=3, so the left room is sometimes a single column of four
+    cells, and two keys cannot both be independently reachable there unless the
+    agent happens to stand between them. `SubgoalEnv.reset` and
+    `ResetHookEnv.reset` catch this and draw the next layout, which keeps the
+    distribution well defined instead of crashing a long run on one bad draw.
+    The retry stream is deterministic given the episode's seed, so an episode is
+    still reproducible.
+    """
+
+
+def recolor_door(colors: Sequence[str] = ("yellow", "blue")) -> ResetHook:
+    """
+    Draw a colour per episode and give the door that colour.
+
+    The first half of the genuine-choice task (H-6 Part C). DoorKey always builds
+    a yellow door with a yellow key, so a composite has nothing to choose;
+    recolouring makes the door's colour a per-episode signal that is visible in
+    the observation's colour channel and, by `Door.toggle`, decisive -- a locked
+    door opens only for a key of its own colour.
+
+    Uses the env's own RNG, so the episode stays reproducible from its seed.
+    """
+    spec = "recolor_door:" + "|".join(colors)
+
+    def fn(env):
+        u = env.unwrapped
+        _, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("recolor_door: no door in this layout")
+        door.color = colors[u._rand_int(0, len(colors))]
+
+    return ResetHook(spec, fn)
+
+
+def remove_keys() -> ResetHook:
+    """
+    Clear every key off the grid, and out of the agent's hand.
+
+    Runs before the agent's pose is randomized so the flood fill is not blocked
+    by the key the layout happened to place: in a one-column room, a key between
+    the agent and the rest of the room makes every other cell unreachable.
+    """
+
+    def fn(env):
+        u = env.unwrapped
+        if u.carrying is not None and u.carrying.type == "key":
+            u.carrying = None
+        for x in range(u.width):
+            for y in range(u.height):
+                cell = u.grid.get(x, y)
+                if cell is not None and cell.type == "key":
+                    u.grid.set(x, y, None)
+
+    return ResetHook("remove_keys", fn)
+
+
+def _standable(u, cell: tuple[int, int], start: tuple[int, int]) -> bool:
+    """Can the agent reach a cell it could pick `cell` up from?"""
+    reach = set(reachable_cells(u, start)) | {start}
+    x, y = cell
+    return any((nx, ny) in reach
+               for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
+
+
+def _dir_sees(u, direction: int, object_idx: int) -> bool:
+    u.agent_dir = direction
+    return bool((u.gen_obs()["image"][:, :, 0] == object_idx).any())
+
+
+def place_two_keys(
+    colors: Sequence[str] = ("yellow", "blue"),
+    *,
+    tries: int = 64,
+) -> ResetHook:
+    """
+    Place one key matching the door and one decoy of another colour.
+
+    The second half of the genuine-choice task. Both keys must be **independently
+    reachable**: the agent has to be able to pick up either one without first
+    picking up the other, because MiniGrid `pickup` needs an empty hand and
+    neither `get_key_<colour>` primitive is trained to drop. If the decoy were
+    only reachable through the matching key, `get_key_<decoy>` would be
+    unachievable and the composite's choice would not be a choice at all.
+
+    Checked, not assumed: a candidate pair is accepted only if each key still has
+    a standable neighbour once the other key is on the grid. Layouts where no
+    pair works raise `UnsuitableLayout` and the caller draws another.
+    """
+    spec = "place_two_keys:" + "|".join(colors)
+
+    def fn(env):
+        from minigrid.core.world_object import Key
+
+        u = env.unwrapped
+        _, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("place_two_keys: no door in this layout")
+        others = [c for c in colors if c != door.color]
+        if not others:
+            raise RuntimeError(f"place_two_keys: no colour differs from {door.color}")
+        decoy_colour = others[u._rand_int(0, len(others))]
+
+        start = (int(u.agent_pos[0]), int(u.agent_pos[1]))
+        free = [c for c in reachable_cells(u, start)
+                if u.grid.get(*c) is None and c != start]
+        if len(free) < 2:
+            raise UnsuitableLayout(
+                f"place_two_keys: {len(free)} free reachable cells, need 2"
+            )
+
+        for _ in range(tries):
+            i = u._rand_int(0, len(free))
+            j = u._rand_int(0, len(free))
+            if i == j:
+                continue
+            a, b = free[i], free[j]
+            u.grid.set(a[0], a[1], Key(door.color))
+            u.grid.set(b[0], b[1], Key(decoy_colour))
+            if _standable(u, a, start) and _standable(u, b, start):
+                return
+            u.grid.set(a[0], a[1], None)
+            u.grid.set(b[0], b[1], None)
+
+        raise UnsuitableLayout(
+            f"place_two_keys: no pair of independently reachable cells in "
+            f"{tries} tries ({len(free)} free cells)"
+        )
+
+    return ResetHook(spec, fn)
+
+
+def face_toward(type_: str = "door") -> ResetHook:
+    """
+    Turn the agent so an object of `type_` is inside its 7x7 view.
+
+    [A: F29, H-6 V7] A composite makes its child choice from one observation at
+    one instant, with a feedforward policy and no memory. In DoorKey-6x6 with a
+    random facing the door is inside that view in only 163 of 300 resets; facing
+    it, in 300 of 300. A choice task whose signal is invisible half the time
+    measures partial observability, not composition.
+
+    The direction is found by *checking the observation* rather than by
+    hard-coding "face right", so the hook works in any layout, and it is drawn
+    uniformly among the directions that keep the object visible, so pose
+    diversity survives.
+    """
+    spec = f"face_toward:{type_}"
+
+    def fn(env):
+        from minigrid.core.constants import OBJECT_TO_IDX
+
+        u = env.unwrapped
+        want = OBJECT_TO_IDX[type_]
+        original = int(u.agent_dir)
+        ok = [d for d in range(4) if _dir_sees(u, d, want)]
+        u.agent_dir = ok[u._rand_int(0, len(ok))] if ok else original
+
+    return ResetHook(spec, fn)
+
+
+def two_keys(colors: Sequence[str] = ("yellow", "blue")) -> ResetHook:
+    """
+    The complete initial-condition hook of the genuine-choice task (H-6 Part C).
+
+    One locked door of a per-episode colour, a matching key, a decoy key of
+    another colour, a random agent position, and a facing that keeps the door in
+    view. The order is the content of this hook:
+
+      1. recolour the door       -- fixes which key is the right one
+      2. remove the layout's key -- so step 3's flood fill is unobstructed
+      3. randomize the pose      -- over the whole region, not just one side
+      4. place both keys         -- both independently reachable, given the pose
+      5. face the door           -- so the signal is in the observation
+
+    Steps 3 and 4 cannot be swapped: which cells are reachable depends on where
+    the agent stands, and whether a key is pickupable depends on both.
+    """
+    return compose(
+        recolor_door(colors),
+        remove_keys(),
+        randomize_agent_pose(anchor=None),
+        place_two_keys(colors),
+        face_toward("door"),
+    )
+
+
 def _traversable(cell) -> bool:
     return cell is None or cell.can_overlap()
 
@@ -247,7 +440,13 @@ class SubgoalEnv(gym.Wrapper):
         obs, info = self.env.reset(seed=seed, options=options)
 
         for attempt in range(self.max_reset_tries):
-            self.reset_hook(self.env)
+            try:
+                self.reset_hook(self.env)
+            except UnsuitableLayout:
+                # The hook's initial conditions cannot be built in this layout;
+                # draw the next one. Deterministic given the episode's seed.
+                obs, info = self.env.reset()
+                continue
             self.version = 0
             self.sv = build_state_view(self.env, version=0)
             # [A: F7] If the goal already holds, the episode would terminate at
