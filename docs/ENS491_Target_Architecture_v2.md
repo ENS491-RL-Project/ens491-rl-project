@@ -364,6 +364,11 @@ class OptionEnv(gym.Wrapper):
   cannot be made to hold, that is the CLAUDE.md stop-and-report condition "OptionEnv cannot be vectorized".
 - **Decision cap [A: F2]:** `max_decisions` child calls per episode. Mandatory, not a guard — see §4.3.
 - Children are frozen, so the SMDP's dynamics are stationary while the parent trains.
+- **Update size (amended 2026-10-02, H-6.8; restated H-7 A.7):** composites use `n_steps = 64`, because
+  one composite step is a whole child execution and 2,048 of them per update left H-6's composites with
+  one to ten updates in total. Every composite, baseline option sets included, uses `eval_every = 512`
+  (one update at 8 envs), the floor §5.3 requires. H-6's composite held-out scores stand; their
+  original `decisions_to_stable` are one update. Reasoning in §5.3.
 
 ### 5.3 Stabilization criterion (replaces mean > 0.85, std < 0.05) 🔒
 
@@ -550,10 +555,28 @@ Every success rate quoted is the freeze-time score on the held-out seed set of �
 | Claim | Experiment | Metric | Baselines |
 |---|---|---|---|
 | **C1 Composition helps.** A composite over frozen skills learns a task faster than learning it flat, and on a task with a real choice it learns something no mask encodes. | `{2,1} solve_doorkey` on DoorKey; **and `{1,2} unlock_matching` on the two-key DoorKey variant** | success rate vs env steps; steps to STABLE; first-decision choice accuracy conditioned on door colour | flat PPO on DoorKey (primary); flat composite over the three primitives; **plus two mandatory controls [A: F1]:** (a) uniform random choice over the available children, (b) the same run with initiation masking switched on |
-| **C2 Reuse across tasks and depth (unbounded).** A skill learned once is reused by later tasks, and deeper composition reuses intermediate skills. | UnlockPickup and BlockedUnlockPickup reusing `unlock_door`; BlockedUnlockPickup variant A (level 2) vs variant B (level 3) | same as C1; stack depth reached | composite from primitives only; flat PPO |
+| **C2 Reuse across tasks and depth (unbounded).** A skill learned once is reused by later tasks, and deeper composition reuses intermediate skills. | UnlockPickup and BlockedUnlockPickup reusing `unlock_door`; BlockedUnlockPickup variant A (level 2) vs variant B (level 3) | R1–R4 below; stack depth reached | composite from primitives only; flat PPO on each task |
 | **C3 Task recognition.** The AE separates known from novel tasks; the GRU identifies known tasks. | observations from all curriculum envs | AE ROC-AUC per task pair; GRU accuracy and latency vs N; recognition accuracy on old tasks after each new task | single vs per-task AE |
 | **C4 Continual learning.** Skills are retained; laterals give forward transfer. | re-evaluate every FROZEN node after each new task (**a regression test, not evidence — [A: F26]**); primitives with vs without laterals | retention (unchanged by construction; a change means a bug); steps to STABLE | no laterals; (optional) EWC fine-tuning |
 | **C5 Introspection.** Internal state is inspectable. | GUI on real runs | qualitative: graph, active stack, traces, per-node stats | — |
+
+**What C2 is evidenced by (amended 2026-10-02, H-7 A.5).** `env_steps_own < env_steps_total` holds by
+construction; C2 is evidenced by transfer without retraining (R1), marginal cost against a flat
+baseline (R2), and the cumulative cost over the curriculum (R3), not by that inequality.
+
+| | Question | Measured by |
+|---|---|---|
+| **R1 Transfer** | Does a frozen skill work, untouched, inside a task it was never trained in? | F29 rows: `{1,1} unlock_door` inside UnlockPickup, and inside BlockedUnlockPickup after the blocker is moved |
+| **R2 Marginal cost** | Given the library, is a new task cheaper than learning it flat? | `env_steps_own` of the nodes created for the task (a primitive's `steps_trained`) vs flat PPO's steps to STABLE on that task |
+| **R3 Amortisation** | Over the whole curriculum, does the hierarchy's cumulative cost fall below flat PPO's, and at which task? | the cumulative table over Unlock → DoorKey → UnlockPickup → BlockedUnlockPickup |
+| **R4 Depth reuse** | Does reusing an intermediate composite help? | T9b (level 3, reuses `unlock_pickup`) vs T9a (level 2, same skills, no intermediate node); a depth-4 stack |
+
+**Two fields added to every composite's report (amended 2026-10-02, H-7 A.6).**
+- `chain_ceiling`: the product of the children's success rates along the successful path, taken from
+  their F29 handoff rows. A composite cannot exceed it; reporting it separates "the selector chose
+  wrongly" from "a child failed".
+- `weak_heldout: true` in `meta.json` for any node whose held-out Wilson lower bound is below 0.80. It
+  does not block freezing (§5.3 is unchanged). It is a flag for the reader.
 
 ### Candidate curriculum (⚠️ Q6)
 
@@ -580,11 +603,54 @@ not only from hook states.
 | T3 | `{1,1} unlock_door` | composite | T1, T2 | `MiniGrid-Unlock-v0` | door open (env success) |
 | T4 | `{0,3} go_to_goal` | primitive | — | DoorKey, reset with door open | agent on goal tile |
 | T5 | `{2,1} solve_doorkey` | composite | T3, T4 | `MiniGrid-DoorKey-6x6-v0` | env success |
-| T6 | `{0,4} pickup_box` | primitive | — | UnlockPickup, reset with door open | agent carries the box |
-| T7 | `{2,2} unlock_pickup` | composite | T3, T6 | `MiniGrid-UnlockPickup-v0` | env success |
-| T8 | `{0,5} move_blocker` | primitive | — | BlockedUnlockPickup | cell in front of the door is free |
-| T9a | `{2,3}` | composite | T8, T3, T6 | `MiniGrid-BlockedUnlockPickup-v0` | env success |
-| T9b | `{3,1}` | composite | T8, T7 | same | env success |
+| T6 | `{0,4} pickup_box` | primitive (I: door open) | — | UnlockPickup **and** BlockedUnlockPickup, reset with the door open **and the key in hand with probability 0.5** | agent carries the box |
+| T7 | `{2,2} unlock_pickup` | composite (I: door locked) | T3, T6 | `MiniGrid-UnlockPickup-v0` | agent carries the box (env success) |
+| T8 | `{0,5} move_blocker` | primitive (I: a ball is adjacent to the door) | — | BlockedUnlockPickup | **no ball adjacent to the door and the agent carries nothing** |
+| T9a | `{2,3} blocked_pickup_a` | composite (I: door locked and a ball adjacent to it) | T8, T3, T6 | `MiniGrid-BlockedUnlockPickup-v0` | agent carries the box (env success) |
+| T9b | `{3,1} blocked_pickup_b` | composite (I: as T9a) | T8, T7 | same | agent carries the box (env success) |
+
+**H-7 node specifications (amended 2026-10-02, H-7 A.1–A.3).** Rationale in `plans/2026-10-02_H7_plan.md`.
+
+| # | timeout | `max_decisions` | reset hook |
+|---|---|---|---|
+| T6 `{0,4} pickup_box` | 120 | — | `relocate_blocker`, `open_door`, `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` |
+| T7 `{2,2} unlock_pickup` | 288 | 8 | none |
+| T8 `{0,5} move_blocker` | 120 | — | `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` |
+| T9a `{2,3} blocked_pickup_a` | 576 | 12 | none |
+| T9b `{3,1} blocked_pickup_b` | 576 | 8 | none |
+
+- **T6, key in hand (A.1).** MiniGrid `pickup` needs an empty hand and `Door.toggle` does not consume
+  the key, so at the `unlock_door` handoff the agent is holding the key. Picking up the box then
+  requires *drop, then pick up*. Trained empty-handed, `pickup_box` would fail at the real handoff as
+  `go_to_goal` did in H-4. Trained on both box envs so one node serves T7 and T9.
+- **T8, goal (A.2).** "The cell in front of the door is free" is read from the grid, and a carried
+  object is not on the grid, so it becomes true the moment the ball is picked up, while the agent
+  still holds it. `get_key` would then be asked to act with a full hand. The goal requires the ball to
+  be put down away from the door and the hand empty. `randomize_carrying` is in T8's hook because under
+  goal-only masking a parent may pick `unlock_door` first; `get_key` succeeds, `open_door` cannot, and
+  control returns with the key in hand.
+- **T7's timeout is constrained (A.3).** By F13 its window is 240 (T3's timeout) to 288 (the env's
+  `max_steps`), so one fully wasted `unlock_door` cannot be recovered inside UnlockPickup.
+- Two library functions enter `spec_hash` through their spec strings: the predicate
+  `door_approach_blocked` (`"door:approach_blocked"`: a ball orthogonally adjacent to the door; false
+  when there is no door) and the hook `relocate_blocker` (`"relocate_blocker"`: moves the ball to a
+  reachable free cell not adjacent to the door, drawn with the env's own RNG; a no-op when there is no
+  ball; raises `UnsuitableLayout` when no such cell exists). `relocate_blocker` reproduces the state T8
+  leaves, which deleting the ball would not.
+
+**H-7 baselines (amended 2026-10-02, H-7 A.4).** Baseline only, registered under `runs/v2/baselines/`,
+never usable as a child. Each matches the node it is compared with in goal, timeout, pipeline, PPO
+config, envs and seed sets.
+
+| node | env | goal | timeout | budget | `eval_every` |
+|---|---|---|---|---|---|
+| `{0,B} flat_unlock_ppo` | `MiniGrid-Unlock-v0` | door open | 240 | 1,500,000 env steps | 50,000 |
+| `{0,B} flat_unlockpickup_ppo` | `MiniGrid-UnlockPickup-v0` | agent carries the box | 288 | 3,000,000 | 100,000 |
+| `{0,B} flat_blocked_ppo` | `MiniGrid-BlockedUnlockPickup-v0` | agent carries the box | 576 | 3,000,000 | 100,000 |
+| `{1,B} flat_unlockpickup_options` | `MiniGrid-UnlockPickup-v0`, children T1, T2, T6 | agent carries the box | 288, `max_decisions` 12 | 40,960 decisions | 512 |
+
+Budgets are fixed in advance and never extended; a run not stable at its budget is reported as
+`> budget (not stable)` with the best success rate it reached.
 
 `initiation` is stated for composites too, not only primitives (amended 2026-10-02, H-6 Part A.3): T3 `{1,1} unlock_door` and T5 `{2,1} solve_doorkey` carry `I: door locked`. §2 requires it of every node, and H-5 measured what leaving it at the `ALWAYS` default costs — the strict mask then differs from the goal-only mask in 0 of 304 decisions and the C1 masking ablation is vacuous. Declaring it changes T3's `spec_hash`, so its H-5 checkpoint is correctly refused by the registry (F18) and T3 is retrained in H-6.2.
 
@@ -771,3 +837,18 @@ Each comes from an advisor review of the H-6 run against `runs/v2/`. Rationale i
 | `spec_hash` silently covers a hook by name | a hook's spec string must change whenever its behaviour does | Tightening `place_two_keys` left every checkpoint loadable while its distribution had changed |
 | a hook either works or raises | a hook may raise `UnsuitableLayout` and the env resamples | Some randomly generated layouts cannot host a node's initial conditions |
 | — | audit both fixed seed sets for solvability before reading a plateau as a learning limit | Two hook bugs produced unsolvable episodes and cost ~1.3 M env steps misdiagnosed |
+
+### Amendments applied 2026-10-02 (H-7)
+
+Each follows from a fact measured on minigrid 3.1.0 before H-7's code was written. Rationale in
+`plans/2026-10-02_H7_plan.md` Part A; re-measured by `scripts/eval_h7_preflight.py`.
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| T6 resets with the door open | door open **and the key in hand with probability 0.5**, on UnlockPickup and BlockedUnlockPickup | `pickup` needs an empty hand and the key is still held at the `unlock_door` handoff (A.1) |
+| T8 goal: cell in front of the door is free | no ball adjacent to the door **and the agent carries nothing**; I: a ball adjacent to the door | the grid-based predicate is true while the ball is still in the agent's hand (A.2) |
+| T7, T9a, T9b unnamed, no initiation or timeout | named, with initiation, timeout and `max_decisions`; T7's F13 window 240–288 recorded | A.3 |
+| — | four H-7 baseline rows, baseline only | A.4 |
+| C2 metric "same as C1" | R1–R4, and C2 is not evidenced by `env_steps_own < env_steps_total` | that inequality holds by construction (A.5) |
+| composite report: three env-step fields | plus `chain_ceiling`; `weak_heldout` flag in `meta.json` | separates selector failure from child failure; flags a weak held-out score without changing §5.3 (A.6) |
+| §5.3 floor and `n_steps = 64` stated in §5.3 | restated in §5.2 with `eval_every = 512` for every composite | A.7; already made by H-6.8 |
