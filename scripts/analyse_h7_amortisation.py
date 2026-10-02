@@ -18,6 +18,16 @@ task, and its running sum. Rules (plan H-7.8, amendment 1 §6/§7):
     part of a lower bound, marked as such;
   - BlockedUnlockPickup is present and marked "H-7b, not run".
 
+Two lines of their own (H-7a close-out K.3), so neither hides in a footnote:
+
+  - **as built**: the costs the frozen checkpoints actually incurred, through
+    DoorKey (`unlock_door` and `solve_doorkey` at `n_steps` 256, flat PPO's
+    update size, instead of their re-measurements at 64);
+  - **including the withdrawn specification**: the hierarchy's cumulative cost
+    through UnlockPickup plus `pickup_box` attempt 1, per seed like every other
+    cell; beside it the totals over all runs (six `pickup_box` runs, three flat
+    PPO UnlockPickup runs).
+
 The script recomputes every sum from the per-node files a second time, the slow
 way, and refuses to write if the two disagree (plan success criterion 4).
 
@@ -192,8 +202,57 @@ def build() -> dict:
         "A flat run not stable at its budget enters as `> steps_trained`; every sum containing it is "
         "a lower bound.",
     ]
-    return {"rows": rows, "caveats": CAVEATS, "footnotes": footnotes,
-            "rules": __doc__.split("Rules")[1].split("The script")[0].strip()}
+    # [K.3] as built: the frozen checkpoints' own costs, through DoorKey
+    as_built_nodes = {
+        "Unlock": {
+            "{0,1} get_key": nodes["Unlock"]["{0,1} get_key"],
+            "{0,2} open_door": nodes["Unlock"]["{0,2} open_door"],
+            "{1,1} unlock_door (frozen checkpoint, n_steps 256)":
+                single(old_ud["env_steps_own"], "runs/v2/1-1_unlock_door/meta.json env_steps_own"),
+        },
+        "DoorKey-6x6": {
+            "{0,3} go_to_goal": nodes["DoorKey-6x6"]["{0,3} go_to_goal"],
+            "{2,1} solve_doorkey (frozen checkpoint, n_steps 256)":
+                single(old_sd["env_steps_own"], "runs/v2/2-1_solve_doorkey/meta.json env_steps_own"),
+        },
+    }
+    as_built, cum = [], None
+    for task in ("Unlock", "DoorKey-6x6"):
+        marg = add(*as_built_nodes[task].values())
+        cum = marg if cum is None else add(cum, marg)
+        f = next(r["flat_cumulative"] for r in rows if r["task"] == task)
+        as_built.append({"task": task, "hierarchy_nodes": as_built_nodes[task],
+                         "hierarchy_marginal": marg, "hierarchy_cumulative": cum,
+                         "flat_cumulative": f,
+                         "display": {"hierarchy_marginal": fmt(marg),
+                                     "hierarchy_cumulative": fmt(cum),
+                                     "flat_cumulative": fmt(f)}})
+
+    # [K.3] including the withdrawn specification, through UnlockPickup
+    attempt1 = primitive_seeds("pickup_box_attempt1")
+    up = next(r for r in rows if r["task"] == "UnlockPickup")
+    incl = add(up["hierarchy_cumulative"], attempt1)
+    up_seeds = [v["steps"] for v in up["flat_ppo"]["per_seed"].values()]
+    pb_runs = ([v["steps"] for v in attempt1["per_seed"].values()]
+               + [v["steps"] for v in
+                  up["hierarchy_nodes"]["{0,4} pickup_box (specification 2)"]["per_seed"].values()])
+    with_withdrawn = {
+        "through": "UnlockPickup",
+        "pickup_box_attempt1": attempt1,
+        "hierarchy_cumulative": incl,
+        "flat_cumulative": up["flat_cumulative"],
+        "display": {"hierarchy_cumulative": fmt(incl),
+                    "flat_cumulative": fmt(up["flat_cumulative"])},
+        "totals_over_all_runs": {
+            "pickup_box_six_runs": {"runs": len(pb_runs), "env_steps": sum(pb_runs),
+                                    "stable": False},
+            "flat_ppo_unlockpickup_three_runs": {"runs": len(up_seeds),
+                                                 "env_steps": sum(up_seeds), "stable": False},
+        },
+    }
+    return {"rows": rows, "as_built": as_built, "including_withdrawn_spec": with_withdrawn,
+            "caveats": CAVEATS, "footnotes": footnotes,
+            "rules": __doc__.split("Rules")[1].split("Two lines")[0].strip()}
 
 
 def recheck(doc: dict) -> list[str]:
@@ -218,6 +277,32 @@ def recheck(doc: dict) -> list[str]:
             got = (r[key]["min"], r[key]["max"])
             if got != want:
                 errs.append(f"{r['task']} {key}: table {got} != recomputed {want}")
+
+    # [K.3] as built: straight from the five meta files
+    m = {d: load(f"{d}/meta.json") for d in ("0-1_get_key", "0-2_open_door", "1-1_unlock_door",
+                                             "0-3_go_to_goal", "2-1_solve_doorkey")}
+    want_unlock = (m["0-1_get_key"]["steps_trained"] + m["0-2_open_door"]["steps_trained"]
+                   + m["1-1_unlock_door"]["env_steps_own"])
+    want_dk = (want_unlock + m["0-3_go_to_goal"]["steps_trained"]
+               + m["2-1_solve_doorkey"]["env_steps_own"])
+    for r, want in zip(doc["as_built"], (want_unlock, want_dk)):
+        got = r["hierarchy_cumulative"]
+        if (got["min"], got["max"]) != (want, want):
+            errs.append(f"as built {r['task']}: table {got} != recomputed {want}")
+
+    # [K.3] including the withdrawn spec: per seed from the per-node files
+    att = [load(f"pickup_box_attempt1_s{s}.json")["steps_trained"] for s in SEEDS]
+    spec2 = [load(f"pickup_box_s{s}.json")["steps_trained"] for s in SEEDS]
+    flat_up = [load(f"flat_unlockpickup_ppo_s{s}.json")["report"]["steps_trained"] for s in SEEDS]
+    w = doc["including_withdrawn_spec"]
+    want = (h_lo + min(att), h_hi + max(att))
+    if (w["hierarchy_cumulative"]["min"], w["hierarchy_cumulative"]["max"]) != want:
+        errs.append(f"incl. withdrawn: table {w['hierarchy_cumulative']} != recomputed {want}")
+    t = w["totals_over_all_runs"]
+    if t["pickup_box_six_runs"]["env_steps"] != sum(att) + sum(spec2):
+        errs.append("pickup_box six-run total mismatch")
+    if t["flat_ppo_unlockpickup_three_runs"]["env_steps"] != sum(flat_up):
+        errs.append("flat UnlockPickup three-run total mismatch")
     return errs
 
 
@@ -235,6 +320,19 @@ def main() -> int:
         d = r["display"]
         print(f"{r['task']:<22}{d['hierarchy_marginal']:>26}{d['hierarchy_cumulative']:>26}"
               f"{d['flat_ppo']:>28}{d['flat_cumulative']:>28}")
+    print("\nas built (frozen checkpoints' own costs):")
+    for r in doc["as_built"]:
+        d = r["display"]
+        print(f"{r['task']:<22}{d['hierarchy_marginal']:>26}{d['hierarchy_cumulative']:>26}"
+              f"{'':>28}{d['flat_cumulative']:>28}")
+    w = doc["including_withdrawn_spec"]
+    print(f"\nincluding the withdrawn pickup_box specification, through UnlockPickup: "
+          f"{w['display']['hierarchy_cumulative']}  vs flat {w['display']['flat_cumulative']}")
+    t = w["totals_over_all_runs"]
+    print(f"totals over all runs: pickup_box {t['pickup_box_six_runs']['runs']} runs "
+          f"{t['pickup_box_six_runs']['env_steps']:,}; flat PPO UnlockPickup "
+          f"{t['flat_ppo_unlockpickup_three_runs']['runs']} runs "
+          f"{t['flat_ppo_unlockpickup_three_runs']['env_steps']:,}")
     OUT.write_text(json.dumps(doc, indent=2), encoding="utf-8")
     print(f"\nsums verified; wrote {OUT.relative_to(REPO)}")
     return 0

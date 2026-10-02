@@ -345,6 +345,188 @@
       }
     }
   ],
+  "as_built": [
+    {
+      "task": "Unlock",
+      "hierarchy_nodes": {
+        "{0,1} get_key": {
+          "source": "runs/v2/0-1_get_key/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 180000,
+              "stable": true
+            }
+          },
+          "min": 180000,
+          "max": 180000,
+          "lower_bound": false
+        },
+        "{0,2} open_door": {
+          "source": "runs/v2/0-2_open_door/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 100000,
+              "stable": true
+            }
+          },
+          "min": 100000,
+          "max": 100000,
+          "lower_bound": false
+        },
+        "{1,1} unlock_door (frozen checkpoint, n_steps 256)": {
+          "source": "runs/v2/1-1_unlock_door/meta.json env_steps_own",
+          "per_seed": {
+            "42": {
+              "steps": 131817,
+              "stable": true
+            }
+          },
+          "min": 131817,
+          "max": 131817,
+          "lower_bound": false
+        }
+      },
+      "hierarchy_marginal": {
+        "min": 411817,
+        "max": 411817,
+        "lower_bound": false
+      },
+      "hierarchy_cumulative": {
+        "min": 411817,
+        "max": 411817,
+        "lower_bound": false
+      },
+      "flat_cumulative": {
+        "source": "runs/v2/flat_unlock_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 450000,
+            "stable": true
+          },
+          "43": {
+            "steps": 350000,
+            "stable": true
+          },
+          "44": {
+            "steps": 450000,
+            "stable": true
+          }
+        },
+        "min": 350000,
+        "max": 450000,
+        "lower_bound": false,
+        "best_stopping_sr": {
+          "42": 1.0,
+          "43": 1.0,
+          "44": 1.0
+        },
+        "budget": 1500000
+      },
+      "display": {
+        "hierarchy_marginal": "411,817",
+        "hierarchy_cumulative": "411,817",
+        "flat_cumulative": "350,000 - 450,000"
+      }
+    },
+    {
+      "task": "DoorKey-6x6",
+      "hierarchy_nodes": {
+        "{0,3} go_to_goal": {
+          "source": "runs/v2/0-3_go_to_goal/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 200000,
+              "stable": true
+            }
+          },
+          "min": 200000,
+          "max": 200000,
+          "lower_bound": false
+        },
+        "{2,1} solve_doorkey (frozen checkpoint, n_steps 256)": {
+          "source": "runs/v2/2-1_solve_doorkey/meta.json env_steps_own",
+          "per_seed": {
+            "42": {
+              "steps": 162138,
+              "stable": true
+            }
+          },
+          "min": 162138,
+          "max": 162138,
+          "lower_bound": false
+        }
+      },
+      "hierarchy_marginal": {
+        "min": 362138,
+        "max": 362138,
+        "lower_bound": false
+      },
+      "hierarchy_cumulative": {
+        "min": 773955,
+        "max": 773955,
+        "lower_bound": false
+      },
+      "flat_cumulative": {
+        "min": 650000,
+        "max": 900000,
+        "lower_bound": false
+      },
+      "display": {
+        "hierarchy_marginal": "362,138",
+        "hierarchy_cumulative": "773,955",
+        "flat_cumulative": "650,000 - 900,000"
+      }
+    }
+  ],
+  "including_withdrawn_spec": {
+    "through": "UnlockPickup",
+    "pickup_box_attempt1": {
+      "source": "runs/v2/pickup_box_attempt1_s{42,43,44}.json steps_trained",
+      "per_seed": {
+        "42": {
+          "steps": 600064,
+          "stable": false
+        },
+        "43": {
+          "steps": 600064,
+          "stable": false
+        },
+        "44": {
+          "steps": 600064,
+          "stable": false
+        }
+      },
+      "min": 600064,
+      "max": 600064,
+      "lower_bound": true
+    },
+    "hierarchy_cumulative": {
+      "min": 2193292,
+      "max": 2202072,
+      "lower_bound": true
+    },
+    "flat_cumulative": {
+      "min": 3650320,
+      "max": 3900320,
+      "lower_bound": true
+    },
+    "display": {
+      "hierarchy_cumulative": "> 2,193,292 - 2,202,072",
+      "flat_cumulative": "> 3,650,320 - 3,900,320"
+    },
+    "totals_over_all_runs": {
+      "pickup_box_six_runs": {
+        "runs": 6,
+        "env_steps": 4804608,
+        "stable": false
+      },
+      "flat_ppo_unlockpickup_three_runs": {
+        "runs": 3,
+        "env_steps": 9000960,
+        "stable": false
+      }
+    }
+  },
   "caveats": [
     "1. `get_key` and `open_door` were trained on Unlock and DoorKey layouts together, so part of DoorKey's cost sits in the Unlock row.",
     "2. Primitive costs before H-7 come from one seed.",
