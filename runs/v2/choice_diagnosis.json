@@ -1,0 +1,355 @@
+{
+  "node_id": "{1,2} unlock_matching",
+  "hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door",
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "sanity": {
+    "n_resets": 400,
+    "seeds": [
+      30000,
+      30399
+    ],
+    "children": [
+      "{0,6} get_key_yellow",
+      "{0,7} get_key_blue",
+      "{0,8} open_door_tk"
+    ],
+    "expected_strict_mask": [
+      true,
+      true,
+      false
+    ],
+    "door_in_view": 400,
+    "door_colour_in_view": 400,
+    "mask_exactly_two_keys": 400,
+    "door_colour_counts": {
+      "yellow": 204,
+      "blue": 196
+    },
+    "distinct_door_cells_in_view": 18,
+    "failures": [],
+    "passed": true
+  },
+  "decode": {
+    "seeds": [
+      30000,
+      34999
+    ],
+    "train_pool": [
+      30000,
+      33999
+    ],
+    "test": [
+      34000,
+      34999
+    ],
+    "label": {
+      "yellow": 0,
+      "blue": 1
+    },
+    "blue_share_all": 0.5076,
+    "blue_share_test": 0.498,
+    "distinct_door_view_cells": 18,
+    "hand_written_reader_test_acc": 1.0,
+    "selector_mlp": {
+      "architecture": "MaskableActorCriticPolicy default: 147 -> 64 tanh -> 64 tanh -> 2 (actor head only, SB3 orthogonal init)",
+      "training": "Adam lr 1e-3, batch 64, <= 400 epochs, early stop on a 20% split of the training examples (patience 40); test set never used to select",
+      "init_seeds": [
+        0,
+        1,
+        2
+      ],
+      "by_train_size": {
+        "250": {
+          "runs": [
+            {
+              "test_acc": 0.483,
+              "train_acc": 0.735,
+              "val_acc": 0.64,
+              "best_epoch": 27
+            },
+            {
+              "test_acc": 0.516,
+              "train_acc": 0.735,
+              "val_acc": 0.7,
+              "best_epoch": 51
+            },
+            {
+              "test_acc": 0.495,
+              "train_acc": 0.62,
+              "val_acc": 0.64,
+              "best_epoch": 0
+            }
+          ],
+          "mean": 0.498,
+          "min": 0.483,
+          "max": 0.516
+        },
+        "500": {
+          "runs": [
+            {
+              "test_acc": 0.518,
+              "train_acc": 0.6175,
+              "val_acc": 0.67,
+              "best_epoch": 5
+            },
+            {
+              "test_acc": 0.847,
+              "train_acc": 0.9575,
+              "val_acc": 0.94,
+              "best_epoch": 144
+            },
+            {
+              "test_acc": 0.828,
+              "train_acc": 0.975,
+              "val_acc": 0.89,
+              "best_epoch": 176
+            }
+          ],
+          "mean": 0.731,
+          "min": 0.518,
+          "max": 0.847
+        },
+        "1000": {
+          "runs": [
+            {
+              "test_acc": 0.956,
+              "train_acc": 0.9987,
+              "val_acc": 0.975,
+              "best_epoch": 159
+            },
+            {
+              "test_acc": 0.935,
+              "train_acc": 0.9887,
+              "val_acc": 0.96,
+              "best_epoch": 107
+            },
+            {
+              "test_acc": 0.929,
+              "train_acc": 0.9962,
+              "val_acc": 0.93,
+              "best_epoch": 159
+            }
+          ],
+          "mean": 0.94,
+          "min": 0.929,
+          "max": 0.956
+        },
+        "2000": {
+          "runs": [
+            {
+              "test_acc": 0.98,
+              "train_acc": 0.9994,
+              "val_acc": 0.9875,
+              "best_epoch": 132
+            },
+            {
+              "test_acc": 0.983,
+              "train_acc": 1.0,
+              "val_acc": 0.98,
+              "best_epoch": 165
+            },
+            {
+              "test_acc": 0.979,
+              "train_acc": 0.9987,
+              "val_acc": 0.9925,
+              "best_epoch": 137
+            }
+          ],
+          "mean": 0.9807,
+          "min": 0.979,
+          "max": 0.983
+        },
+        "4000": {
+          "runs": [
+            {
+              "test_acc": 0.993,
+              "train_acc": 0.9994,
+              "val_acc": 0.9987,
+              "best_epoch": 91
+            },
+            {
+              "test_acc": 1.0,
+              "train_acc": 1.0,
+              "val_acc": 0.9987,
+              "best_epoch": 137
+            },
+            {
+              "test_acc": 0.997,
+              "train_acc": 1.0,
+              "val_acc": 0.9975,
+              "best_epoch": 122
+            }
+          ],
+          "mean": 0.9967,
+          "min": 0.993,
+          "max": 1.0
+        }
+      }
+    },
+    "logistic_regression": {
+      "training": "L2 logistic, LBFGS; L2 weight picked on a 20% split of the training examples",
+      "by_train_size": {
+        "250": {
+          "test_acc": 0.814,
+          "train_acc": 0.992,
+          "l2": 1e-05,
+          "val_acc_by_l2": {
+            "1e-05": 0.78,
+            "0.0001": 0.76,
+            "0.001": 0.64,
+            "0.01": 0.62
+          }
+        },
+        "500": {
+          "test_acc": 0.891,
+          "train_acc": 0.966,
+          "l2": 1e-05,
+          "val_acc_by_l2": {
+            "1e-05": 0.93,
+            "0.0001": 0.89,
+            "0.001": 0.77,
+            "0.01": 0.69
+          }
+        },
+        "1000": {
+          "test_acc": 0.907,
+          "train_acc": 0.948,
+          "l2": 1e-05,
+          "val_acc_by_l2": {
+            "1e-05": 0.97,
+            "0.0001": 0.875,
+            "0.001": 0.76,
+            "0.01": 0.68
+          }
+        },
+        "2000": {
+          "test_acc": 0.911,
+          "train_acc": 0.9385,
+          "l2": 1e-05,
+          "val_acc_by_l2": {
+            "1e-05": 0.9225,
+            "0.0001": 0.835,
+            "0.001": 0.71,
+            "0.01": 0.6275
+          }
+        },
+        "4000": {
+          "test_acc": 0.91,
+          "train_acc": 0.931,
+          "l2": 1e-05,
+          "val_acc_by_l2": {
+            "1e-05": 0.9263,
+            "0.0001": 0.8588,
+            "0.001": 0.7362,
+            "0.01": 0.6488
+          }
+        }
+      }
+    },
+    "sensitivity_fixed_budget_mlp": {
+      "status": "post hoc, added after the primary numbers were seen; not used for the verdict",
+      "training": "same network, Adam lr 1e-3, batch 64, exactly 3,000 gradient steps on all training examples, last weights, no selection",
+      "by_train_size": {
+        "250": {
+          "runs": [
+            {
+              "test_acc": 0.756,
+              "train_acc": 1.0
+            },
+            {
+              "test_acc": 0.768,
+              "train_acc": 1.0
+            },
+            {
+              "test_acc": 0.758,
+              "train_acc": 1.0
+            }
+          ],
+          "mean": 0.7607,
+          "min": 0.756,
+          "max": 0.768
+        },
+        "500": {
+          "runs": [
+            {
+              "test_acc": 0.908,
+              "train_acc": 1.0
+            },
+            {
+              "test_acc": 0.911,
+              "train_acc": 1.0
+            },
+            {
+              "test_acc": 0.913,
+              "train_acc": 1.0
+            }
+          ],
+          "mean": 0.9107,
+          "min": 0.908,
+          "max": 0.913
+        },
+        "1000": {
+          "runs": [
+            {
+              "test_acc": 0.967,
+              "train_acc": 1.0
+            },
+            {
+              "test_acc": 0.959,
+              "train_acc": 0.999
+            },
+            {
+              "test_acc": 0.959,
+              "train_acc": 0.998
+            }
+          ],
+          "mean": 0.9617,
+          "min": 0.959,
+          "max": 0.967
+        },
+        "2000": {
+          "runs": [
+            {
+              "test_acc": 0.98,
+              "train_acc": 0.995
+            },
+            {
+              "test_acc": 0.97,
+              "train_acc": 0.993
+            },
+            {
+              "test_acc": 0.975,
+              "train_acc": 0.995
+            }
+          ],
+          "mean": 0.975,
+          "min": 0.97,
+          "max": 0.98
+        },
+        "4000": {
+          "runs": [
+            {
+              "test_acc": 0.99,
+              "train_acc": 0.9948
+            },
+            {
+              "test_acc": 0.989,
+              "train_acc": 0.9962
+            },
+            {
+              "test_acc": 0.971,
+              "train_acc": 0.9893
+            }
+          ],
+          "mean": 0.9833,
+          "min": 0.971,
+          "max": 0.99
+        }
+      }
+    },
+    "verdict": "none",
+    "verdict_reason": "between the two thresholds; numbers only",
+    "threshold": 0.95,
+    "verdict_statistic": "mean test accuracy over the 3 classifier initialisations, primary (early-stopped) fit"
+  }
+}
