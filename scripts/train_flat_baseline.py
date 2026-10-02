@@ -28,6 +28,18 @@ single-env episodes capped at 360 steps, so evaluating a policy that fails
 everything costs up to 18,000 env steps of Python inference, and at a fine
 `eval_every` that would dominate the run. `--measure-eval` times it.
 
+[H-7.2] `--task` extends the same harness to the rest of the curriculum, each
+baseline matched to the node it is compared with (v2 §11, H-7 A.4):
+
+    --task unlock        {0,B} flat_unlock_ppo            door open,        240,  1.5M / 50k
+    --task unlockpickup  {0,B} flat_unlockpickup_ppo      carrying the box, 288,  3M   / 100k
+                         {1,B} flat_unlockpickup_options  (get_key, open_door, pickup_box),
+                                                          288, max_decisions 12, 40,960 decisions / 512
+    --task blocked       {0,B} flat_blocked_ppo           carrying the box, 576,  3M   / 100k
+
+`doorkey` stays the default so the H-6 commands still reproduce. Budgets are
+fixed in advance and never extended (H-7 plan, Part B).
+
 Usage:
     python scripts/train_flat_baseline.py --which ppo --measure-eval
     python scripts/train_flat_baseline.py --which ppo --smoke
@@ -49,7 +61,7 @@ sys.path.insert(0, str(REPO / "scripts"))
 
 from src.envs.subgoal_env import NO_HOOK  # noqa: E402
 from src.skills.node import ALWAYS, SkillNode  # noqa: E402
-from src.skills.predicates import on_goal_tile  # noqa: E402
+from src.skills.predicates import carrying, door_open, on_goal_tile  # noqa: E402
 from src.skills.registry import NodeRegistry  # noqa: E402
 from src.training.c1_controls import ARM_LABELS, capture_trace, mask_divergence, run_arms  # noqa: E402
 from src.training.device import describe  # noqa: E402
@@ -61,7 +73,7 @@ from src.training.node_trainer import (  # noqa: E402
     train_composite,
     train_primitive,
 )
-from train_primitives import DOORKEY, build_node, specs  # noqa: E402
+from train_primitives import DOORKEY, UNLOCK, build_node, specs  # noqa: E402
 from train_solve_doorkey import load_children  # noqa: E402
 
 RUNS = REPO / "runs" / "v2"
@@ -72,39 +84,71 @@ BASELINE_RUNS = RUNS / "baselines"
 TIMEOUT = 360
 OPTIONS_MAX_DECISIONS = 12      # [A: F2] 3 children, room for a few wasted picks
 
+UNLOCKPICKUP = "MiniGrid-UnlockPickup-v0"
+BLOCKED = "MiniGrid-BlockedUnlockPickup-v0"
 
-def build_flat_ppo():
+# [H-7.2] One row per task. Goal and timeout match the curriculum node the
+# baseline is compared with: {1,1} unlock_door (240), {2,2} unlock_pickup (288),
+# {3,1} blocked_pickup_b (576). `ppo` budgets are env steps; `options` budgets
+# are SMDP decisions.
+TASKS = {
+    "doorkey": dict(env=DOORKEY, name="doorkey", goal=on_goal_tile, timeout=TIMEOUT,
+                    ppo=(1_500_000, 50_000), options=(20_000, 1_000)),
+    "unlock": dict(env=UNLOCK, name="unlock", goal=door_open, timeout=240,
+                   ppo=(1_500_000, 50_000), options=None),
+    "unlockpickup": dict(env=UNLOCKPICKUP, name="unlockpickup",
+                         goal=lambda: carrying("box"), timeout=288,
+                         ppo=(3_000_000, 100_000), options=(40_960, 512)),
+    "blocked": dict(env=BLOCKED, name="blocked", goal=lambda: carrying("box"), timeout=576,
+                    ppo=(3_000_000, 100_000), options=None),
+}
+
+
+def build_flat_ppo(task="doorkey"):
+    t = TASKS[task]
     return SkillNode(
-        "{0,B} flat_doorkey_ppo",
-        goal=on_goal_tile(),
+        "{0,B} flat_" + t["name"] + "_ppo",
+        goal=t["goal"](),
         initiation=ALWAYS,          # the real task starts wherever the env starts
-        timeout=TIMEOUT,
-        env_ids=[DOORKEY],
+        timeout=t["timeout"],
+        env_ids=[t["env"]],
         train_hook="none",
         m=1,
     )
 
 
-def build_flat_options(children):
+def build_flat_options(children, task="doorkey"):
+    t = TASKS[task]
     return SkillNode(
-        "{1,B} flat_doorkey_options",
+        "{1,B} flat_" + t["name"] + "_options",
         children=children,
-        goal=on_goal_tile(),
+        goal=t["goal"](),
         initiation=ALWAYS,
-        timeout=TIMEOUT,
+        timeout=t["timeout"],
         max_decisions=OPTIONS_MAX_DECISIONS,
-        env_ids=[DOORKEY],
+        env_ids=[t["env"]],
         m=1,
     )
 
 
-def load_three_primitives(registry, device="cpu"):
+def load_option_children(task, registry, device="cpu"):
+    if task == "doorkey":
+        return load_three_primitives(registry, device=device)
+    # unlockpickup: get_key, open_door and the H-7 pickup_box -- the same three
+    # skills {2,2} unlock_pickup has, without the intermediate unlock_door
+    from h7_nodes import load_h7_primitive
+    kids = load_three_primitives(registry, device=device, names=("get_key", "open_door"))
+    kids.append(load_h7_primitive("pickup_box", registry, device=device))
+    return kids
+
+
+def load_three_primitives(registry, device="cpu", names=("get_key", "open_door", "go_to_goal")):
     from src.training.node_trainer import load_frozen_primitive
     from src.types import NodeStatus
 
     all_specs = specs()
     out = []
-    for name in ("get_key", "open_door", "go_to_goal"):
+    for name in names:
         spec = all_specs[name]
         node = build_node(spec)
         load_frozen_primitive(node, registry, spec["env_ids"][0], spec["hook"],
@@ -116,7 +160,7 @@ def load_three_primitives(registry, device="cpu"):
     return out
 
 
-def measure_eval_cost(n_eval: int) -> dict:
+def measure_eval_cost(n_eval: int, task: str = "doorkey") -> dict:
     """
     Time one evaluation of an untrained policy -- the worst case, because every
     episode runs to the full timeout.
@@ -127,10 +171,11 @@ def measure_eval_cost(n_eval: int) -> dict:
     """
     from src.training.node_trainer import attach_sb3_primitive_policy
 
-    node = build_flat_ppo()
-    attach_sb3_primitive_policy(node, DOORKEY, NO_HOOK)
+    env_id = TASKS[task]["env"]
+    node = build_flat_ppo(task)
+    attach_sb3_primitive_policy(node, env_id, NO_HOOK)
     t0 = time.perf_counter()
-    res = pooled_eval_fn(node, [DOORKEY], NO_HOOK, n_episodes=n_eval,
+    res = pooled_eval_fn(node, [env_id], NO_HOOK, n_episodes=n_eval,
                          seed_base=heldout_seeds(1)[0])()
     dt = time.perf_counter() - t0
     env_steps = sum(res.lengths)
@@ -138,7 +183,7 @@ def measure_eval_cost(n_eval: int) -> dict:
           f"{env_steps:,} env steps, SR {res.success_rate:.2f}")
     # Training throughput measured in H-4 was ~1,050 env steps/s. Keep total
     # evaluation wall time under ~40% of training wall time.
-    return {"seconds": round(dt, 1), "env_steps": env_steps,
+    return {"task": task, "env_id": env_id, "seconds": round(dt, 1), "env_steps": env_steps,
             "success_rate": res.success_rate}
 
 
@@ -166,6 +211,7 @@ def curve(report: dict, *, steps_per_x: float, eval_every: int) -> list[dict]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--which", choices=["ppo", "options"], required=True)
+    ap.add_argument("--task", choices=list(TASKS), default="doorkey")
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--measure-eval", action="store_true",
                     help="time one evaluation and exit")
@@ -180,10 +226,14 @@ def main() -> int:
     ap.add_argument("--out-name", default=None)
     args = ap.parse_args()
 
+    task = TASKS[args.task]
+    env_id = task["env"]
+    if task[args.which] is None:
+        ap.error(f"--which {args.which} is not defined for --task {args.task}")
     if args.budget is None:
-        args.budget = 1_500_000 if args.which == "ppo" else 20_000
+        args.budget = task[args.which][0]
     if args.eval_every is None:
-        args.eval_every = 50_000 if args.which == "ppo" else 1_000
+        args.eval_every = task[args.which][1]
     if args.smoke:
         args.n_eval = 10
         args.n_envs = 2
@@ -194,24 +244,26 @@ def main() -> int:
     print(f"torch threads: {set_torch_threads(args.torch_threads)}")
 
     if args.measure_eval:
-        cost = measure_eval_cost(args.n_eval)
-        out = RUNS / "flat_baseline_eval_cost.json"
+        cost = measure_eval_cost(args.n_eval, args.task)
+        out = RUNS / ("flat_baseline_eval_cost.json" if args.task == "doorkey"
+                      else f"flat_baseline_eval_cost_{args.task}.json")
         out.write_text(json.dumps(cost, indent=2), encoding="utf-8")
         print(f"wrote {out.relative_to(REPO)}")
         return 0
 
     registry = NodeRegistry(RUNS)
     baseline_registry = NodeRegistry(BASELINE_RUNS)
-    result: dict = {"which": args.which, "seed": args.seed, "env_id": DOORKEY}
+    result: dict = {"which": args.which, "task": args.task, "seed": args.seed,
+                    "env_id": env_id, "budget": args.budget, "eval_every": args.eval_every}
 
     if args.which == "ppo":
-        node = build_flat_ppo()
+        node = build_flat_ppo(args.task)
         print(f"\n{'=' * 72}\n{node.id}  n={node.n}  (no children: plain PPO)"
-              f"\n  env={DOORKEY} timeout={node.timeout} goal={node.goal.spec}"
+              f"\n  env={env_id} timeout={node.timeout} goal={node.goal.spec}"
               f"\n  seed={args.seed} budget={args.budget:,} env steps "
               f"eval_every={args.eval_every:,}\n{'=' * 72}")
         report, _model = train_primitive(
-            node, [DOORKEY], NO_HOOK,
+            node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
             n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed,
             device=args.device, verbose=1,
@@ -226,15 +278,15 @@ def main() -> int:
 
     else:
         print("loading the three frozen primitives:")
-        children = load_three_primitives(registry, device=args.device)
-        node = build_flat_options(children)
+        children = load_option_children(args.task, registry, device=args.device)
+        node = build_flat_options(children, args.task)
         print(f"\n{'=' * 72}\n{node.id}  n={node.n}  "
               f"children={[c.id for c in node.children]}"
-              f"\n  env={DOORKEY} timeout={node.timeout} "
+              f"\n  env={env_id} timeout={node.timeout} "
               f"max_decisions={node.max_decisions}"
               f"\n  seed={args.seed} budget={args.budget:,} decisions\n{'=' * 72}")
         report, _model = train_composite(
-            node, [DOORKEY], NO_HOOK,
+            node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
             n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed,
             device=args.device, verbose=1,
@@ -252,10 +304,10 @@ def main() -> int:
 
     # Held-out score, through the same evaluation path as every other node.
     heldout_fn = (
-        pooled_eval_fn(node, [DOORKEY], NO_HOOK, n_episodes=args.n_eval,
+        pooled_eval_fn(node, [env_id], NO_HOOK, n_episodes=args.n_eval,
                        seed_base=heldout_seeds(1)[0])
         if node.is_primitive else
-        pooled_eval_fn(node, [DOORKEY], NO_HOOK, n_episodes=args.n_eval,
+        pooled_eval_fn(node, [env_id], NO_HOOK, n_episodes=args.n_eval,
                        seed_base=heldout_seeds(1)[0],
                        env_factory_fn=execution_env_factory)
     )
@@ -275,7 +327,7 @@ def main() -> int:
     if not node.is_primitive:
         seeds = heldout_seeds(args.n_eval)
         arms = run_arms(
-            lambda: build_flat_options(node.children), DOORKEY, NO_HOOK, seeds,
+            lambda: build_flat_options(node.children, args.task), env_id, NO_HOOK, seeds,
             learned_policy=learned, rng_seed=args.seed,
         )
         result["arms"] = {k: {"label": ARM_LABELS[k], **v.as_dict()}
@@ -285,13 +337,15 @@ def main() -> int:
             print(f"  {ARM_LABELS[name]:<44} SR {res.success_rate:5.2f}  "
                   f"[{res.wilson_lower:.2f},{res.wilson_upper:.2f}]  "
                   f"mean env steps {res.mean_length:6.1f}")
-        result["mask_divergence"] = mask_divergence(node, DOORKEY, NO_HOOK, seeds[:20])
-        result["trace"] = capture_trace(node, DOORKEY, NO_HOOK, seeds[0])
+        result["mask_divergence"] = mask_divergence(node, env_id, NO_HOOK, seeds[:20])
+        result["trace"] = capture_trace(node, env_id, NO_HOOK, seeds[0])
         print(f"  max stack depth {result['trace']['max_stack_depth']}, "
               f"selected: {' -> '.join(result['trace']['selected_children'])}")
 
     suffix = "_smoke" if args.smoke else ""
-    name = args.out_name or f"flat_{args.which}{suffix}_s{args.seed}.json"
+    default = (f"flat_{args.which}{suffix}_s{args.seed}.json" if args.task == "doorkey"
+               else f"flat_{args.task}_{args.which}{suffix}_s{args.seed}.json")
+    name = args.out_name or default
     path = RUNS / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, indent=2), encoding="utf-8")

@@ -1,0 +1,7 @@
+{
+  "task": "unlock",
+  "env_id": "MiniGrid-Unlock-v0",
+  "seconds": 24.6,
+  "env_steps": 12000,
+  "success_rate": 0.0
+}

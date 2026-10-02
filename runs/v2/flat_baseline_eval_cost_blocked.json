@@ -1,0 +1,7 @@
+{
+  "task": "blocked",
+  "env_id": "MiniGrid-BlockedUnlockPickup-v0",
+  "seconds": 65.9,
+  "env_steps": 28800,
+  "success_rate": 0.0
+}
