@@ -603,26 +603,42 @@ not only from hook states.
 | T3 | `{1,1} unlock_door` | composite | T1, T2 | `MiniGrid-Unlock-v0` | door open (env success) |
 | T4 | `{0,3} go_to_goal` | primitive | — | DoorKey, reset with door open | agent on goal tile |
 | T5 | `{2,1} solve_doorkey` | composite | T3, T4 | `MiniGrid-DoorKey-6x6-v0` | env success |
-| T6 | `{0,4} pickup_box` | primitive (I: door open) | — | UnlockPickup **and** BlockedUnlockPickup, reset with the door open **and the key in hand with probability 0.5** | agent carries the box |
-| T7 | `{2,2} unlock_pickup` | composite (I: door locked) | T3, T6 | `MiniGrid-UnlockPickup-v0` | agent carries the box (env success) |
+| T6 | `{0,4} pickup_box` | primitive (I: door open and carrying nothing) | — | UnlockPickup, reset with the door open, the hand empty and no key on the door's approach cell | agent carries the box |
+| T6b | `{0,9} drop_held` | primitive (I: carrying anything) | — | UnlockPickup, reset with the door open and the key in hand | agent carries nothing |
+| T7 | `{2,2} unlock_pickup` | composite (I: door locked) | T3, T6b, T6 | `MiniGrid-UnlockPickup-v0` | agent carries the box (env success) |
 | T8 | `{0,5} move_blocker` | primitive (I: a ball is adjacent to the door) | — | BlockedUnlockPickup | **no ball adjacent to the door and the agent carries nothing** |
-| T9a | `{2,3} blocked_pickup_a` | composite (I: door locked and a ball adjacent to it) | T8, T3, T6 | `MiniGrid-BlockedUnlockPickup-v0` | agent carries the box (env success) |
-| T9b | `{3,1} blocked_pickup_b` | composite (I: as T9a) | T8, T7 | same | agent carries the box (env success) |
+| T9a | `{2,3} blocked_pickup_a` | composite (I: door locked and a ball adjacent to it) | T8, T3, T6 | `MiniGrid-BlockedUnlockPickup-v0` | agent carries the box (env success) — **deferred to H-7b** |
+| T9b | `{3,1} blocked_pickup_b` | composite (I: as T9a) | T8, T7 | same | agent carries the box (env success) — **deferred to H-7b** |
 
-**H-7 node specifications (amended 2026-10-02, H-7 A.1–A.3).** Rationale in `plans/2026-10-02_H7_plan.md`.
+**H-7 node specifications (amended 2026-10-02, H-7 A.1–A.3; T6, T6b and T7 re-specified by H-7
+amendment 1).** Rationale in `plans/2026-10-02_H7_plan.md` and `plans/2026-10-02_H7_amendment_1.md`.
 
 | # | timeout | `max_decisions` | reset hook |
 |---|---|---|---|
-| T6 `{0,4} pickup_box` | 120 | — | `relocate_blocker`, `open_door`, `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` |
+| T6 `{0,4} pickup_box` | 120 | — | `open_door`, `key_off_door`, `randomize_agent_pose(any)` |
+| T6b `{0,9} drop_held` | 30 | — | `open_door`, `give_key`, `randomize_agent_pose(any)` |
 | T7 `{2,2} unlock_pickup` | 288 | 8 | none |
-| T8 `{0,5} move_blocker` | 120 | — | `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` |
-| T9a `{2,3} blocked_pickup_a` | 576 | 12 | none |
-| T9b `{3,1} blocked_pickup_b` | 576 | 8 | none |
+| T8 `{0,5} move_blocker` | 120 | — | `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` — H-7b |
+| T9a `{2,3} blocked_pickup_a` | 576 | 12 | none — H-7b |
+| T9b `{3,1} blocked_pickup_b` | 576 | 8 | none — H-7b |
 
-- **T6, key in hand (A.1).** MiniGrid `pickup` needs an empty hand and `Door.toggle` does not consume
-  the key, so at the `unlock_door` handoff the agent is holding the key. Picking up the box then
-  requires *drop, then pick up*. Trained empty-handed, `pickup_box` would fail at the real handoff as
-  `go_to_goal` did in H-4. Trained on both box envs so one node serves T7 and T9.
+- **T6 split into T6b + T6 (H-7 amendment 1).** MiniGrid `pickup` needs an empty hand and
+  `Door.toggle` does not consume the key, so at the `unlock_door` handoff the agent is holding the
+  key. A.1 answered this by training one `pickup_box` on UnlockPickup and BlockedUnlockPickup with the
+  key in hand with probability 0.5. That node was **not stable within 600,000 env steps on any of
+  three seeds** (held-out 0.28 / 0.40 / 0.24), and the seed-42 checkpoint scored **0.10 at the real
+  handoff** (`runs/v2/pickup_box_diagnosis.json`): one flat policy under one sparse reward was asked
+  to cross the door, drop the key and pick up the box. A.1 is withdrawn on that measurement. The skill
+  is decomposed instead: `{0,9} drop_held` empties the hand, and `{0,4} pickup_box` is trained
+  empty-handed on UnlockPickup only, and the parent T7 sequences them. Under the goal-only mask
+  `drop_held` is unavailable while the hand is empty (its goal holds) and `pickup_box` stays
+  selectable with a full hand, where it times out; T7 has to learn unlock → drop → pick up from that.
+- **T6b `{0,9} drop_held`.** Goal `carrying:none`, initiation `carrying:any`, timeout 30, trained on
+  UnlockPickup from the door-open, key-in-hand state at any reachable pose.
+- **One re-specification only.** If T6b or the new T6 does not stabilise within its budget
+  (100,000 and 1,000,000 env steps), that is the finding and H-7a stops. The first `pickup_box`
+  attempt's cost (3 × 600,064 env steps) is reported, not counted (caveat 4 of the amortisation
+  table).
 - **T8, goal (A.2).** "The cell in front of the door is free" is read from the grid, and a carried
   object is not on the grid, so it becomes true the moment the ball is picked up, while the agent
   still holds it. `get_key` would then be asked to act with a full hand. The goal requires the ball to
@@ -637,6 +653,11 @@ not only from hook states.
   reachable free cell not adjacent to the door, drawn with the env's own RNG; a no-op when there is no
   ball; raises `UnsuitableLayout` when no such cell exists). `relocate_blocker` reproduces the state T8
   leaves, which deleting the ball would not.
+- Two more (H-7 amendment 1): the predicate `carrying_anything` (`"carrying:any"`: the agent holds
+  some object) and the hook `key_off_door` (`"key_off_door"`: raises `UnsuitableLayout` when a key
+  lies on a cell orthogonally adjacent to the door). With the door open and the hand empty, a key on
+  the door's approach cell can only be passed by picking it up, which fills the hand again; at the
+  real handoff it cannot happen, because the agent stands on that cell when it drops the key.
 
 **H-7 baselines (amended 2026-10-02, H-7 A.4).** Baseline only, registered under `runs/v2/baselines/`,
 never usable as a child. Each matches the node it is compared with in goal, timeout, pipeline, PPO
@@ -647,7 +668,7 @@ config, envs and seed sets.
 | `{0,B} flat_unlock_ppo` | `MiniGrid-Unlock-v0` | door open | 240 | 1,500,000 env steps | 50,000 |
 | `{0,B} flat_unlockpickup_ppo` | `MiniGrid-UnlockPickup-v0` | agent carries the box | 288 | 3,000,000 | 100,000 |
 | `{0,B} flat_blocked_ppo` | `MiniGrid-BlockedUnlockPickup-v0` | agent carries the box | 576 | 3,000,000 | 100,000 |
-| `{1,B} flat_unlockpickup_options` | `MiniGrid-UnlockPickup-v0`, children T1, T2, T6 | agent carries the box | 288, `max_decisions` 12 | 40,960 decisions | 512 |
+| `{1,B} flat_unlockpickup_options` | `MiniGrid-UnlockPickup-v0`, children T1, T2, T6b, T6 (amendment 1) | agent carries the box | 288, `max_decisions` 12 | 40,960 decisions | 512 |
 
 Budgets are fixed in advance and never extended; a run not stable at its budget is reported as
 `> budget (not stable)` with the best success rate it reached.
@@ -852,3 +873,18 @@ Each follows from a fact measured on minigrid 3.1.0 before H-7's code was writte
 | C2 metric "same as C1" | R1–R4, and C2 is not evidenced by `env_steps_own < env_steps_total` | that inequality holds by construction (A.5) |
 | composite report: three env-step fields | plus `chain_ceiling`; `weak_heldout` flag in `meta.json` | separates selector failure from child failure; flags a weak held-out score without changing §5.3 (A.6) |
 | §5.3 floor and `n_steps = 64` stated in §5.3 | restated in §5.2 with `eval_every = 512` for every composite | A.7; already made by H-6.8 |
+
+### Amendments applied 2026-10-02 (H-7 amendment 1)
+
+H-7 stopped on its assumption A2: the A.1 `pickup_box` was not stable within 600,000 env steps on any
+seed. Rationale in `plans/2026-10-02_H7_amendment_1.md`; the stop report is in
+`plans/2026-10-02_H7_summary.md`.
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| T6 (A.1): door open, key in hand with probability 0.5, UnlockPickup and BlockedUnlockPickup; I: door open | T6 empty-handed on UnlockPickup only, hook `open_door`, `key_off_door`, `randomize_agent_pose(any)`; I: door open and carrying nothing; new spec, new `spec_hash`. A.1 is withdrawn | not stable in 600,000 steps on 3 seeds (held-out 0.28 / 0.40 / 0.24); 0.10 at the real handoff. One flat policy was asked to cross, drop and pick up under one sparse reward |
+| — | T6b `{0,9} drop_held`: goal carrying nothing, I: carrying anything, timeout 30, UnlockPickup, hook `open_door`, `give_key`, `randomize_agent_pose(any)` | the drop is a one-action skill and gets its own node; a skill too hard for one primitive is decomposed |
+| T7 children T3, T6 | T3, T6b, T6 | the parent sequences unlock → drop → pick up |
+| `{1,B} flat_unlockpickup_options` children T1, T2, T6 | T1, T2, T6b, T6 | same skills as T7 without the intermediate T3 |
+| T8, T9a, T9b in H-7 | deferred to H-7b, planned after H-7a's result | the H-7.1 pre-flight already shows the frozen Unlock skills break on BlockedUnlockPickup (`get_key` picks up the ball in 29/50) |
+| — | predicate `carrying_anything` (`"carrying:any"`), hook `key_off_door` (`"key_off_door"`) | T6b's initiation; T6's hook rejects a key on the door's approach cell, which an empty-handed policy could pass only by refilling its hand |
