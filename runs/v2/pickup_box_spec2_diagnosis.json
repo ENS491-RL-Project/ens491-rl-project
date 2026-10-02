@@ -1,0 +1,65 @@
+{
+  "node": "{0,4} pickup_box",
+  "spec": "H-7 amendment 1",
+  "checkpoint": "seed 42, TRAINING (not stable at 1,001,472)",
+  "spec_hash": "a529aa4e74808ba0",
+  "rows": [
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "own hook (pose over both rooms)",
+      "hook": "open_door+key_off_door+randomize_agent_pose:any",
+      "n_episodes": 50,
+      "successes": 35,
+      "success_rate": 0.7,
+      "wilson_lower": 0.5625,
+      "wilson_upper": 0.809,
+      "mean_length": 41.36,
+      "seed_base": 20000,
+      "timeouts": 15,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "own hook, pose in the LEFT room (parent's side)",
+      "hook": "open_door+key_off_door+probe_pose_in_room:left",
+      "n_episodes": 50,
+      "successes": 29,
+      "success_rate": 0.58,
+      "wilson_lower": 0.4423,
+      "wilson_upper": 0.7062,
+      "mean_length": 56.18,
+      "seed_base": 20000,
+      "timeouts": 21,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "own hook, pose in the RIGHT room (box's side)",
+      "hook": "open_door+key_off_door+probe_pose_in_room:right",
+      "n_episodes": 50,
+      "successes": 48,
+      "success_rate": 0.96,
+      "wilson_lower": 0.8654,
+      "wilson_upper": 0.989,
+      "mean_length": 9.38,
+      "seed_base": 20000,
+      "timeouts": 2,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "after unlock_door, drop_held (the real handoff)",
+      "hook": "none",
+      "n_episodes": 50,
+      "successes": 30,
+      "success_rate": 0.6,
+      "wilson_lower": 0.4618,
+      "wilson_upper": 0.7239,
+      "mean_length": 50.3,
+      "seed_base": 20000,
+      "timeouts": 20,
+      "reselections": 0
+    }
+  ],
+  "note": "diagnostic; a reading of one checkpoint, not a tested cause"
+}
