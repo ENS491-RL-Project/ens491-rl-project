@@ -1,0 +1,252 @@
+{
+  "which": "options",
+  "seed": 43,
+  "env_id": "MiniGrid-DoorKey-6x6-v0",
+  "report": {
+    "node_id": "{1,B} flat_doorkey_options",
+    "kind": "composite",
+    "children": [
+      "{0,1} get_key",
+      "{0,2} open_door",
+      "{0,3} go_to_goal"
+    ],
+    "level_n": 1,
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 360,
+    "max_decisions": 12,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 43,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 512,
+    "ppo": {
+      "n_steps": 64,
+      "batch_size": 64,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 51200,
+    "decisions_trained": 1536,
+    "env_steps_own": 67134,
+    "env_steps_per_decision": 43.71,
+    "decisions_per_update": 512,
+    "policy_updates": 3,
+    "env_steps_children": 480000,
+    "env_steps_total": 547134,
+    "wall_seconds": 249.2,
+    "decisions_per_second": 6.2,
+    "stable": true,
+    "decisions_to_stable": 1536,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 11,
+          "success_rate": 0.22,
+          "wilson_lower": 0.1275,
+          "wilson_upper": 0.3524,
+          "mean_length": 301.32,
+          "seed_base": 10000,
+          "timeouts": 39,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "eval_extra": [],
+    "curve": [
+      {
+        "x_env_steps": 22380,
+        "x_native": 512,
+        "success_rate": 0.22,
+        "wilson_lower": 0.1275,
+        "mean_length": 301.32
+      },
+      {
+        "x_env_steps": 44759,
+        "x_native": 1024,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "mean_length": 13.76
+      },
+      {
+        "x_env_steps": 67139,
+        "x_native": 1536,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "mean_length": 13.76
+      }
+    ],
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "arms": {
+    "random_over_all": {
+      "label": "random over all children (mask clipped)",
+      "n_episodes": 50,
+      "successes": 35,
+      "success_rate": 0.7,
+      "wilson_lower": 0.5625,
+      "wilson_upper": 0.809,
+      "mean_length": 204.3,
+      "seed_base": 20000,
+      "timeouts": 15,
+      "reselections": 25
+    },
+    "random_over_available": {
+      "label": "random over available children",
+      "n_episodes": 50,
+      "successes": 31,
+      "success_rate": 0.62,
+      "wilson_lower": 0.4815,
+      "wilson_upper": 0.7414,
+      "mean_length": 230.16,
+      "seed_base": 20000,
+      "timeouts": 19,
+      "reselections": 39
+    },
+    "random_strict_mask": {
+      "label": "random, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    "learned": {
+      "label": "learned composite",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    "learned_strict_mask": {
+      "label": "learned composite, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "mask_divergence": {
+    "episodes": 20,
+    "decisions": 60,
+    "masks_differ": 40,
+    "would_have_blocked_learned_choice": 0
+  },
+  "trace": {
+    "seed": 20000,
+    "env_id": "MiniGrid-DoorKey-6x6-v0",
+    "success": true,
+    "env_steps": 25,
+    "max_stack_depth": 2,
+    "levels_selected": [
+      0
+    ],
+    "selected_children": [
+      "{0,1} get_key",
+      "{0,2} open_door",
+      "{0,3} go_to_goal"
+    ],
+    "trace": [
+      {
+        "depth": 2,
+        "node_id": "{0,1} get_key",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,1} get_key",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 10,
+        "version": 10
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,2} open_door",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 10
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,2} open_door",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 11,
+        "version": 21
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,3} go_to_goal",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 21
+      }
+    ]
+  }
+}

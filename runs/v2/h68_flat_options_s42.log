@@ -1,0 +1,29 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+loading the three frozen primitives:
+  loaded SkillNode('{0,1} get_key', n=0, primitive, frozen)
+  loaded SkillNode('{0,2} open_door', n=0, primitive, frozen)
+  loaded SkillNode('{0,3} go_to_goal', n=0, primitive, frozen)
+
+========================================================================
+{1,B} flat_doorkey_options  n=1  children=['{0,1} get_key', '{0,2} open_door', '{0,3} go_to_goal']
+  env=MiniGrid-DoorKey-6x6-v0 timeout=360 max_decisions=12
+  seed=42 budget=51,200 decisions
+========================================================================
+  [     512] {1,B} flat_doorkey_options: SR 0.060 (3/50), Wilson LB 0.021, mean length 341.8 | streak 0/2
+  [    1024] {1,B} flat_doorkey_options: SR 0.620 (31/50), Wilson LB 0.482, mean length 159.8 | streak 0/2
+  [    1536] {1,B} flat_doorkey_options: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 1/2
+  [    2048] {1,B} flat_doorkey_options: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 2/2 -> STABLE
+  decisions=2,048 env_steps_own=80,951 (39.53/decision) wall=277.5s stable=True
+  held-out: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.2
+  saved to runs/v2/baselines/1-B_flat_doorkey_options/ (baseline, never a child)
+
+--- C1 arms, 50 held-out episodes ---
+  random over all children (mask clipped)      SR  0.64  [0.50,0.76]  mean env steps  229.3
+  random over available children               SR  0.56  [0.42,0.69]  mean env steps  249.0
+  random, initiation masking ON                SR  1.00  [0.93,1.00]  mean env steps   14.2
+  learned composite                            SR  1.00  [0.93,1.00]  mean env steps   14.2
+  learned composite, initiation masking ON     SR  1.00  [0.93,1.00]  mean env steps   14.2
+  max stack depth 2, selected: {0,1} get_key -> {0,2} open_door -> {0,3} go_to_goal
+
+wrote runs\v2\flat_options_h68_s42.json

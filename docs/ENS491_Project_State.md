@@ -3,7 +3,7 @@
 > Technical memory of the project: current status, open empirical questions, and where each roadmap task stands.
 > **Design decisions live in `ENS491_Target_Architecture_v2.md`**, not here. This file only tracks state.
 >
-> Last updated: 2026-10-01 (re-baselined after the v2 architecture decision).
+> Last updated: 2026-10-02 (H-6 complete; H-6.8 corrections applied after advisor review).
 
 ---
 
