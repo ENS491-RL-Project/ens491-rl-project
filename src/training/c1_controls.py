@@ -268,3 +268,65 @@ def capture_trace(
         close = getattr(env, "close", None)
         if callable(close):
             close()
+
+
+def selection_sequences(
+    node: SkillNode,
+    env_id: str,
+    reset_hook,
+    seeds: Sequence[int],
+    *,
+    initiation_masking: bool = False,
+    env_factory_fn: Optional[Callable] = None,
+) -> dict:
+    """
+    The sequence of children this node selected, per episode, counted by sequence.
+
+    [H-7 plan, "How the result is worded"] A success-rate gap over a control is
+    never reported alone: H-6.6's 0.78-vs-0.46 separation came entirely from a
+    recovery path the design had ruled out, and only the mechanism showed it.
+    This is the mechanism measure every H-7 composite carries beside its score:
+    for each held-out episode, the ordered list of the node's OWN selections (a
+    SELECT at depth 2 -- this node choosing one of its children), with whether
+    that episode reached the goal.
+    """
+    from collections import Counter
+
+    from src.training.node_trainer import execution_env_factory
+
+    build_env = env_factory_fn or execution_env_factory
+    env = build_env(env_id, reset_hook)()
+    counts: Counter = Counter()
+    wins: Counter = Counter()
+    try:
+        for seed in seeds:
+            obs, _ = env.reset(seed=seed)
+            version = 0
+            sv = build_state_view(env, version)
+            ex = Executor(node, initiation_masking=initiation_masking)
+            for _ in range(node.timeout):
+                action = ex.act(obs, sv)
+                if action is None:
+                    break
+                obs, _, term, trunc, _ = env.step(action)
+                version += 1
+                sv = build_state_view(env, version)
+                ex.observe_reward(0.0)
+                if term or trunc:
+                    break
+            seq = " -> ".join(e.node_id for e in ex.trace
+                              if e.event == "SELECT" and e.depth == 2)
+            counts[seq] += 1
+            wins[seq] += int(bool(node.goal(sv)))
+    finally:
+        close = getattr(env, "close", None)
+        if callable(close):
+            close()
+    return {
+        "episodes": len(seeds),
+        "initiation_masking": initiation_masking,
+        "sequences": [
+            {"sequence": s, "count": n, "successes": wins[s]}
+            for s, n in counts.most_common()
+        ],
+    }

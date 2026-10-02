@@ -23,6 +23,7 @@ import pytest
 from src.envs.subgoal_env import NO_HOOK
 from src.skills.node import ALWAYS, NEVER, Predicate, SkillNode
 from src.training.c1_controls import (
+    selection_sequences,
     ARM_LABELS,
     RandomOverAll,
     RandomOverAvailable,
@@ -216,3 +217,15 @@ def test_capture_trace_reaches_depth_three_on_a_two_level_graph():
     assert outer.n == 2
     assert trace["max_stack_depth"] == 3
     assert 0 in trace["levels_selected"] and 1 in trace["levels_selected"]
+
+
+def test_selection_sequences_counts_each_episodes_root_choices():
+    node = _graph()
+    one = selection_sequences(node, UNLOCK, NO_HOOK, [31])
+    three = selection_sequences(node, UNLOCK, NO_HOOK, [31, 32, 33])
+    assert one["episodes"] == 1 and three["episodes"] == 3
+    (row,) = one["sequences"]
+    # the two root decisions of mask_divergence's first test, in order
+    assert row["sequence"].count(" -> ") == 1
+    assert row["count"] == 1
+    assert sum(r["count"] for r in three["sequences"]) == 3

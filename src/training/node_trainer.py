@@ -205,6 +205,11 @@ PPO_DEFAULTS = dict(
 )
 
 
+# [H-7 A.6] meta.json carries `weak_heldout: true` when the held-out Wilson
+# lower bound is below this. It does not block freezing.
+WEAK_HELDOUT_LB = 0.80
+
+
 def measure_throughput(vec_env, model, n_steps: int = 2048) -> float:
     """[A: F31] Print steps/s before committing to a budget."""
     t0 = time.perf_counter()
@@ -325,6 +330,8 @@ def freeze_and_save(
     )()
     report = dict(report)
     report["heldout"] = heldout.as_dict()
+    # [H-7 A.6] A flag for the reader, not a gate: §5.3 is unchanged.
+    report["weak_heldout"] = bool(heldout.wilson_lower < WEAK_HELDOUT_LB)
     if prepare is not None:
         reach = pooled_eval_fn(
             node, env_ids, reset_hook, n_episodes=n_eval, normalize=normalize,
