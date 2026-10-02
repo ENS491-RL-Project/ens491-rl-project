@@ -92,6 +92,24 @@
       "reselections": 0
     },
     {
+      "node": "{0,8} open_door_tk",
+      "n": 0,
+      "status": "frozen",
+      "spec_hash": "b1f8d1a511fa44b0",
+      "recorded": 0.94,
+      "now": 0.94,
+      "delta": 0.0,
+      "n_episodes": 50,
+      "successes": 47,
+      "success_rate": 0.94,
+      "wilson_lower": 0.8378,
+      "wilson_upper": 0.9794,
+      "mean_length": 7.6,
+      "seed_base": 20000,
+      "timeouts": 3,
+      "reselections": 0
+    },
+    {
       "node": "{1,1} unlock_door",
       "n": 1,
       "status": "frozen",

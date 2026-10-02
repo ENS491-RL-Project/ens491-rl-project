@@ -372,7 +372,19 @@ class OptionEnv(gym.Wrapper):
 > **Success rate** = fraction of episodes in which `goal` is reached before `timeout`.
 > A node is **STABLE** when, in **two consecutive evaluations**, the success rate is **≥ 0.90** *and* its
 > **Wilson 95 % lower bound is ≥ 0.80**.
+> The two evaluations must be **at least one policy update apart**: `eval_every ≥ n_steps × n_envs`.
 > Mean episode length is reported alongside but is not part of the criterion.
+
+**Why "consecutive" needs a floor (amended 2026-10-02, H-6.8).** "Two consecutive evaluations" was
+read as two evaluations, and with `eval_every` smaller than one PPO rollout it is two evaluations *of
+the same network*. On a fixed seed set in deterministic execution mode the second is then a bit-exact
+copy of the first, so the rule degenerates into "one evaluation, counted twice" — it removes the
+binomial-noise protection the Wilson bound was added for and replaces a convergence test with a single
+measurement. H-6 ran composites at `n_steps = 256 × 8 envs = 2,048` decisions per update with
+`eval_every = 1,000`, and every history in `runs/v2/` came out in identical pairs
+(`solve_doorkey` seed 42: 20, 20, 50, 50). That node was declared STABLE after **one** gradient update,
+on one policy scored twice. The amendment makes the floor explicit and checkable, and
+`EvaluationCallback` enforces it rather than trusting the caller.
 
 **Why the extra bound [A: F11].** At p = 0.90 and N = 50 the estimate has σ ≈ 0.042. "≥ 0.90 twice in a
 row" with freshly sampled eval seeds is selection on noise: it stops on a lucky pair. Fixing the seed
@@ -388,6 +400,14 @@ stopping, and both numbers go in `meta.json`. Only the second is quoted as the n
 Why the old rule had to go: MiniGrid's reward depends on path length. In environments with random start and goal positions (FourRooms), a policy that succeeds 100 % of the time typically still has reward std above 0.05, because path lengths differ from episode to episode, so the old rule can be impossible to satisfy regardless of learning quality. The PN-4 FourRooms run also used a relaxed 0.75 threshold in `train_pn4.py` while docs said 0.85; v2 retires both numbers.
 
 The thresholds (0.90, two evaluations, N = 50) are defaults, fixed per experiment and reported 🧪. The same rule applies to primitive and composite nodes.
+
+**Composites train at `n_steps = 64` (amended 2026-10-02, H-6.8).** A composite's unit of experience is
+an SMDP decision, and a whole episode is only a handful of them — `{2,1} solve_doorkey` averages 2
+decisions per episode — so `n_steps = 256 × 8 envs` buys one gradient update per 2,048 decisions and a
+20,000-decision budget is ten updates in total. At `n_steps = 64` one update costs 512 decisions, which
+makes a comparable budget ~100 updates and `eval_every = 512` the smallest value §5.3's floor permits.
+Primitives keep `n_steps = 256`: their unit is an env step and the same budget already buys hundreds of
+updates. The numbers are experiment parameters and go in each run's `meta.json` as usual.
 
 ### 5.4 Freezing and execution mode 🔒
 
@@ -574,9 +594,41 @@ not only from hook states.
 |---|---|---|---|---|---|
 | T10a | `{0,6} get_key_yellow` | primitive (I: carrying nothing) | — | DoorKey-6x6 + two-key hook | agent carries a **yellow** key |
 | T10b | `{0,7} get_key_blue` | primitive (I: carrying nothing) | — | DoorKey-6x6 + two-key hook | agent carries a **blue** key |
-| T11 | `{1,2} unlock_matching` | composite (I: door locked, carrying nothing) | T10a, T10b, T2 | DoorKey-6x6 + two-key hook | door open |
+| T11 | `{1,2} unlock_matching` | composite (I: door locked, carrying nothing) | T10a, T10b, **T12** | DoorKey-6x6 + two-key hook | door open |
+| T12 | `{0,8} open_door_tk` | primitive (I: carrying key) | — | DoorKey-6x6 + two-key hook + a key in hand | door open |
 | — | `{0,B} flat_doorkey_ppo` | primitive, **baseline only** | — | `MiniGrid-DoorKey-6x6-v0` | agent on goal tile |
 | — | `{1,B} flat_doorkey_options` | composite, **baseline only** | T1, T2, T4 | `MiniGrid-DoorKey-6x6-v0` | agent on goal tile |
+
+**T12 exists because T2 does not transfer here (amended 2026-10-02, H-6.8).** `{0,2} open_door` scores
+1.00 on its own hook distribution and **0.83** in the two-key env from the state the key primitives
+actually leave — a key in hand, a *second* key still on the floor, and a blue door half the time. It
+had never seen a spare key lying around. Per F29 and the H-6 plan's A4 branch the response is a new
+node trained on the parent's own distribution, never a modification of T2: `{0,8} open_door_tk` scores
+**0.98** from the same handoff. T2 stays frozen and untouched, and the pair is reported as the transfer
+measurement it is.
+
+**A reset hook's spec string must change whenever its behaviour does (amended 2026-10-02, H-6.8).**
+`spec_hash` covers a hook's *name*, not its implementation [A: F18], so tightening a hook's rules
+leaves every existing checkpoint loadable while the distribution it was trained on has silently
+changed. Nothing detects this automatically. The convention is a suffix naming the rule, as in
+`place_two_keys:yellow|blue:door_clear`, and it is the author's responsibility on every hook edit.
+
+**A hook may reject a layout, and the env resamples (amended 2026-10-02, H-6.8).** A hook defines a
+node's initial-condition distribution and some randomly generated layouts cannot satisfy it. Raising
+`UnsuitableLayout` makes `SubgoalEnv.reset` and `ResetHookEnv.reset` draw the next layout, up to
+`max_reset_tries`; the retry stream is seeded by the episode's seed, so episodes stay reproducible.
+This is distinct from a `RuntimeError`, which means the hook itself is wrong. It is needed because
+DoorKey-6x6 draws its splitting wall at x = 2 or x = 3, so the left room is sometimes a single column
+of four cells in which two keys cannot both be independently reachable.
+
+**Episodes no policy can solve must be excluded before any plateau is interpreted
+(amended 2026-10-02, H-6.8).** Two bugs in the two-key hook produced unsolvable episodes and both were
+first misread as learning limits, at a cost of roughly 1.3 M env steps. MiniGrid `toggle` acts on
+`front_pos` and DoorKey's door sits in a vertical wall, so exactly one cell on the agent's side can
+open it: a key *on* that cell made 59 of 400 layouts (14.7 %) unopenable, and a key *between the agent
+and* that cell made 3 of the 50 stopping seeds and 4 of the 50 held-out seeds unopenable — which is
+exactly the gap between `{0,8} open_door_tk`'s 0.94 stopping score and the 0.84 it generalized to.
+Before concluding that a node has hit a ceiling, audit both fixed seed sets for solvability.
 
 The two-key hook recolours the DoorKey door and its key to one of two colours drawn per episode, adds a decoy key of the other colour, randomizes the agent's position, and faces the agent so the door is inside its 7×7 view. It is built from reset hooks only — no new env class — so it inherits `spec_hash` coverage and seed reproducibility. `Door.toggle` opens a locked door only for a key of the matching colour, and MiniGrid `pickup` needs an empty hand, so a wrong first pick is unrecoverable within the episode: the choice separates success rate, not merely episode length. Facing is pinned because the door is inside the agent's view in only 163/300 resets with a random facing and 300/300 facing the door (measured on minigrid 3.1.0) — a feedforward policy cannot condition on a signal it cannot see, and without this the experiment would measure partial observability instead of composition.
 
@@ -705,3 +757,17 @@ Each follows from a measurement taken after H-5, not from a preference. Full rat
 | C1 = `solve_doorkey` vs flat baselines | C1 also runs `{1,2} unlock_matching`, a task with a genuine choice | On a strict-order task the initiation mask *is* the ordering constraint, so success rate cannot separate composition from masking — measured, not conjectured |
 | "env-step counts include steps inside frozen children" | Three named fields: `env_steps_own`, `env_steps_children`, `env_steps_total`, all three reported | The amortized and from-scratch framings of a composite's cost are both legitimate and must not be allowed to drift |
 | §11 node table ends at T9b | Adds T10a, T10b, T11 and two explicitly non-curriculum baseline nodes | The choice task needs colour-specific key primitives; baselines need node ids but must never be reusable children |
+
+### Amendments applied 2026-10-02 (H-6.8)
+
+Each comes from an advisor review of the H-6 run against `runs/v2/`. Rationale in
+`plans/2026-10-02_H6_summary.md` § "Corrections (H-6.8)".
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| "two consecutive evaluations" | plus `eval_every ≥ n_steps × n_envs`, enforced by `EvaluationCallback` | With a smaller `eval_every` the two evaluations are the same network on the same seeds, so the rule became "one evaluation counted twice". Every H-6 composite history is identical pairs, and `solve_doorkey` was declared STABLE after one gradient update |
+| one `n_steps` for every node | composites use `n_steps = 64`, primitives keep 256 | A composite's unit is an SMDP decision and an episode is ~2 of them; 256 × 8 bought 10 updates in a 20,000-decision budget |
+| §11 lists T11's children as T10a, T10b, T2 | T10a, T10b, **T12** `{0,8} open_door_tk`, with T12 added to the table | T2 scores 0.83 from the two-key handoff, below the 0.90 gate, so the A4 branch applied |
+| `spec_hash` silently covers a hook by name | a hook's spec string must change whenever its behaviour does | Tightening `place_two_keys` left every checkpoint loadable while its distribution had changed |
+| a hook either works or raises | a hook may raise `UnsuitableLayout` and the env resamples | Some randomly generated layouts cannot host a node's initial conditions |
+| — | audit both fixed seed sets for solvability before reading a plateau as a learning limit | Two hook bugs produced unsolvable episodes and cost ~1.3 M env steps misdiagnosed |

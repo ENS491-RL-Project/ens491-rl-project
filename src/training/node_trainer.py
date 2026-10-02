@@ -184,6 +184,15 @@ def pooled_eval_fn(
 #   is zero until the key is picked up or the door opens.
 # n_steps=256 x 8 envs = 2048 per update (~290 updates in the same budget) and
 # ent_coef=0.01 is the usual MiniGrid setting.
+# [H-6.8] Composites override n_steps to 64 (v2 §5.3). A composite's unit of
+# experience is an SMDP decision and a whole episode is a handful of them --
+# solve_doorkey averages 2 -- so 256 x 8 envs buys ONE gradient update per 2,048
+# decisions, and H-6's 20,000-decision budget was ten updates in total. At 64 an
+# update costs 512 decisions, which is also the smallest eval_every §5.3's floor
+# allows. Primitives keep 256: their unit is an env step and the same budget
+# already buys hundreds of updates.
+COMPOSITE_N_STEPS = 64
+
 PPO_DEFAULTS = dict(
     n_steps=256,
     batch_size=256,
@@ -258,6 +267,7 @@ def train_primitive(
                                n_episodes=n_eval, normalize=normalize),
         eval_every=eval_every,
         criterion=criterion,
+        update_every=ppo_kwargs["n_steps"] * n_envs,   # [H-6.8] v2 §5.3 floor
         verbose=verbose,
     )
 
@@ -429,6 +439,7 @@ def train_composite(
     initiation_masking: bool = False,
     ppo_overrides: Optional[dict] = None,
     criterion: Optional[StabilityCriterion] = None,
+    extra_metrics: Optional[Callable[[], dict]] = None,
     verbose: int = 0,
 ) -> tuple[dict, object]:
     """
@@ -460,6 +471,8 @@ def train_composite(
     ])
 
     ppo_kwargs = dict(PPO_DEFAULTS)
+    ppo_kwargs["n_steps"] = COMPOSITE_N_STEPS          # [H-6.8] v2 §5.3
+    ppo_kwargs["batch_size"] = COMPOSITE_N_STEPS
     ppo_kwargs.update(ppo_overrides or {})
     model = MaskablePPO("MlpPolicy", vec, seed=seed, device=dev, verbose=0, **ppo_kwargs)
     node.policy = CompositePolicyAdapter(model.policy)
@@ -474,7 +487,10 @@ def train_composite(
     )
     callback = EvaluationCallback(
         node, env_factory=None, eval_fn=eval_fn,
-        eval_every=eval_every, criterion=criterion, verbose=verbose,
+        eval_every=eval_every, criterion=criterion,
+        update_every=ppo_kwargs["n_steps"] * n_envs,   # [H-6.8] v2 §5.3 floor
+        extra_metrics=extra_metrics,
+        verbose=verbose,
     )
 
     t0 = time.perf_counter()
@@ -511,6 +527,8 @@ def train_composite(
         "env_steps_per_decision": (
             round(env_steps_own / decisions, 2) if decisions else None
         ),
+        "decisions_per_update": ppo_kwargs["n_steps"] * n_envs,
+        "policy_updates": decisions // (ppo_kwargs["n_steps"] * n_envs),
         "env_steps_children": children_env_steps(node),
         "env_steps_total": env_steps_own + children_env_steps(node),
         "wall_seconds": round(wall, 1),
@@ -522,6 +540,7 @@ def train_composite(
             len(criterion.history) * eval_every if criterion.is_stable else None
         ),
         "criterion": criterion.as_dict(),
+        "eval_extra": callback.extra_history,
     }
     if criterion.is_stable:
         node.status = NodeStatus.STABLE

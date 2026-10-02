@@ -37,7 +37,12 @@ from src.training.node_trainer import (  # noqa: E402
     pooled_eval_fn,
 )
 from src.types import NodeStatus  # noqa: E402
-from train_choice_task import COLORS, build_t11, choice_specs  # noqa: E402
+from train_choice_task import (  # noqa: E402
+    COLORS,
+    build_t11,
+    choice_specs,
+    open_door_tk_spec,
+)
 from train_primitives import DOORKEY, UNLOCK, build_node, specs  # noqa: E402
 from train_solve_doorkey import build_t5  # noqa: E402
 from train_unlock_door import build_t3  # noqa: E402
@@ -60,6 +65,10 @@ def main() -> int:
     # ---- primitives ---------------------------------------------------
     all_specs = dict(specs())
     all_specs.update(choice_specs())
+    # [H-6.8] open_door_tk is FROZEN and was missing from this sweep, so the
+    # harness reported 7 of 8 nodes and called it 7 of 7. It is not in
+    # choice_specs() because it has its own env list and hook.
+    all_specs["open_door_tk"] = open_door_tk_spec()
     for name, spec in all_specs.items():
         try:
             node, env_ids, hook = primitive(registry, name, spec)
@@ -78,10 +87,10 @@ def main() -> int:
         composites.append((t3, [UNLOCK], NO_HOOK))
         if "go_to_goal" in nodes:
             composites.append((build_t5(t3, nodes["go_to_goal"]), [DOORKEY], NO_HOOK))
-    if {"get_key_yellow", "get_key_blue", "open_door"} <= set(nodes):
+    if {"get_key_yellow", "get_key_blue", "open_door_tk"} <= set(nodes):
         composites.append((
             build_t11([nodes["get_key_yellow"], nodes["get_key_blue"],
-                       nodes["open_door"]]),
+                       nodes["open_door_tk"]]),
             [DOORKEY], two_keys(COLORS),
         ))
 

@@ -5,7 +5,8 @@ Target Architecture v2 §5.3, as amended.
 
     Every `eval_every` steps, run N=50 episodes in execution mode on a FIXED seed
     set. A node is STABLE when, in two consecutive evaluations, the success rate
-    is >= 0.90 AND its Wilson 95% lower bound is >= 0.80.
+    is >= 0.90 AND its Wilson 95% lower bound is >= 0.80, and the two
+    evaluations are at least one policy update apart.
 
 [A: F11] Both halves of that matter. With freshly drawn eval seeds the rule is
 selection on noise (sigma ~ 0.042 at p=0.90, N=50) and stops on a lucky pair, so
@@ -15,6 +16,16 @@ bound of 0.85 would silently have demanded 48/50, which is not what "0.90" means
 
 The score quoted for a node is the one on a SECOND seed set that is never used
 for stopping -- the stopping set is optimistically biased by construction.
+
+[H-6.8] "Two consecutive evaluations" needs a floor: `eval_every` must be at
+least one PPO rollout, `n_steps * n_envs`. Below that the two evaluations score
+the SAME network, and on a fixed seed set in deterministic execution mode the
+second is a bit-exact copy of the first -- so the rule collapses into "one
+evaluation, counted twice", which is exactly the binomial-noise exposure the
+Wilson bound was added to remove. H-6 ran composites at 2,048 decisions per
+update with `eval_every=1,000` and every recorded history came out in identical
+pairs; `{2,1} solve_doorkey` was declared STABLE after one gradient update.
+`EvaluationCallback` now enforces the floor instead of trusting the caller.
 
 This replaces `StabilizationMonitor` (reward mean > 0.85, std < 0.05), which
 MiniGrid's path-length-dependent reward can make unsatisfiable regardless of how
@@ -288,11 +299,32 @@ class EvaluationCallback(BaseCallback):
         n_episodes: int = DEFAULT_N_EVAL,
         criterion: Optional[StabilityCriterion] = None,
         execution_mode: str = DETERMINISTIC,
+        update_every: Optional[int] = None,
+        extra_metrics: Optional[Callable[[], dict]] = None,
         verbose: int = 1,
     ) -> None:
         super().__init__(verbose)
         if env_factory is None and eval_fn is None:
             raise ValueError("EvaluationCallback needs env_factory or eval_fn")
+        # [H-6.8] v2 §5.3: two consecutive evaluations must be at least one
+        # policy update apart, or they score the same network twice. `n_consecutive`
+        # of 1 opts out, since then "consecutive" means nothing anyway.
+        if (update_every is not None and criterion is not None
+                and criterion.n_consecutive > 1 and eval_every < update_every):
+            raise ValueError(
+                f"eval_every={eval_every} is smaller than one policy update "
+                f"({update_every} steps): {criterion.n_consecutive} 'consecutive' "
+                f"evaluations would score the same network. v2 §5.3 requires "
+                f"eval_every >= n_steps * n_envs."
+            )
+        self.update_every = update_every
+        # [H-6.8] Per-evaluation diagnostics recorded beside the success rate.
+        # The choice task needs first-key accuracy by door colour AT EVERY
+        # evaluation, not only at the end: a policy that converges to
+        # 'always yellow' and one that is still exploring look identical in the
+        # success rate alone.
+        self.extra_metrics = extra_metrics
+        self.extra_history: list[dict] = []
         self.node = node
         self.env_factory = env_factory
         self.eval_fn = eval_fn
@@ -311,6 +343,13 @@ class EvaluationCallback(BaseCallback):
                 n_episodes=self.n_episodes, execution_mode=self.execution_mode,
             )
         stable = self.criterion.update(result)
+        if self.extra_metrics is not None:
+            extra = dict(self.extra_metrics())
+            # num_timesteps reads through self.model, which only exists once the
+            # callback is attached to a trainer.
+            extra['at_steps'] = int(getattr(self, 'model', None) and self.num_timesteps or 0)
+            extra['success_rate'] = round(result.success_rate, 4)
+            self.extra_history.append(extra)
         if self.verbose:
             print(
                 f"  [{self.num_timesteps:>8}] {self.node.id}: {result}"
@@ -318,7 +357,10 @@ class EvaluationCallback(BaseCallback):
                 f"{' -> STABLE' if stable else ''}",
                 flush=True,
             )
-        if self.logger is not None:
+        # `logger` reads through `self.model`, which only exists once SB3 has
+        # attached this callback to a trainer. Unit tests drive _run_eval()
+        # directly, so this cannot assume it is there.
+        if getattr(self, 'model', None) is not None and self.logger is not None:
             self.logger.record("eval/success_rate", result.success_rate)
             self.logger.record("eval/wilson_lower", result.wilson_lower)
             self.logger.record("eval/mean_length", result.mean_length)

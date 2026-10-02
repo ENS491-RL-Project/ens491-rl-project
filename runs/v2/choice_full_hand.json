@@ -1,0 +1,64 @@
+{
+  "n_eval": 50,
+  "env_id": "MiniGrid-DoorKey-6x6-v0",
+  "hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door+give_key_of:decoy",
+  "seed_base": 20000,
+  "children": [
+    {
+      "id": "{0,6} get_key_yellow",
+      "spec_hash": "d5d8cec8c48fe728"
+    },
+    {
+      "id": "{0,7} get_key_blue",
+      "spec_hash": "5d981c88fd65b0bf"
+    },
+    {
+      "id": "{0,8} open_door_tk",
+      "spec_hash": "b1f8d1a511fa44b0"
+    }
+  ],
+  "rows": [
+    {
+      "label": "get_key_<matching> while holding the DECOY key",
+      "episodes": 50,
+      "actions": {
+        "left": 313,
+        "right": 403,
+        "forward": 78,
+        "pickup": 163,
+        "drop": 167
+      },
+      "action_share": {
+        "left": 0.2785,
+        "right": 0.3585,
+        "forward": 0.0694,
+        "pickup": 0.145,
+        "drop": 0.1486
+      },
+      "ended_empty_handed": 4,
+      "swapped_to_the_matching_key": 43,
+      "swap_rate": 0.86,
+      "door_opened": 0
+    },
+    {
+      "label": "open_door_tk while holding the WRONG key",
+      "episodes": 50,
+      "actions": {
+        "left": 33,
+        "right": 39,
+        "forward": 250,
+        "toggle": 2678
+      },
+      "action_share": {
+        "left": 0.011,
+        "right": 0.013,
+        "forward": 0.0833,
+        "toggle": 0.8927
+      },
+      "ended_empty_handed": 0,
+      "swapped_to_the_matching_key": 0,
+      "swap_rate": 0.0,
+      "door_opened": 0
+    }
+  ]
+}

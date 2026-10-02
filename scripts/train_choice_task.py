@@ -96,10 +96,6 @@ KEY_TIMEOUT = 120
 
 GATE = 0.90
 
-# A per-node stopping rule, recorded in the node's meta.json. See
-# open_door_tk_spec() for why this node needs one.
-STRICT_STOP = dict(min_success_rate=0.94, min_wilson_lower=0.85, n_consecutive=3)
-
 
 def choice_specs():
     """
@@ -152,15 +148,23 @@ def open_door_tk_spec():
     response is the plan's other prescribed one -- train inside the parent's own
     env with the parent's reset distribution -- plus a stricter stop.
 
-    Held to the project's **standard** stopping rule, not a stricter one. A
-    stricter rule (STRICT_STOP below) was tried and abandoned: this node plateaus
-    at exactly 46/50 on the stopping seeds, so 0.94-three-times is simply never
-    reached and a 600k-step run ends with nothing frozen. The residual 4 failures
-    are not the blocked-door-approach bug either -- that bug was real, cost ~15%
-    of layouts, and is fixed in place_two_keys, but the plateau is identical with
-    and without it. Freezing at 0.92 with the standard rule and reporting the
-    held-out number is the honest option; inventing a threshold this node happens
-    to clear would not be.
+    Held to the project's standard stopping rule.
+
+    [H-6.8] An earlier version of this docstring claimed the 0.92 plateau was a
+    genuine ceiling and survived the layout fixes. That was wrong, and the
+    summary's deviation 2b has the right account. There were TWO layout bugs in
+    `place_two_keys`, found in sequence, and the plateau tracked them exactly:
+
+      * a key could land ON the door's only approach cell (14.7% of layouts);
+      * a key could land BETWEEN the agent and that cell, blocking the path
+        without occupying it (3 of 50 stopping seeds, 4 of 50 held-out).
+
+    After the first fix the node still plateaued at 46/50 -- which is what the
+    stale claim was based on -- because the second bug was still there, and 3
+    unsolvable stopping seeds cap the score at exactly 47/50. With both fixed it
+    trains to 1.00 on the stopping seeds and 0.94 held-out in 100k steps. A
+    stricter stopping rule was tried in between and abandoned; it was chasing the
+    bug, not a threshold.
     """
     return dict(
         node_id="{0,8} open_door_tk", m=8,
@@ -500,9 +504,14 @@ def first_decision_accuracy(node, hook, seeds) -> dict:
     Two of the three children are keys and one is the door opener, and those
     carry completely different consequences:
 
-      * picking the WRONG KEY is fatal. `pickup` needs an empty hand and
-        `open_door_tk` never drops -- verified, 0 of 50 episodes ended with an
-        empty hand and 92% of its actions are `toggle` -- so the episode is lost.
+      * picking the WRONG KEY was *designed* to be fatal, and is not.
+        `open_door_tk` indeed never drops (0 of 50 episodes end empty-handed,
+        89% of its actions are `toggle`), but the OTHER key primitive does: asked
+        for the matching key while holding the decoy, `get_key_<matching>` drops
+        and swaps in 43 of 50 episodes. See `scripts/eval_full_hand.py` and
+        `runs/v2/choice_full_hand.json`. So a wrong key costs a detour, not the
+        episode, and that recovery path accounts for the composite's whole
+        apparent advantage over the controls.
       * picking the OPENER while empty-handed is merely wasteful. `toggle` does
         nothing without a key, the child times out after its 60 steps, and the
         parent chooses again with the state unchanged.

@@ -217,3 +217,93 @@ def test_requesting_a_missing_device_raises_rather_than_falling_back():
 def test_unknown_device_rejected():
     with pytest.raises(ValueError):
         resolve_device("tpu")
+
+
+# --------------------------------------------------------------------------
+# H-6.8: "two consecutive evaluations" needs a floor of one policy update
+# --------------------------------------------------------------------------
+
+def _dummy_node():
+    from src.skills.node import SkillNode
+
+    return SkillNode("{0,t} t", timeout=10)
+
+
+def test_eval_every_below_one_policy_update_is_refused():
+    """
+    v2 §5.3, amended. With `eval_every` smaller than one PPO rollout the two
+    "consecutive" evaluations score the SAME network, and on a fixed seed set in
+    deterministic execution mode the second is a bit-exact copy of the first --
+    so the criterion degenerates into one measurement counted twice, which is
+    precisely the binomial-noise exposure the Wilson bound exists to remove.
+
+    This is not hypothetical: every composite history in H-6 came out in
+    identical pairs, and `{2,1} solve_doorkey` was declared STABLE after one
+    gradient update.
+    """
+    from src.training.evaluation import EvaluationCallback, StabilityCriterion
+
+    with pytest.raises(ValueError, match="smaller than one policy update"):
+        EvaluationCallback(
+            _dummy_node(),
+            eval_fn=lambda: EvalResult(50, 50, 1.0, 10_000),
+            eval_every=1_000,
+            criterion=StabilityCriterion(),
+            update_every=2_048,
+        )
+
+
+def test_eval_every_at_exactly_one_policy_update_is_allowed():
+    from src.training.evaluation import EvaluationCallback, StabilityCriterion
+
+    cb = EvaluationCallback(
+        _dummy_node(),
+        eval_fn=lambda: EvalResult(50, 50, 1.0, 10_000),
+        eval_every=512,
+        criterion=StabilityCriterion(),
+        update_every=512,
+    )
+    assert cb.update_every == 512
+
+
+def test_a_single_evaluation_criterion_opts_out_of_the_floor():
+    """`n_consecutive=1` makes "consecutive" vacuous, so the floor is moot."""
+    from src.training.evaluation import EvaluationCallback, StabilityCriterion
+
+    cb = EvaluationCallback(
+        _dummy_node(),
+        eval_fn=lambda: EvalResult(50, 50, 1.0, 10_000),
+        eval_every=10,
+        criterion=StabilityCriterion(n_consecutive=1),
+        update_every=2_048,
+    )
+    assert cb.eval_every == 10
+
+
+def test_extra_metrics_are_recorded_per_evaluation():
+    """
+    The choice task needs first-key accuracy by door colour at EVERY evaluation:
+    a policy converging to "always yellow" and one still exploring are
+    indistinguishable in the success rate alone.
+    """
+    from src.training.evaluation import EvaluationCallback, StabilityCriterion
+
+    calls = {"n": 0}
+
+    def metrics():
+        calls["n"] += 1
+        return {"probe": calls["n"]}
+
+    cb = EvaluationCallback(
+        _dummy_node(),
+        eval_fn=lambda: EvalResult(50, 40, 1.0, 10_000),
+        eval_every=512,
+        criterion=StabilityCriterion(),
+        update_every=512,
+        extra_metrics=metrics,
+        verbose=0,
+    )
+    cb._run_eval()
+    cb._run_eval()
+    assert [e["probe"] for e in cb.extra_history] == [1, 2]
+    assert all("success_rate" in e and "at_steps" in e for e in cb.extra_history)
