@@ -1,0 +1,224 @@
+{
+  "which": "ppo",
+  "task": "unlock",
+  "seed": 42,
+  "env_id": "MiniGrid-Unlock-v0",
+  "budget": 1500000,
+  "eval_every": 50000,
+  "report": {
+    "node_id": "{0,B} flat_unlock_ppo",
+    "env_ids": [
+      "MiniGrid-Unlock-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 240,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 50000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget": 1500000,
+    "steps_trained": 450000,
+    "wall_seconds": 1261.4,
+    "steps_per_second": 356.8,
+    "stable": true,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 0,
+          "success_rate": 0.0,
+          "wilson_lower": 0.0,
+          "wilson_upper": 0.0713,
+          "mean_length": 240.0,
+          "seed_base": 10000,
+          "timeouts": 50,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 0,
+          "success_rate": 0.0,
+          "wilson_lower": 0.0,
+          "wilson_upper": 0.0713,
+          "mean_length": 240.0,
+          "seed_base": 10000,
+          "timeouts": 50,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 1,
+          "success_rate": 0.02,
+          "wilson_lower": 0.0035,
+          "wilson_upper": 0.105,
+          "mean_length": 235.46,
+          "seed_base": 10000,
+          "timeouts": 49,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 3,
+          "success_rate": 0.06,
+          "wilson_lower": 0.0206,
+          "wilson_upper": 0.1622,
+          "mean_length": 226.48,
+          "seed_base": 10000,
+          "timeouts": 47,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 16,
+          "success_rate": 0.32,
+          "wilson_lower": 0.2076,
+          "wilson_upper": 0.4581,
+          "mean_length": 168.56,
+          "seed_base": 10000,
+          "timeouts": 34,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 37,
+          "success_rate": 0.74,
+          "wilson_lower": 0.6045,
+          "wilson_upper": 0.8413,
+          "mean_length": 74.02,
+          "seed_base": 10000,
+          "timeouts": 13,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 42,
+          "success_rate": 0.84,
+          "wilson_lower": 0.7149,
+          "wilson_upper": 0.9166,
+          "mean_length": 48.52,
+          "seed_base": 10000,
+          "timeouts": 8,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 11.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 48,
+          "success_rate": 0.96,
+          "wilson_lower": 0.8654,
+          "wilson_upper": 0.989,
+          "mean_length": 20.6,
+          "seed_base": 10000,
+          "timeouts": 2,
+          "reselections": 0
+        }
+      ]
+    },
+    "env_steps_own": 450000,
+    "env_steps_children": 0,
+    "env_steps_total": 450000,
+    "curve": [
+      {
+        "x_env_steps": 50000,
+        "x_native": 50000,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "mean_length": 240.0
+      },
+      {
+        "x_env_steps": 100000,
+        "x_native": 100000,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "mean_length": 240.0
+      },
+      {
+        "x_env_steps": 150000,
+        "x_native": 150000,
+        "success_rate": 0.02,
+        "wilson_lower": 0.0035,
+        "mean_length": 235.46
+      },
+      {
+        "x_env_steps": 200000,
+        "x_native": 200000,
+        "success_rate": 0.06,
+        "wilson_lower": 0.0206,
+        "mean_length": 226.48
+      },
+      {
+        "x_env_steps": 250000,
+        "x_native": 250000,
+        "success_rate": 0.32,
+        "wilson_lower": 0.2076,
+        "mean_length": 168.56
+      },
+      {
+        "x_env_steps": 300000,
+        "x_native": 300000,
+        "success_rate": 0.74,
+        "wilson_lower": 0.6045,
+        "mean_length": 74.02
+      },
+      {
+        "x_env_steps": 350000,
+        "x_native": 350000,
+        "success_rate": 0.84,
+        "wilson_lower": 0.7149,
+        "mean_length": 48.52
+      },
+      {
+        "x_env_steps": 400000,
+        "x_native": 400000,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "mean_length": 11.76
+      },
+      {
+        "x_env_steps": 450000,
+        "x_native": 450000,
+        "success_rate": 0.96,
+        "wilson_lower": 0.8654,
+        "mean_length": 20.6
+      }
+    ],
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 48,
+      "success_rate": 0.96,
+      "wilson_lower": 0.8654,
+      "wilson_upper": 0.989,
+      "mean_length": 20.58,
+      "seed_base": 20000,
+      "timeouts": 2,
+      "reselections": 0
+    }
+  }
+}

@@ -3,7 +3,7 @@
 > Technical memory of the project: current status, open empirical questions, and where each roadmap task stands.
 > **Design decisions live in `ENS491_Target_Architecture_v2.md`**, not here. This file only tracks state.
 >
-> Last updated: 2026-10-02 (H-6 complete; H-6.8 corrections applied after advisor review).
+> Last updated: 2026-10-02 (H-6.9 diagnosis; H-7 started and stopped at H-7.3 on plan assumption A2).
 
 ---
 
@@ -113,7 +113,8 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ✅ 2026-10-01 — all three FROZEN; held-out 1.00 / 1.00 / 0.92; F29 gate passed after retraining go_to_goal |
 | H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ✅ 2026-10-01 — `{1,1} unlock_door` FROZEN, held-out 0.98 in 6k decisions; both C1 controls run |
 | H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ✅ 2026-10-02 — `{2,1} solve_doorkey` FROZEN, held-out **1.00** on 3 seeds, depth-3 stack confirmed. Flat PPO 300–450k env steps vs the composite's **~53k own / ~664k with children** (H-6.8 figures). The genuine-choice task gives a **negative** result after 100 policy updates (§4 of the summary) |
-| H-7 | T6–T9b reuse and depth experiment | 8 | ⬜ Next — plan at `plans/2026-10-02_H7_plan.md`; §7 of the H-6 summary lists eight pre-flight checks H-6/H-6.8 showed are needed, and two of its figures need updating (`solve_doorkey` ~53k own / ~664k total) |
+| H-7 | T6–T9b reuse and depth experiment | 8 | ⛔ **Stopped at H-7.3** (2026-10-02). H-7.0–H-7.2 done: v2 amended (Part A), pre-flight passed (V1–V7 reproduce; 0/500 unsolvable layouts; A1 `unlock_door` transfers to UnlockPickup at **0.98**), nine flat baselines launched. `{0,4} pickup_box` **not stable in 600,000 env steps on any seed** (held-out 0.28 / 0.40 / 0.24, still rising) — plan A2 is a stop. Flat PPO on Unlock: STABLE at 350–450k. See `plans/2026-10-02_H7_summary.md` |
+| H-6.9 | Why the choice selector did not learn | 1 | ✅ 2026-10-02 — task built as designed (400/400); the selector's network reads the door colour supervised at 0.940 from 1,000 examples and 0.997 from 4,000; between the pre-set thresholds, so no verdict. H-6 summary §10 |
 | H-6.8 | Advisor corrections to H-6: fair choice run, distinct-policy evaluations, stale numbers | 3 | ✅ 2026-10-02 — v2 §5.3 gets an `eval_every` floor; composites move to `n_steps = 64`; choice task rerun at 100 updates (A5 fails, reported); `{0,2} open_door` re-measured at 0.83; regression 8 of 8. H-6 summary §9 |
 
 ### Track C — Continual learning / PN
