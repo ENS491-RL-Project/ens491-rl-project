@@ -1,0 +1,363 @@
+{
+  "rows": [
+    {
+      "task": "Unlock",
+      "status": "run",
+      "hierarchy_nodes": {
+        "{0,1} get_key": {
+          "source": "runs/v2/0-1_get_key/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 180000,
+              "stable": true
+            }
+          },
+          "min": 180000,
+          "max": 180000,
+          "lower_bound": false
+        },
+        "{0,2} open_door": {
+          "source": "runs/v2/0-2_open_door/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 100000,
+              "stable": true
+            }
+          },
+          "min": 100000,
+          "max": 100000,
+          "lower_bound": false
+        },
+        "{1,1} unlock_door (re-measured, n_steps 64)": {
+          "source": "runs/v2/unlock_door_h7_s{42,43,44}.json env_steps_own",
+          "per_seed": {
+            "42": {
+              "steps": 34877,
+              "stable": true
+            },
+            "43": {
+              "steps": 32869,
+              "stable": true
+            },
+            "44": {
+              "steps": 33369,
+              "stable": true
+            }
+          },
+          "min": 32869,
+          "max": 34877,
+          "lower_bound": false
+        }
+      },
+      "hierarchy_marginal": {
+        "min": 312869,
+        "max": 314877,
+        "lower_bound": false
+      },
+      "hierarchy_cumulative": {
+        "min": 312869,
+        "max": 314877,
+        "lower_bound": false
+      },
+      "flat_ppo": {
+        "source": "runs/v2/flat_unlock_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 450000,
+            "stable": true
+          },
+          "43": {
+            "steps": 350000,
+            "stable": true
+          },
+          "44": {
+            "steps": 450000,
+            "stable": true
+          }
+        },
+        "min": 350000,
+        "max": 450000,
+        "lower_bound": false,
+        "best_stopping_sr": {
+          "42": 1.0,
+          "43": 1.0,
+          "44": 1.0
+        },
+        "budget": 1500000
+      },
+      "flat_cumulative": {
+        "source": "runs/v2/flat_unlock_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 450000,
+            "stable": true
+          },
+          "43": {
+            "steps": 350000,
+            "stable": true
+          },
+          "44": {
+            "steps": 450000,
+            "stable": true
+          }
+        },
+        "min": 350000,
+        "max": 450000,
+        "lower_bound": false,
+        "best_stopping_sr": {
+          "42": 1.0,
+          "43": 1.0,
+          "44": 1.0
+        },
+        "budget": 1500000
+      },
+      "display": {
+        "hierarchy_marginal": "312,869 - 314,877",
+        "hierarchy_cumulative": "312,869 - 314,877",
+        "flat_ppo": "350,000 - 450,000",
+        "flat_cumulative": "350,000 - 450,000"
+      }
+    },
+    {
+      "task": "DoorKey-6x6",
+      "status": "run",
+      "hierarchy_nodes": {
+        "{0,3} go_to_goal": {
+          "source": "runs/v2/0-3_go_to_goal/meta.json",
+          "per_seed": {
+            "42": {
+              "steps": 200000,
+              "stable": true
+            }
+          },
+          "min": 200000,
+          "max": 200000,
+          "lower_bound": false
+        },
+        "{2,1} solve_doorkey (H-6.8, n_steps 64)": {
+          "source": "runs/v2/solve_doorkey_h68_s{42,43,44}.json env_steps_own",
+          "per_seed": {
+            "42": {
+              "steps": 55659,
+              "stable": true
+            },
+            "43": {
+              "steps": 48887,
+              "stable": true
+            },
+            "44": {
+              "steps": 53930,
+              "stable": true
+            }
+          },
+          "min": 48887,
+          "max": 55659,
+          "lower_bound": false
+        }
+      },
+      "hierarchy_marginal": {
+        "min": 248887,
+        "max": 255659,
+        "lower_bound": false
+      },
+      "hierarchy_cumulative": {
+        "min": 561756,
+        "max": 570536,
+        "lower_bound": false
+      },
+      "flat_ppo": {
+        "source": "runs/v2/flat_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 450000,
+            "stable": true
+          },
+          "43": {
+            "steps": 350000,
+            "stable": true
+          },
+          "44": {
+            "steps": 300000,
+            "stable": true
+          }
+        },
+        "min": 300000,
+        "max": 450000,
+        "lower_bound": false,
+        "best_stopping_sr": {
+          "42": 1.0,
+          "43": 1.0,
+          "44": 1.0
+        },
+        "budget": 1500000
+      },
+      "flat_cumulative": {
+        "min": 650000,
+        "max": 900000,
+        "lower_bound": false
+      },
+      "display": {
+        "hierarchy_marginal": "248,887 - 255,659",
+        "hierarchy_cumulative": "561,756 - 570,536",
+        "flat_ppo": "300,000 - 450,000",
+        "flat_cumulative": "650,000 - 900,000"
+      }
+    },
+    {
+      "task": "UnlockPickup",
+      "status": "run",
+      "hierarchy_nodes": {
+        "{0,9} drop_held": {
+          "source": "runs/v2/drop_held_s{42,43,44}.json steps_trained",
+          "per_seed": {
+            "42": {
+              "steps": 30000,
+              "stable": true
+            },
+            "43": {
+              "steps": 30000,
+              "stable": true
+            },
+            "44": {
+              "steps": 30000,
+              "stable": true
+            }
+          },
+          "min": 30000,
+          "max": 30000,
+          "lower_bound": false
+        },
+        "{0,4} pickup_box (specification 2)": {
+          "source": "runs/v2/pickup_box_s{42,43,44}.json steps_trained",
+          "per_seed": {
+            "42": {
+              "steps": 1001472,
+              "stable": false
+            },
+            "43": {
+              "steps": 1001472,
+              "stable": false
+            },
+            "44": {
+              "steps": 1001472,
+              "stable": false
+            }
+          },
+          "min": 1001472,
+          "max": 1001472,
+          "lower_bound": true
+        },
+        "{2,2} unlock_pickup": {
+          "source": null,
+          "status": "not run (A2b stop: pickup_box never froze)",
+          "per_seed": {},
+          "min": 0,
+          "max": 0,
+          "lower_bound": true
+        }
+      },
+      "hierarchy_marginal": {
+        "min": 1031472,
+        "max": 1031472,
+        "lower_bound": true
+      },
+      "hierarchy_cumulative": {
+        "min": 1593228,
+        "max": 1602008,
+        "lower_bound": true
+      },
+      "flat_ppo": {
+        "source": "runs/v2/flat_unlockpickup_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 3000320,
+            "stable": false
+          },
+          "43": {
+            "steps": 3000320,
+            "stable": false
+          },
+          "44": {
+            "steps": 3000320,
+            "stable": false
+          }
+        },
+        "min": 3000320,
+        "max": 3000320,
+        "lower_bound": true,
+        "best_stopping_sr": {
+          "42": 0.0,
+          "43": 0.0,
+          "44": 0.0
+        },
+        "budget": 3000000
+      },
+      "flat_cumulative": {
+        "min": 3650320,
+        "max": 3900320,
+        "lower_bound": true
+      },
+      "display": {
+        "hierarchy_marginal": "> 1,031,472",
+        "hierarchy_cumulative": "> 1,593,228 - 1,602,008",
+        "flat_ppo": "> 3,000,320",
+        "flat_cumulative": "> 3,650,320 - 3,900,320"
+      }
+    },
+    {
+      "task": "BlockedUnlockPickup",
+      "status": "H-7b, not run",
+      "hierarchy_nodes": null,
+      "hierarchy_marginal": null,
+      "hierarchy_cumulative": null,
+      "flat_ppo": {
+        "source": "runs/v2/flat_blocked_ppo_s{42,43,44}.json steps_trained",
+        "per_seed": {
+          "42": {
+            "steps": 3000320,
+            "stable": false
+          },
+          "43": {
+            "steps": 3000320,
+            "stable": false
+          },
+          "44": {
+            "steps": 3000320,
+            "stable": false
+          }
+        },
+        "min": 3000320,
+        "max": 3000320,
+        "lower_bound": true,
+        "best_stopping_sr": {
+          "42": 0.0,
+          "43": 0.0,
+          "44": 0.0
+        },
+        "budget": 3000000
+      },
+      "flat_cumulative": null,
+      "display": {
+        "hierarchy_marginal": "H-7b, not run",
+        "hierarchy_cumulative": "H-7b, not run",
+        "flat_ppo": "> 3,000,320",
+        "flat_cumulative": "-"
+      }
+    }
+  ],
+  "caveats": [
+    "1. `get_key` and `open_door` were trained on Unlock and DoorKey layouts together, so part of DoorKey's cost sits in the Unlock row.",
+    "2. Primitive costs before H-7 come from one seed.",
+    "3. Evaluation episodes are counted on neither side.",
+    "4. Runs repeated because of a bug or a spec change are not counted; they are listed. `{0,4} pickup_box` took two specifications: the first (H-7 A.1: key in hand with probability 0.5, UnlockPickup and BlockedUnlockPickup) was not stable within 600,064 env steps on any of three seeds, 3 x 600,064 = 1,800,192 env steps, not counted (`runs/v2/pickup_box_attempt1_s{42,43,44}.json`).",
+    "5. The hierarchy was given hand-written subgoals and reset hooks that start it in states flat PPO must reach by itself. The comparison is \"designer decomposition plus reuse\" against \"flat\", not \"hierarchy\" against \"flat\" in the abstract."
+  ],
+  "footnotes": [
+    "The frozen `{1,1} unlock_door` checkpoint was trained at `n_steps` 256 and cost 131,817 env steps of its own; the table uses its H-7a.3 re-measurement at `n_steps` 64 (not a re-freeze).",
+    "The frozen `{2,1} solve_doorkey` checkpoint came from the earlier H-6.3 run at 162,138 env steps of its own; the table uses the H-6.8 re-measurement at `n_steps` 64.",
+    "Flat PPO's update size (`n_steps` 256 x 8 envs) was never revisited.",
+    "A flat run not stable at its budget enters as `> steps_trained`; every sum containing it is a lower bound."
+  ],
+  "rules": "(plan H-7.8, amendment 1 \u00a76/\u00a77):\n\n  - a primitive's cost is its `steps_trained`, a composite's its `env_steps_own`;\n  - every composite cost is measured under one setting (`n_steps` 64,\n    `eval_every` 512): `unlock_door` enters with its H-7a.3 re-measurement and\n    `solve_doorkey` with its H-6.8 re-measurement; the costs the frozen\n    checkpoints actually incurred go in a footnote;\n  - multi-seed costs are min-max over seeds, and a sum of ranges is\n    (sum of minima, sum of maxima);\n  - a run not stable at its budget enters as `> steps` and makes every sum it is\n    part of a lower bound, marked as such;\n  - BlockedUnlockPickup is present and marked \"H-7b, not run\".",
+  "sums_verified": true
+}
