@@ -69,11 +69,13 @@ from src.skills.state import build_state_view  # noqa: E402
 from src.training.c1_controls import ARM_LABELS, capture_trace, mask_divergence, run_arms  # noqa: E402
 from src.training.device import describe  # noqa: E402
 from src.training.evaluation import (  # noqa: E402
-    StabilityCriterion,
     evaluate_node,
     heldout_seeds,
+    stopping_seeds,
+    wilson_lower,
 )
 from src.training.node_trainer import (  # noqa: E402
+    COMPOSITE_N_STEPS,
     execution_env_factory,
     freeze_and_save,
     load_frozen_primitive,
@@ -389,110 +391,175 @@ def stage_f29(args, registry) -> dict:
     return out
 
 
-def stage_composite(args, registry) -> dict:
-    print("loading the frozen children:")
-    children = load_choice_children(registry, device=args.device,
-                                    third=args.third_child)
-    hook = two_keys(COLORS)
-    node = build_t11(children)
-    print(f"\n{'=' * 72}\n{node.id}  n={node.n}  "
-          f"children={[c.id for c in node.children]}"
-          f"\n  env={DOORKEY} hook={hook.spec}"
-          f"\n  timeout={node.timeout} max_decisions={node.max_decisions} "
-          f"initiation={node.initiation.spec}"
-          f"\n  seed={args.seed} budget={args.budget:,} decisions\n{'=' * 72}")
+def train_one(args, children, hook, *, initiation_masking: bool):
+    """
+    One training condition. [H-6.8]
 
-    out: dict = {"seed": args.seed, "node_id": node.id, "env_id": DOORKEY,
-                 "hook": hook.spec,
-                 "children": [{"id": c.id, "spec_hash": c.spec_hash()}
-                              for c in children]}
+    The plan's arm (d) is "the same run **trained and scored** under the strict
+    mask". H-6 called `train_composite` once and scored the goal-only policy
+    under a mask it had never trained with, which is not arm (d) and is the arm
+    section 4 of the H-6 summary rested on. Both conditions are now trained
+    separately, and each is scored under the mask it was trained with.
+    """
+    label = "strict" if initiation_masking else "goal_only"
+    node = build_t11(children)
+    probe_seeds = stopping_seeds(args.probe_n)
+
+    # Logged at EVERY evaluation, not only at the end: a policy converging to
+    # "always yellow" and one still exploring are indistinguishable in the
+    # success rate alone, and H-6 only measured this once, after the fact.
+    def metrics():
+        fd = first_decision_accuracy(node, hook, probe_seeds,
+                                     initiation_masking=initiation_masking)
+        return {
+            "first_key_accuracy": fd["accuracy"],
+            "by_colour": {c: d["accuracy"] for c, d in fd["by_colour"].items()},
+            "above_chance_on_both_colours": fd["above_chance_on_both_colours"],
+        }
+
+    print(f"\n{'=' * 72}\n{node.id}  trained with initiation_masking="
+          f"{initiation_masking}  ({label})"
+          f"\n  n_steps={COMPOSITE_N_STEPS} x {args.n_envs} envs = "
+          f"{COMPOSITE_N_STEPS * args.n_envs} decisions/update"
+          f"  ->  {args.budget // (COMPOSITE_N_STEPS * args.n_envs)} updates"
+          f"\n  eval_every={args.eval_every} budget={args.budget:,} seed={args.seed}"
+          f"\n{'=' * 72}")
 
     report, _model = train_composite(
         node, [DOORKEY], hook,
         total_timesteps=args.budget, eval_every=args.eval_every,
         n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed,
-        device=args.device, verbose=1,
+        device=args.device, initiation_masking=initiation_masking,
+        extra_metrics=metrics, verbose=1,
     )
     print(f"  decisions={report['decisions_trained']:,} "
+          f"updates={report['policy_updates']} "
           f"env_steps_own={report['env_steps_own']:,} "
-          f"({report['env_steps_per_decision']}/decision) "
           f"wall={report['wall_seconds']}s stable={report['stable']}")
 
-    learned = node.policy
-    if report["stable"]:
-        node.freeze()
-        heldout = pooled_eval_fn(
-            node, [DOORKEY], hook, n_episodes=args.n_eval,
-            seed_base=heldout_seeds(1)[0], env_factory_fn=execution_env_factory,
-        )()
-        report["heldout"] = heldout.as_dict()
-        print(f"  held-out: {heldout}")
-        if not args.no_freeze:
-            registry.save(node, extra_meta=report)
-            print(f"  FROZEN and saved to {registry.node_dir(node.id).name}/")
-    else:
-        print("  not stable within budget -- not frozen")
-        if not args.no_freeze:
-            # Saved with status TRAINING, exactly as train_primitives.py does for
-            # an unstable primitive. It can never be loaded as a child (the
-            # registry requires FROZEN), but the arms and the mechanism metrics
-            # can be recomputed from it without retraining.
-            registry.save(node, extra_meta=report)
-            print(f"  saved (status TRAINING) to {registry.node_dir(node.id).name}/")
-    out["composite"] = report
+    heldout = pooled_eval_fn(
+        node, [DOORKEY], hook, n_episodes=args.n_eval,
+        seed_base=heldout_seeds(1)[0], env_factory_fn=execution_env_factory,
+        initiation_masking=initiation_masking,
+    )()
+    report["heldout"] = heldout.as_dict()
+    print(f"  held-out (scored under the mask it trained with): {heldout}")
+    return node, report
 
+
+def stage_composite(args, registry) -> dict:
+    print("loading the frozen children:")
+    children = load_choice_children(registry, device=args.device,
+                                    third=args.third_child)
+    hook = two_keys(COLORS)
     seeds = heldout_seeds(args.n_eval)
-    arms = run_arms(lambda: build_t11(children), DOORKEY, hook, seeds,
-                    learned_policy=learned, rng_seed=args.seed)
-    out["arms"] = {k: {"label": ARM_LABELS[k], **v.as_dict()} for k, v in arms.items()}
+    out: dict = {
+        "seed": args.seed, "node_id": "{1,2} unlock_matching", "env_id": DOORKEY,
+        "hook": hook.spec,
+        "children": [{"id": c.id, "spec_hash": c.spec_hash()} for c in children],
+        "conditions": {},
+    }
 
-    print(f"\n--- C1 arms, {args.n_eval} held-out episodes ---")
-    for name, res in arms.items():
-        print(f"  {ARM_LABELS[name]:<44} SR {res.success_rate:5.2f}  "
-              f"[{res.wilson_lower:.2f},{res.wilson_upper:.2f}]  "
-              f"mean env steps {res.mean_length:6.1f}")
-
-    # ---- the gate: the learned arm and the masked control must not overlap ----
-    learned_res = arms.get("learned")
-    control = arms.get("random_strict_mask")
-    if learned_res is not None and control is not None:
-        separated = learned_res.wilson_lower > control.wilson_upper
-        out["gate"] = {
-            "learned_wilson_lower": round(learned_res.wilson_lower, 4),
-            "masked_random_wilson_upper": round(control.wilson_upper, 4),
-            "separated_at_95": bool(separated),
+    conditions = (
+        [("goal_only", False), ("strict", True)] if args.mask == "both"
+        else [(args.mask, args.mask == "strict")]
+    )
+    nodes = {}
+    for label, masking in conditions:
+        node, report = train_one(args, children, hook, initiation_masking=masking)
+        fd = first_decision_accuracy(node, hook, seeds, initiation_masking=masking)
+        div = mask_divergence(node, DOORKEY, hook, seeds[:20])
+        trace = capture_trace(node, DOORKEY, hook, seeds[0])
+        out["conditions"][label] = {
+            "initiation_masking": masking,
+            "composite": report,
+            "first_decision": fd,
+            "mask_divergence": div,
+            "trace": trace,
         }
-        print(f"\ngate: learned LB {learned_res.wilson_lower:.3f} vs masked-random "
-              f"UB {control.wilson_upper:.3f} -> "
-              f"{'SEPARATED' if separated else 'OVERLAPPING'}")
-        if not separated and report["stable"]:
-            print("  A5 CONTRADICTED: the task is not the genuine choice it was "
-                  "designed to be. Stop and report.")
-        elif not separated:
-            print("  (the node did not stabilize, so the gate is not yet "
-                  "meaningful -- A5 is only testable on a converged run)")
+        nodes[label] = node
 
-    # ---- the mechanism: first-decision choice accuracy by door colour --------
-    out["first_decision"] = first_decision_accuracy(node, hook, seeds)
-    fd = out["first_decision"]
-    print(f"\nfirst KEY the policy commits to, by door colour "
-          f"(the mechanism -- a wrong key is fatal):")
-    for colour, d in sorted(fd["by_colour"].items()):
-        print(f"  door {colour:<7} n={d['n']:<4} matching key "
-              f"{d['correct']}/{d['n']} = {d['accuracy']:.2f}")
-    print(f"  overall {fd['correct']}/{fd['n']} = {fd['accuracy']:.2f}"
-          f"   (episodes that never picked a key: "
-          f"{fd['episodes_with_no_key_pick']})")
-    print(f"  first child selected overall: {fd['first_child_selected']}")
+        print(f"\n  first KEY committed to, by door colour ({label}, "
+              f"{args.n_eval} held-out episodes):")
+        for colour, d in sorted(fd["by_colour"].items()):
+            print(f"    door {colour:<7} {d['correct']}/{d['n']} = "
+                  f"{d['accuracy']:.2f}  Wilson LB {d['wilson_lower']:.2f}"
+                  f"  {'> chance' if d['above_chance'] else 'NOT above chance'}")
+        print(f"    first child selected: {fd['first_child_selected']}")
 
-    out["mask_divergence"] = mask_divergence(node, DOORKEY, hook, seeds[:20])
-    out["trace"] = capture_trace(node, DOORKEY, hook, seeds[0])
-    print(f"  max stack depth {out['trace']['max_stack_depth']}, "
-          f"selected: {' -> '.join(out['trace']['selected_children'])}")
+    # ---- the control arms, each scored under its own mask ------------------
+    #
+    # An arm's NAME has to match the mask it is scored under. The first H-6.8 run
+    # requested the "learned" arm (goal-only) for both conditions and stored the
+    # strict-trained policy's score under the key "learned_strict", so that entry
+    # was the strict-trained policy evaluated WITHOUT the strict mask. The A5
+    # verdict was unchanged, but the number was wrong, and it is the same class of
+    # error the advisor caught in H-6's arm (d). Fixed: the strict condition asks
+    # for the strict arm by name.
+    arms = {}
+    for label, masking in conditions:
+        wanted = ("random_over_available", "random_strict_mask",
+                  "learned_strict_mask" if masking else "learned")
+        got = run_arms(
+            lambda: build_t11(children), DOORKEY, hook, seeds,
+            learned_policy=None if masking else nodes[label].policy,
+            learned_strict_policy=nodes[label].policy if masking else None,
+            rng_seed=args.seed, arms=wanted,
+        )
+        for k, v in got.items():
+            arms.setdefault(k, v.as_dict())
+    out["arms"] = arms
+
+    print(f"\n--- arms, {args.n_eval} held-out episodes ---")
+    for k, v in arms.items():
+        print(f"  {k:<26} SR {v['success_rate']:5.2f}  "
+              f"[{v['wilson_lower']:.2f},{v['wilson_upper']:.2f}]  "
+              f"mean env steps {v['mean_length']:6.1f}")
+
+    # ---- A5, judged on the strict-mask run --------------------------------
+    if "strict" in out["conditions"]:
+        fd = out["conditions"]["strict"]["first_decision"]
+        learned = arms["learned_strict_mask"]
+        control = arms["random_strict_mask"]
+        beats = learned["wilson_lower"] > control["wilson_upper"]
+        out["a5"] = {
+            "judged_on": "strict",
+            "first_key_above_chance_on_both_colours": fd["above_chance_on_both_colours"],
+            "per_colour_wilson_lower": {c: d["wilson_lower"]
+                                        for c, d in fd["by_colour"].items()},
+            "learned_wilson_lower": learned["wilson_lower"],
+            "masked_random_wilson_upper": control["wilson_upper"],
+            "beats_masked_random": bool(beats),
+            "passed": bool(fd["above_chance_on_both_colours"] and beats),
+        }
+        a = out["a5"]
+        print(f"\nA5 (judged on the strict-mask run, "
+              f"{out['conditions']['strict']['composite']['policy_updates']} updates):")
+        print(f"  first-key Wilson LB > 0.5 on both colours : "
+              f"{a['first_key_above_chance_on_both_colours']}  "
+              f"{a['per_colour_wilson_lower']}")
+        print(f"  learned LB {a['learned_wilson_lower']:.3f} > masked-random UB "
+              f"{a['masked_random_wilson_upper']:.3f} : {a['beats_masked_random']}")
+        print(f"  A5 {'PASSED' if a['passed'] else 'FAILED'}"
+              + ("" if a["passed"] else
+                 " -- after this many updates that is the negative result, "
+                 "reported as one"))
+
+    # Freeze only if a condition stabilized; otherwise save as TRAINING so the
+    # metrics can be recomputed without retraining.
+    if not args.no_freeze:
+        best = max(out["conditions"], key=lambda k: out["conditions"][k]
+                   ["composite"]["heldout"]["success_rate"])
+        node = nodes[best]
+        if out["conditions"][best]["composite"]["stable"]:
+            node.freeze()
+        registry.save(node, extra_meta=out["conditions"][best]["composite"])
+        print(f"\n  saved the {best} condition ({node.status.value}) to "
+              f"{registry.node_dir(node.id).name}/")
     return out
 
 
-def first_decision_accuracy(node, hook, seeds) -> dict:
+def first_decision_accuracy(node, hook, seeds, *, initiation_masking=False) -> dict:
     """
     Does the policy actually read the door's colour?
 
@@ -531,7 +598,7 @@ def first_decision_accuracy(node, hook, seeds) -> dict:
             version = 0
             sv = build_state_view(env, version)
             colour = sv.door().color
-            ex = Executor(node)
+            ex = Executor(node, initiation_masking=initiation_masking)
             first_key = None
             first_pick = None
             for _ in range(node.timeout):
@@ -569,11 +636,23 @@ def first_decision_accuracy(node, hook, seeds) -> dict:
         env.close()
     for d in by_colour.values():
         d["accuracy"] = round(d["correct"] / d["n"], 4) if d["n"] else 0.0
+        # [H-6.8] The A5 gate is per-colour with a Wilson bound, not a point
+        # estimate: "reads the observation" means better than a coin flip on
+        # BOTH colours, and at n~25 a point estimate of 0.6 is not evidence of
+        # that. A policy that always picks yellow scores ~1.0 on one colour and
+        # ~0.0 on the other, so an overall average hides exactly the failure
+        # mode this task exists to detect.
+        d["wilson_lower"] = round(wilson_lower(d["correct"], d["n"]), 4)
+        d["above_chance"] = bool(d["wilson_lower"] > 0.5)
     return {
         "n": total, "correct": correct,
         "accuracy": round(correct / total, 4) if total else 0.0,
+        "wilson_lower": round(wilson_lower(correct, total), 4) if total else 0.0,
         "episodes_with_no_key_pick": no_key,
         "by_colour": by_colour,
+        "above_chance_on_both_colours": bool(
+            by_colour and all(d["above_chance"] for d in by_colour.values())
+        ),
         "first_child_selected": first_child,
     }
 
@@ -593,19 +672,29 @@ def main() -> int:
     ap.add_argument("--torch-threads", type=int, default=2)
     ap.add_argument("--no-freeze", action="store_true")
     ap.add_argument("--out-name", default=None)
+    ap.add_argument("--mask", default="both",
+                    choices=["both", "goal_only", "strict"],
+                    help="which training condition(s) to run (H-6.8 arm (d))")
+    ap.add_argument("--probe-n", type=int, default=20,
+                    help="seeds for the per-evaluation first-key probe")
     ap.add_argument("--third-child", default="auto",
                     choices=["auto", "open_door", "open_door_tk"],
                     help="which door-opening child to use; the F29 check decides")
     args = ap.parse_args()
 
     if args.budget is None:
-        args.budget = 600_000 if args.stage == "primitives" else 20_000
+        # [H-6.8] 51,200 decisions = 100 policy updates at n_steps 64 x 8 envs.
+        # H-6's 20,480 was ten updates, which is why its "negative result" was
+        # premature.
+        args.budget = 600_000 if args.stage == "primitives" else 51_200
     if args.eval_every is None:
-        args.eval_every = 20_000 if args.stage == "primitives" else 1_000
+        # 512 = one policy update, the smallest value v2 §5.3's floor allows.
+        args.eval_every = 20_000 if args.stage == "primitives" else 512
     if args.smoke:
         args.n_eval, args.n_envs = 10, 2
-        args.budget = 8_000 if args.stage == "primitives" else 600
-        args.eval_every = 2_000 if args.stage == "primitives" else 200
+        args.budget = 8_000 if args.stage == "primitives" else 1_024
+        args.eval_every = 2_000 if args.stage == "primitives" else 128
+        args.probe_n = 10
 
     print(describe())
     print(f"torch threads: {set_torch_threads(args.torch_threads)}")

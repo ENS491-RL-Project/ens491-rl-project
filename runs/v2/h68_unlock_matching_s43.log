@@ -1,0 +1,245 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+loading the frozen children:
+  loaded SkillNode('{0,6} get_key_yellow', n=0, primitive, frozen)  spec_hash=d5d8cec8c48fe728
+  loaded SkillNode('{0,7} get_key_blue', n=0, primitive, frozen)  spec_hash=5d981c88fd65b0bf
+  loaded SkillNode('{0,8} open_door_tk', n=0, primitive, frozen)  spec_hash=b1f8d1a511fa44b0
+
+========================================================================
+{1,2} unlock_matching  trained with initiation_masking=False  (goal_only)
+  n_steps=64 x 8 envs = 512 decisions/update  ->  100 updates
+  eval_every=512 budget=51,200 seed=43
+========================================================================
+  [     512] {1,2} unlock_matching: SR 0.140 (7/50), Wilson LB 0.070, mean length 91.8 | streak 0/2
+  [    1024] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 87.0 | streak 0/2
+  [    1536] {1,2} unlock_matching: SR 0.040 (2/50), Wilson LB 0.011, mean length 69.6 | streak 0/2
+  [    2048] {1,2} unlock_matching: SR 0.000 (0/50), Wilson LB 0.000, mean length 61.2 | streak 0/2
+  [    2560] {1,2} unlock_matching: SR 0.000 (0/50), Wilson LB 0.000, mean length 68.1 | streak 0/2
+  [    3072] {1,2} unlock_matching: SR 0.300 (15/50), Wilson LB 0.191, mean length 82.7 | streak 0/2
+  [    3584] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 75.5 | streak 0/2
+  [    4096] {1,2} unlock_matching: SR 0.480 (24/50), Wilson LB 0.348, mean length 72.5 | streak 0/2
+  [    4608] {1,2} unlock_matching: SR 0.420 (21/50), Wilson LB 0.294, mean length 76.7 | streak 0/2
+  [    5120] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 71.4 | streak 0/2
+  [    5632] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 74.7 | streak 0/2
+  [    6144] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 72.6 | streak 0/2
+  [    6656] {1,2} unlock_matching: SR 0.620 (31/50), Wilson LB 0.482, mean length 74.1 | streak 0/2
+  [    7168] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 73.0 | streak 0/2
+  [    7680] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 72.2 | streak 0/2
+  [    8192] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 70.5 | streak 0/2
+  [    8704] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 74.9 | streak 0/2
+  [    9216] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 73.8 | streak 0/2
+  [    9728] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 73.8 | streak 0/2
+  [   10240] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 75.2 | streak 0/2
+  [   10752] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 76.4 | streak 0/2
+  [   11264] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 79.5 | streak 0/2
+  [   11776] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 79.5 | streak 0/2
+  [   12288] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 79.5 | streak 0/2
+  [   12800] {1,2} unlock_matching: SR 0.660 (33/50), Wilson LB 0.522, mean length 80.4 | streak 0/2
+  [   13312] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 76.7 | streak 0/2
+  [   13824] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 73.8 | streak 0/2
+  [   14336] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 74.6 | streak 0/2
+  [   14848] {1,2} unlock_matching: SR 0.720 (36/50), Wilson LB 0.583, mean length 77.4 | streak 0/2
+  [   15360] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 73.8 | streak 0/2
+  [   15872] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 77.1 | streak 0/2
+  [   16384] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 75.6 | streak 0/2
+  [   16896] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 76.7 | streak 0/2
+  [   17408] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 75.4 | streak 0/2
+  [   17920] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 75.4 | streak 0/2
+  [   18432] {1,2} unlock_matching: SR 0.640 (32/50), Wilson LB 0.501, mean length 75.4 | streak 0/2
+  [   18944] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 80.4 | streak 0/2
+  [   19456] {1,2} unlock_matching: SR 0.620 (31/50), Wilson LB 0.482, mean length 79.7 | streak 0/2
+  [   19968] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 83.0 | streak 0/2
+  [   20480] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 80.4 | streak 0/2
+  [   20992] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 84.7 | streak 0/2
+  [   21504] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 83.0 | streak 0/2
+  [   22016] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 83.0 | streak 0/2
+  [   22528] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 84.7 | streak 0/2
+  [   23040] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 82.7 | streak 0/2
+  [   23552] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   24064] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   24576] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   25088] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   25600] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   26112] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   26624] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   27136] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   27648] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   28160] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   28672] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   29184] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   29696] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   30208] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   30720] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   31232] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   31744] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   32256] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   32768] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   33280] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   33792] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   34304] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   34816] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   35328] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   35840] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   36352] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   36864] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   37376] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   37888] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   38400] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   38912] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   39424] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   39936] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 87.1 | streak 0/2
+  [   40448] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 84.4 | streak 0/2
+  [   40960] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 83.2 | streak 0/2
+  [   41472] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 81.5 | streak 0/2
+  [   41984] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 81.5 | streak 0/2
+  [   42496] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 81.5 | streak 0/2
+  [   43008] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   43520] {1,2} unlock_matching: SR 0.680 (34/50), Wilson LB 0.542, mean length 81.5 | streak 0/2
+  [   44032] {1,2} unlock_matching: SR 0.740 (37/50), Wilson LB 0.604, mean length 77.2 | streak 0/2
+  [   44544] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   45056] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   45568] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   46080] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   46592] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   47104] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   47616] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   48128] {1,2} unlock_matching: SR 0.760 (38/50), Wilson LB 0.626, mean length 75.8 | streak 0/2
+  [   48640] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 72.5 | streak 0/2
+  [   49152] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 72.5 | streak 0/2
+  [   49664] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 72.5 | streak 0/2
+  [   50176] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 72.5 | streak 0/2
+  [   50688] {1,2} unlock_matching: SR 0.780 (39/50), Wilson LB 0.648, mean length 72.5 | streak 0/2
+  [   51200] {1,2} unlock_matching: SR 0.800 (40/50), Wilson LB 0.670, mean length 70.0 | streak 0/2
+  decisions=51,200 updates=100 env_steps_own=1,283,740 wall=1921.6s stable=False
+  held-out (scored under the mask it trained with): SR 0.800 (40/50), Wilson LB 0.670, mean length 79.9
+
+  first KEY committed to, by door colour (goal_only, 50 held-out episodes):
+    door blue    0/27 = 0.00  Wilson LB 0.00  NOT above chance
+    door yellow  23/23 = 1.00  Wilson LB 0.86  > chance
+    first child selected: {'{0,6} get_key_yellow': 49, '{0,8} open_door_tk': 1}
+
+========================================================================
+{1,2} unlock_matching  trained with initiation_masking=True  (strict)
+  n_steps=64 x 8 envs = 512 decisions/update  ->  100 updates
+  eval_every=512 budget=51,200 seed=43
+========================================================================
+  [     512] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 124.3 | streak 0/2
+  [    1024] {1,2} unlock_matching: SR 0.560 (28/50), Wilson LB 0.423, mean length 110.1 | streak 0/2
+  [    1536] {1,2} unlock_matching: SR 0.620 (31/50), Wilson LB 0.482, mean length 96.2 | streak 0/2
+  [    2048] {1,2} unlock_matching: SR 0.620 (31/50), Wilson LB 0.482, mean length 96.2 | streak 0/2
+  [    2560] {1,2} unlock_matching: SR 0.620 (31/50), Wilson LB 0.482, mean length 96.6 | streak 0/2
+  [    3072] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 119.8 | streak 0/2
+  [    3584] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    4096] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    4608] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    5120] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    5632] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    6144] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    6656] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    7168] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 152.2 | streak 0/2
+  [    7680] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [    8192] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 152.2 | streak 0/2
+  [    8704] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 141.1 | streak 0/2
+  [    9216] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 141.1 | streak 0/2
+  [    9728] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 141.1 | streak 0/2
+  [   10240] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.5 | streak 0/2
+  [   10752] {1,2} unlock_matching: SR 0.480 (24/50), Wilson LB 0.348, mean length 131.4 | streak 0/2
+  [   11264] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 126.8 | streak 0/2
+  [   11776] {1,2} unlock_matching: SR 0.480 (24/50), Wilson LB 0.348, mean length 131.4 | streak 0/2
+  [   12288] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 136.0 | streak 0/2
+  [   12800] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 138.2 | streak 0/2
+  [   13312] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.5 | streak 0/2
+  [   13824] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 152.2 | streak 0/2
+  [   14336] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.8 | streak 0/2
+  [   14848] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.8 | streak 0/2
+  [   15360] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.8 | streak 0/2
+  [   15872] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [   16384] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [   16896] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 152.2 | streak 0/2
+  [   17408] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.8 | streak 0/2
+  [   17920] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.8 | streak 0/2
+  [   18432] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.8 | streak 0/2
+  [   18944] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 152.3 | streak 0/2
+  [   19456] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.4 | streak 0/2
+  [   19968] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.5 | streak 0/2
+  [   20480] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.4 | streak 0/2
+  [   20992] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.3 | streak 0/2
+  [   21504] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 137.8 | streak 0/2
+  [   22016] {1,2} unlock_matching: SR 0.360 (18/50), Wilson LB 0.241, mean length 156.2 | streak 0/2
+  [   22528] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 137.8 | streak 0/2
+  [   23040] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.2 | streak 0/2
+  [   23552] {1,2} unlock_matching: SR 0.420 (21/50), Wilson LB 0.294, mean length 142.6 | streak 0/2
+  [   24064] {1,2} unlock_matching: SR 0.420 (21/50), Wilson LB 0.294, mean length 142.6 | streak 0/2
+  [   24576] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.1 | streak 0/2
+  [   25088] {1,2} unlock_matching: SR 0.380 (19/50), Wilson LB 0.259, mean length 151.8 | streak 0/2
+  [   25600] {1,2} unlock_matching: SR 0.340 (17/50), Wilson LB 0.224, mean length 161.0 | streak 0/2
+  [   26112] {1,2} unlock_matching: SR 0.400 (20/50), Wilson LB 0.276, mean length 147.1 | streak 0/2
+  [   26624] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 137.8 | streak 0/2
+  [   27136] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 137.8 | streak 0/2
+  [   27648] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.2 | streak 0/2
+  [   28160] {1,2} unlock_matching: SR 0.440 (22/50), Wilson LB 0.312, mean length 137.7 | streak 0/2
+  [   28672] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.7 | streak 0/2
+  [   29184] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.7 | streak 0/2
+  [   29696] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.2 | streak 0/2
+  [   30208] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.7 | streak 0/2
+  [   30720] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.2 | streak 0/2
+  [   31232] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.2 | streak 0/2
+  [   31744] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.9 | streak 0/2
+  [   32256] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.2 | streak 0/2
+  [   32768] {1,2} unlock_matching: SR 0.480 (24/50), Wilson LB 0.348, mean length 128.3 | streak 0/2
+  [   33280] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.7 | streak 0/2
+  [   33792] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 119.0 | streak 0/2
+  [   34304] {1,2} unlock_matching: SR 0.480 (24/50), Wilson LB 0.348, mean length 128.3 | streak 0/2
+  [   34816] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   35328] {1,2} unlock_matching: SR 0.560 (28/50), Wilson LB 0.423, mean length 109.9 | streak 0/2
+  [   35840] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 105.2 | streak 0/2
+  [   36352] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   36864] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 105.2 | streak 0/2
+  [   37376] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   37888] {1,2} unlock_matching: SR 0.560 (28/50), Wilson LB 0.423, mean length 109.9 | streak 0/2
+  [   38400] {1,2} unlock_matching: SR 0.560 (28/50), Wilson LB 0.423, mean length 109.9 | streak 0/2
+  [   38912] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 103.1 | streak 0/2
+  [   39424] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 107.7 | streak 0/2
+  [   39936] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 119.1 | streak 0/2
+  [   40448] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 123.7 | streak 0/2
+  [   40960] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 119.1 | streak 0/2
+  [   41472] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 133.1 | streak 0/2
+  [   41984] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   42496] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 105.3 | streak 0/2
+  [   43008] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 105.3 | streak 0/2
+  [   43520] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   44032] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 114.5 | streak 0/2
+  [   44544] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 100.6 | streak 0/2
+  [   45056] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 100.7 | streak 0/2
+  [   45568] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 100.7 | streak 0/2
+  [   46080] {1,2} unlock_matching: SR 0.600 (30/50), Wilson LB 0.462, mean length 100.7 | streak 0/2
+  [   46592] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 105.4 | streak 0/2
+  [   47104] {1,2} unlock_matching: SR 0.580 (29/50), Wilson LB 0.442, mean length 107.8 | streak 0/2
+  [   47616] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 117.0 | streak 0/2
+  [   48128] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 121.6 | streak 0/2
+  [   48640] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 121.6 | streak 0/2
+  [   49152] {1,2} unlock_matching: SR 0.520 (26/50), Wilson LB 0.385, mean length 121.5 | streak 0/2
+  [   49664] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 135.6 | streak 0/2
+  [   50176] {1,2} unlock_matching: SR 0.500 (25/50), Wilson LB 0.366, mean length 126.1 | streak 0/2
+  [   50688] {1,2} unlock_matching: SR 0.540 (27/50), Wilson LB 0.404, mean length 116.9 | streak 0/2
+  [   51200] {1,2} unlock_matching: SR 0.460 (23/50), Wilson LB 0.330, mean length 135.6 | streak 0/2
+  decisions=51,200 updates=100 env_steps_own=1,946,455 wall=1756.6s stable=False
+  held-out (scored under the mask it trained with): SR 0.660 (33/50), Wilson LB 0.522, mean length 87.5
+
+  first KEY committed to, by door colour (strict, 50 held-out episodes):
+    door blue    21/27 = 0.78  Wilson LB 0.59  > chance
+    door yellow  15/23 = 0.65  Wilson LB 0.45  NOT above chance
+    first child selected: {'{0,7} get_key_blue': 29, '{0,6} get_key_yellow': 21}
+
+--- arms, 50 held-out episodes ---
+  learned                    SR  0.80  [0.67,0.89]  mean env steps   79.9
+  random_over_available      SR  0.52  [0.39,0.65]  mean env steps  118.7
+  random_strict_mask         SR  0.54  [0.40,0.67]  mean env steps  115.6
+  learned_strict             SR  0.38  [0.26,0.52]  mean env steps   91.4
+
+A5 (judged on the strict-mask run, 100 updates):
+  first-key Wilson LB > 0.5 on both colours : False  {'blue': 0.5924, 'yellow': 0.4489}
+  learned LB 0.259 > masked-random UB 0.670 : False
+  A5 FAILED -- after this many updates that is the negative result, reported as one
+
+wrote runs\v2\unlock_matching_s43.json
