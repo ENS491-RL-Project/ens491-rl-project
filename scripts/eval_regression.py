@@ -43,6 +43,7 @@ from train_choice_task import (  # noqa: E402
     choice_specs,
     open_door_tk_spec,
 )
+from h7_nodes import UNLOCKPICKUP, build_unlock_pickup, h7_primitive_specs  # noqa: E402
 from train_primitives import DOORKEY, UNLOCK, build_node, specs  # noqa: E402
 from train_solve_doorkey import build_t5  # noqa: E402
 from train_unlock_door import build_t3  # noqa: E402
@@ -69,6 +70,11 @@ def main() -> int:
     # harness reported 7 of 8 nodes and called it 7 of 7. It is not in
     # choice_specs() because it has its own env list and hook.
     all_specs["open_door_tk"] = open_door_tk_spec()
+    # [H-7a.4] The amendment-1 primitives. move_blocker is H-7b: never trained,
+    # so it is not listed (a SKIP line would only be noise).
+    h7 = h7_primitive_specs()
+    all_specs["drop_held"] = h7["drop_held"]
+    all_specs["pickup_box"] = h7["pickup_box"]
     for name, spec in all_specs.items():
         try:
             node, env_ids, hook = primitive(registry, name, spec)
@@ -87,6 +93,11 @@ def main() -> int:
         composites.append((t3, [UNLOCK], NO_HOOK))
         if "go_to_goal" in nodes:
             composites.append((build_t5(t3, nodes["go_to_goal"]), [DOORKEY], NO_HOOK))
+        # [H-7a.4] T7 reuses the same t3 object, so it is loaded after t3 below
+        # (composites are loaded in list order, children first).
+        if {"drop_held", "pickup_box"} <= set(nodes):
+            composites.append((build_unlock_pickup(t3, nodes["drop_held"], nodes["pickup_box"]),
+                               [UNLOCKPICKUP], NO_HOOK))
     if {"get_key_yellow", "get_key_blue", "open_door_tk"} <= set(nodes):
         composites.append((
             build_t11([nodes["get_key_yellow"], nodes["get_key_blue"],

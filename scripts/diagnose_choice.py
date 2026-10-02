@@ -440,12 +440,64 @@ def stage_arm(args, children) -> dict:
         extra_metrics=lambda: key_probabilities(node, probe_X, probe_colour, probe_mask),
         verbose=1,
     )
+    final = report["eval_extra"][-1] if report["eval_extra"] else None
     return {
         "arm": "ent_coef" if args.ent_coef is not None else "unchanged",
         "seed": args.seed, "mask": "strict", "ent_coef": report["ppo"]["ent_coef"],
         "probe_seeds": f"stopping seeds, first {args.probe_n}",
         "composite": report,
+        "first_key_heldout": first_key_accuracy(node, args.n_eval),
+        "final_policy_shape": policy_shape(final),
     }
+
+
+def first_key_accuracy(node, n: int) -> dict:
+    """
+    [H-7a, amendment 1 §8] The trained policy's deterministic first decision on
+    the held-out seeds, by door colour: the share of episodes whose first key is
+    the matching one, with a Wilson 95% interval.
+    """
+    from src.training.evaluation import heldout_seeds, wilson_lower
+
+    env = make_env(node, strict=True)
+    names = [c.id for c in node.children]
+    by = {c: {"n": 0, "correct": 0, "first": {}} for c in COLORS}
+    try:
+        for seed in heldout_seeds(n):
+            obs, _ = env.reset(seed=seed)
+            colour = env.sv.door().color
+            a = int(node.policy.select(obs, env.action_masks(), deterministic=True))
+            row = by[colour]
+            row["n"] += 1
+            row["correct"] += int(names[a] == KEY_CHILD[colour])
+            row["first"][names[a]] = row["first"].get(names[a], 0) + 1
+    finally:
+        env.close()
+    for row in by.values():
+        k, m = row["correct"], row["n"]
+        row["accuracy"] = round(k / m, 4) if m else None
+        row["wilson_lower"] = round(wilson_lower(k, m), 4) if m else None
+        row["wilson_upper"] = round(1 - wilson_lower(m - k, m), 4) if m else None
+    total = sum(r["correct"] for r in by.values())
+    return {"seeds": "held-out", "n": n, "deterministic": True, "by_door_colour": by,
+            "overall_accuracy": round(total / n, 4)}
+
+
+def policy_shape(extra: dict | None) -> dict | None:
+    """
+    Collapsed = the probe's mean probability of one key is >= 0.9 for BOTH door
+    colours (the policy ignores the colour); otherwise tilted. From the last
+    evaluation's probe, i.e. the final policy.
+    """
+    if not extra:
+        return None
+    p_yellow_key = {c: extra[f"door_{c}"][KEY_CHILD["yellow"]] for c in COLORS}
+    p_blue_key = {c: extra[f"door_{c}"][KEY_CHILD["blue"]] for c in COLORS}
+    collapsed_on = ("yellow" if all(v >= 0.9 for v in p_yellow_key.values()) else
+                    "blue" if all(v >= 0.9 for v in p_blue_key.values()) else None)
+    return {"p_yellow_key_by_door": p_yellow_key, "p_blue_key_by_door": p_blue_key,
+            "collapsed": collapsed_on is not None, "collapsed_on": collapsed_on,
+            "rule": "collapsed iff mean p(one key) >= 0.9 on both door colours (probe, final policy)"}
 
 
 def main() -> int:

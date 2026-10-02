@@ -16,6 +16,15 @@ are cheap, so the headline number is never reported alone:
 Usage:
     python scripts/train_unlock_door.py --smoke
     python scripts/train_unlock_door.py
+
+[H-7a.3] Re-measuring the node's own cost under the composite setting H-6.8
+introduced, without touching the frozen checkpoint:
+
+    python scripts/train_unlock_door.py --no-freeze --n-steps 64 --eval-every 512 \
+        --budget 51200 --skip-ablation --seed 43 --out-name unlock_door_h7_s43.json
+
+`--no-freeze` matters: the registry keys by node id, so a stable run that saved
+would overwrite the frozen `{1,1} unlock_door` every later node was built on.
 """
 
 from __future__ import annotations
@@ -118,6 +127,10 @@ def main() -> int:
     ap.add_argument("--torch-threads", type=int, default=2)
     ap.add_argument("--out-name", default=None,
                     help="output file name; defaults to unlock_door[_smoke].json")
+    ap.add_argument("--no-freeze", action="store_true",
+                    help="train and report but never write to the registry")
+    ap.add_argument("--n-steps", type=int, default=None,
+                    help="MaskablePPO n_steps (and batch_size); default COMPOSITE_N_STEPS")
     args = ap.parse_args()
 
     if args.smoke:
@@ -141,11 +154,13 @@ def main() -> int:
     print(f"\n{'='*72}\n{node.id}  n={node.n}  children={[c.id for c in node.children]}"
           f"\n  timeout={node.timeout} max_decisions={node.max_decisions}\n{'='*72}")
 
+    overrides = ({} if args.n_steps is None else
+                 {"n_steps": args.n_steps, "batch_size": args.n_steps})
     report, _model = train_composite(
         node, [UNLOCK], NO_HOOK,
         total_timesteps=args.budget, eval_every=args.eval_every,
         n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed,
-        device=args.device, verbose=1,
+        device=args.device, ppo_overrides=overrides, verbose=1,
     )
     print(f"  decisions={report['decisions_trained']:,} wall={report['wall_seconds']}s "
           f"({report['decisions_per_second']} decisions/s) stable={report['stable']}")
@@ -157,8 +172,11 @@ def main() -> int:
             seed_base=heldout_seeds(1)[0], env_factory_fn=execution_env_factory,
         )()
         report["heldout"] = heldout.as_dict()
-        registry.save(node, extra_meta=report)
-        print(f"  FROZEN. held-out: {heldout}")
+        if args.no_freeze or args.smoke:
+            print(f"  stable, not saved (--no-freeze/--smoke). held-out: {heldout}")
+        else:
+            registry.save(node, extra_meta=report)
+            print(f"  FROZEN. held-out: {heldout}")
     else:
         print("  not stable within budget -- not frozen")
     out["composite"] = report
@@ -172,7 +190,8 @@ def main() -> int:
             abl_node, [UNLOCK], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
             n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed,
-            device=args.device, initiation_masking=True, verbose=1,
+            device=args.device, initiation_masking=True, ppo_overrides=overrides,
+            verbose=1,
         )
         out["ablation_initiation_masking"] = abl_report
         print(f"  decisions={abl_report['decisions_trained']:,} "
