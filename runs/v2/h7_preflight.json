@@ -168,13 +168,19 @@
       }
     ]
   },
-  "gate_passed": true,
+  "gate_passed": false,
   "gating_rows": [
     {
       "node": "{1,1} unlock_door",
       "env": "MiniGrid-UnlockPickup-v0",
       "start_state": "episode start (A1)",
       "success_rate": 0.98
+    },
+    {
+      "node": "{0,9} drop_held",
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "drop_held after unlock_door (A2a)",
+      "success_rate": 1.0
     }
   ],
   "full_hand": {
@@ -539,5 +545,70 @@
       }
     ],
     "key_off_door_rejects_first_draw": "27/500"
-  }
+  },
+  "pickup_box": {
+    "rows": [
+      {
+        "node": "{0,9} drop_held",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "none",
+        "start_state": "drop_held after unlock_door (A2a)",
+        "gate": true,
+        "n_episodes": 50,
+        "successes": 50,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0,
+        "mean_length": 1.96,
+        "seed_base": 20000,
+        "timeouts": 0,
+        "reselections": 0
+      },
+      {
+        "node": "{0,4} pickup_box",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "none",
+        "start_state": "[diagnostic: TRAINING checkpoint, not stable] pickup_box after unlock_door, drop_held (A2b)",
+        "gate": false,
+        "n_episodes": 50,
+        "successes": 30,
+        "success_rate": 0.6,
+        "wilson_lower": 0.4618,
+        "wilson_upper": 0.7239,
+        "mean_length": 50.3,
+        "seed_base": 20000,
+        "timeouts": 20,
+        "reselections": 0
+      },
+      {
+        "node": "{0,4} pickup_box",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "none",
+        "start_state": "[diagnostic: TRAINING checkpoint, not stable] [not gating] pickup_box after unlock_door, key still in hand",
+        "gate": false,
+        "n": 50,
+        "successes": 26,
+        "success_rate": 0.52,
+        "wilson_lower": 0.3851,
+        "goal_true_at_start": 0,
+        "mean_length": 60.12,
+        "drop_share": 0.0749,
+        "action_share": {
+          "left": 0.3733,
+          "right": 0.3886,
+          "forward": 0.0958,
+          "pickup": 0.0675,
+          "drop": 0.0749
+        },
+        "holding_at_end": {
+          "box": 26,
+          "nothing": 23,
+          "key": 1
+        }
+      }
+    ],
+    "spec": "H-7 amendment 1",
+    "pickup_box_frozen": false
+  },
+  "gate_failed_reason": "A2b: {0,4} pickup_box (amendment 1) not stable within 1,000,000 env steps on any of 3 seeds; not frozen"
 }

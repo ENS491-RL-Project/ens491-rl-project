@@ -110,6 +110,24 @@
       "reselections": 0
     },
     {
+      "node": "{0,9} drop_held",
+      "n": 0,
+      "status": "frozen",
+      "spec_hash": "ed693928545d8edc",
+      "recorded": 1.0,
+      "now": 1.0,
+      "delta": 0.0,
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 1.28,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    {
       "node": "{1,1} unlock_door",
       "n": 1,
       "status": "frozen",

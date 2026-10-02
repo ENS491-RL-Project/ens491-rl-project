@@ -491,27 +491,51 @@ def stage_audit() -> dict:
     return {"solvability": audits}
 
 
-def stage_pickup_box(registry) -> dict:
-    """[H-7a.2] Amendment 1's three rows; replaces the attempt-1 rows of plan H-7.3."""
+def load_unstable_pickup_box(registry):
+    """
+    [H-7a.2, A2b stop] The seed-42 checkpoint of the amendment-1 pickup_box,
+    saved as TRAINING because it did not stabilise within 1,000,000 env steps.
+    Loaded only for diagnostic rows, never as a child of anything.
+    """
+    from src.training.node_trainer import attach_sb3_primitive_policy
+    from train_primitives import build_node
+
+    spec = h7_primitive_specs()["pickup_box"]
+    node = build_node(spec)
+    attach_sb3_primitive_policy(node, UNLOCKPICKUP, spec["hook"])
+    registry.load_into(node, require_frozen=False)
+    print(f"  loaded {node} (TRAINING, diagnostic only)  spec_hash={node.spec_hash()}")
+    return node
+
+
+def stage_pickup_box(registry, unstable: bool = False) -> dict:
+    """
+    [H-7a.2] Amendment 1's three rows; replaces the attempt-1 rows of plan H-7.3.
+
+    `unstable`: pickup_box was not frozen (A2b failed). The A2a row is still a
+    gate; the pickup_box rows are taken from the TRAINING checkpoint, labelled
+    diagnostic and never gating -- A2b has already failed on the stopping rule.
+    """
     _, t3 = load_unlock_graph(registry)
     dh = load_h7_primitive("drop_held", registry)
-    pb = load_h7_primitive("pickup_box", registry)
+    pb = load_unstable_pickup_box(registry) if unstable else load_h7_primitive("pickup_box", registry)
+    tag = "[diagnostic: TRAINING checkpoint, not stable] " if unstable else ""
     print("\nF29 rows on UnlockPickup, 50 held-out seeds:")
     rows = [
         f29_row(dh, UNLOCKPICKUP, NO_HOOK, chain(t3), "drop_held after unlock_door (A2a)", True),
         f29_row(pb, UNLOCKPICKUP, NO_HOOK, chain(t3, dh),
-                "pickup_box after unlock_door, drop_held (A2b)", True),
+                f"{tag}pickup_box after unlock_door, drop_held (A2b)", not unstable),
     ]
     # Not gating: pickup_box handed the key, as a goal-only parent may do. What
     # it does with a full hand (V13: undefined is not the same as failing).
     full = run_full_hand(pb, UNLOCKPICKUP, NO_HOOK, prepare=chain(t3))
-    label = "[not gating] pickup_box after unlock_door, key still in hand"
+    label = f"{tag}[not gating] pickup_box after unlock_door, key still in hand"
     print(f"  {pb.id:<24}{'UnlockPickup-v0':<26}{label:<52}{full['success_rate']:>6.2f}"
           f"{full['wilson_lower']:>7.3f}{full['mean_length']:>7.1f}   -   drop share "
           f"{full['drop_share']:.3f}, holding at end {full['holding_at_end']}")
     rows.append({"node": pb.id, "env": UNLOCKPICKUP, "hook": NO_HOOK.spec,
                  "start_state": label, "gate": False, **full})
-    return {"rows": rows, "spec": "H-7 amendment 1"}
+    return {"rows": rows, "spec": "H-7 amendment 1", "pickup_box_frozen": not unstable}
 
 
 def stage_blocked(registry, args) -> dict:
@@ -651,6 +675,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stage", required=True,
                     choices=["base", "audit", "pickup_box", "blocked", "full_hand"])
+    ap.add_argument("--unstable-pickup-box", action="store_true",
+                    help="A2b failed: score the TRAINING pickup_box checkpoint, diagnostic rows only")
     ap.add_argument("--move-blocker-fallback", action="store_true",
                     help="load move_blocker trained with the empty-handed fallback hook")
     args = ap.parse_args()
@@ -665,7 +691,7 @@ def main() -> int:
     elif args.stage == "audit":
         doc["h7a_audit"] = stage_audit()
     elif args.stage == "pickup_box":
-        doc["pickup_box"] = stage_pickup_box(registry)
+        doc["pickup_box"] = stage_pickup_box(registry, unstable=args.unstable_pickup_box)
     elif args.stage == "blocked":
         doc["blocked"] = stage_blocked(registry, args)
     else:
@@ -676,8 +702,16 @@ def main() -> int:
     # base: the attempt-1 and move_blocker hooks (H-7.1); h7a_audit: amendment 1.
     unsolvable = sum(a["unsolvable"] for st in ("base", "h7a_audit")
                      for a in doc.get(st, {}).get("solvability", []))
+    # [H-7a.2] A node that never froze fails its assumption on the stopping rule
+    # before any row is taken; its rows are diagnostic, so the gate must say so.
+    pb_frozen = doc.get("pickup_box", {}).get("pickup_box_frozen", True)
     doc["gate_passed"] = bool(gating) and all(r["success_rate"] >= GATE for r in gating) \
-        and unsolvable == 0
+        and unsolvable == 0 and pb_frozen
+    if not pb_frozen:
+        doc["gate_failed_reason"] = ("A2b: {0,4} pickup_box (amendment 1) not stable within "
+                                     "1,000,000 env steps on any of 3 seeds; not frozen")
+    else:
+        doc.pop("gate_failed_reason", None)
     doc["gating_rows"] = [{"node": r["node"], "env": r["env"], "start_state": r["start_state"],
                            "success_rate": r["success_rate"]} for r in gating]
     OUT.write_text(json.dumps(doc, indent=2), encoding="utf-8")
