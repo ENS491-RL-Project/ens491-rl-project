@@ -179,6 +179,34 @@ def relocate_blocker(*, tries: int = 64) -> ResetHook:
     return ResetHook("relocate_blocker", fn)
 
 
+def key_off_door() -> ResetHook:
+    """
+    Reject a layout with a key on a cell orthogonally adjacent to the door
+    (T6 `pickup_box`, H-7 amendment 1).
+
+    `pickup_box` starts with the door open and an empty hand. A key lying on the
+    door's approach cell can then only be passed by picking it up, which fills
+    the hand again, and `pickup` needs an empty one: the episode asks for a drop
+    the node is not meant to learn. At the real handoff it cannot happen,
+    because the agent is standing on that cell when it drops the key. The H-7.1
+    pre-flight counted 13 such layouts in 500. Raises `UnsuitableLayout`, so the
+    env draws another layout; never moves anything.
+    """
+
+    def fn(env):
+        u = env.unwrapped
+        door_pos, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("key_off_door: no door in this layout")
+        for x in range(u.width):
+            for y in range(u.height):
+                c = u.grid.get(x, y)
+                if c is not None and c.type == "key" and _adjacent((x, y), door_pos):
+                    raise UnsuitableLayout(f"key_off_door: a key at {(x, y)} next to the door")
+
+    return ResetHook("key_off_door", fn)
+
+
 def randomize_carrying(prob: float = 0.5, type_: str = "key") -> ResetHook:
     """
     With probability `prob`, start the episode already holding the object.

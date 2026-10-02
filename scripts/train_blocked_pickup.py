@@ -55,6 +55,10 @@ def load_library(registry, rebuilt: bool, device="cpu"):
 
 
 def main() -> int:
+    # [H-7 amendment 1, §2] BlockedUnlockPickup is H-7b, planned after H-7a's
+    # result has been read; T7 now has three children, so the builders below
+    # no longer match. Refuse rather than train a node nobody has specified.
+    raise SystemExit("train_blocked_pickup.py: deferred to H-7b (H-7 amendment 1, §2)")
     ap = common_args(argparse.ArgumentParser())
     ap.add_argument("--variant", choices=["a", "b"], required=True)
     ap.add_argument("--rebuilt", action="store_true",

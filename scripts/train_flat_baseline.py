@@ -33,8 +33,9 @@ baseline matched to the node it is compared with (v2 §11, H-7 A.4):
 
     --task unlock        {0,B} flat_unlock_ppo            door open,        240,  1.5M / 50k
     --task unlockpickup  {0,B} flat_unlockpickup_ppo      carrying the box, 288,  3M   / 100k
-                         {1,B} flat_unlockpickup_options  (get_key, open_door, pickup_box),
+                         {1,B} flat_unlockpickup_options  (get_key, open_door, drop_held, pickup_box),
                                                           288, max_decisions 12, 40,960 decisions / 512
+                                                          (children per H-7 amendment 1)
     --task blocked       {0,B} flat_blocked_ppo           carrying the box, 576,  3M   / 100k
 
 `doorkey` stays the default so the H-6 commands still reproduce. Budgets are
@@ -82,7 +83,7 @@ BASELINE_RUNS = RUNS / "baselines"
 # Identical to {2,1} solve_doorkey: same goal, same ceiling (DoorKey-6x6's own
 # max_steps is 360), so neither side gets more of the episode than the other.
 TIMEOUT = 360
-OPTIONS_MAX_DECISIONS = 12      # [A: F2] 3 children, room for a few wasted picks
+OPTIONS_MAX_DECISIONS = 12      # [A: F2] 3-4 children, room for a few wasted picks
 
 UNLOCKPICKUP = "MiniGrid-UnlockPickup-v0"
 BLOCKED = "MiniGrid-BlockedUnlockPickup-v0"
@@ -134,10 +135,12 @@ def build_flat_options(children, task="doorkey"):
 def load_option_children(task, registry, device="cpu"):
     if task == "doorkey":
         return load_three_primitives(registry, device=device)
-    # unlockpickup: get_key, open_door and the H-7 pickup_box -- the same three
-    # skills {2,2} unlock_pickup has, without the intermediate unlock_door
+    # unlockpickup (H-7 amendment 1): get_key, open_door, drop_held and
+    # pickup_box -- the skills {2,2} unlock_pickup has, without the
+    # intermediate unlock_door
     from h7_nodes import load_h7_primitive
     kids = load_three_primitives(registry, device=device, names=("get_key", "open_door"))
+    kids.append(load_h7_primitive("drop_held", registry, device=device))
     kids.append(load_h7_primitive("pickup_box", registry, device=device))
     return kids
 
@@ -277,7 +280,7 @@ def main() -> int:
         learned = node.policy
 
     else:
-        print("loading the three frozen primitives:")
+        print("loading the frozen primitives:")
         children = load_option_children(args.task, registry, device=args.device)
         node = build_flat_options(children, args.task)
         print(f"\n{'=' * 72}\n{node.id}  n={node.n}  "

@@ -9,6 +9,10 @@ env and by what the agent holds at the start, plus the real handoff (after
 starts from a measurement.
 
     python scripts/diagnose_pickup_box.py   ->  runs/v2/pickup_box_diagnosis.json
+
+[H-7 amendment 1] The attempt-1 spec was withdrawn and its checkpoint moved to
+`runs/v2/attempts/0-4_pickup_box_attempt1/`; it is loaded from there with the
+withdrawn spec, so this diagnosis still reproduces.
 """
 
 from __future__ import annotations
@@ -26,7 +30,14 @@ from src.skills.registry import NodeRegistry  # noqa: E402
 from src.training.evaluation import evaluate_node, heldout_seeds  # noqa: E402
 from src.training.node_trainer import attach_sb3_primitive_policy, execution_env_factory  # noqa: E402
 from eval_h7_preflight import chain  # noqa: E402
-from h7_nodes import BLOCKED, RUNS, UNLOCKPICKUP, h7_primitive_specs, load_unlock_graph  # noqa: E402
+from h7_nodes import (  # noqa: E402
+    ATTEMPT1_DIR,
+    BLOCKED,
+    RUNS,
+    UNLOCKPICKUP,
+    load_unlock_graph,
+    pickup_box_attempt1_spec,
+)
 from train_primitives import build_node  # noqa: E402
 
 N = 50
@@ -34,10 +45,10 @@ N = 50
 
 def main() -> int:
     registry = NodeRegistry(RUNS)
-    spec = h7_primitive_specs()["pickup_box"]
+    spec = pickup_box_attempt1_spec()
     node = build_node(spec)
     attach_sb3_primitive_policy(node, UNLOCKPICKUP, spec["hook"])
-    registry.load_into(node, require_frozen=False)       # TRAINING, not frozen
+    registry.load_into(node, run_dir=ATTEMPT1_DIR, require_frozen=False)   # TRAINING, not frozen
     _, t3 = load_unlock_graph(registry, verbose=False)
 
     cases = []

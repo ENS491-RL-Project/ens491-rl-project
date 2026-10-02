@@ -10,20 +10,26 @@ is recorded as a deviation (plan header).
 
 Stages, each merged into `runs/v2/h7_preflight.json`:
 
-  base        V1-V7; solvability audits of pickup_box's and move_blocker's hooks;
-              F29 rows for {1,1} unlock_door on UnlockPickup (gating, A1) and on
-              BlockedUnlockPickup (expected fail)
-  pickup_box  F29 rows for {0,4} pickup_box: after unlock_door on UnlockPickup
-              (gating, A2) and from episode start with the door shut (expected fail)
-  blocked     F29 rows on BlockedUnlockPickup for move_blocker (gating) and the A5
-              transfer rows that decide the branch of H-7.5
+  base        V1-V7; solvability audits of the attempt-1 pickup_box hook and
+              move_blocker's hook; F29 rows for {1,1} unlock_door on UnlockPickup
+              (gating, A1) and on BlockedUnlockPickup (expected fail). H-7.1;
+              not re-run after amendment 1, so its record stays as measured
+  audit       [H-7a.1] solvability audit of the two amendment-1 reset
+              distributions, {0,9} drop_held's and the new {0,4} pickup_box's,
+              500 resets each by exhaustive search. Counts toward gate_passed
+  pickup_box  [H-7a.2] three F29 rows on UnlockPickup, 50 held-out seeds:
+              drop_held after unlock_door (gating, A2a); pickup_box after
+              unlock_door then drop_held (gating, A2b); pickup_box after
+              unlock_door with the key still in hand (not gating: SR, drop share,
+              what it holds at the end)
+  blocked     H-7b: refused until H-7b is planned (amendment 1, section 2)
   full_hand   every child any H-7 composite can select, started holding nothing,
               the key, and (BlockedUnlockPickup) the ball. Not gating
 
 Usage:
     python scripts/eval_h7_preflight.py --stage base
+    python scripts/eval_h7_preflight.py --stage audit
     python scripts/eval_h7_preflight.py --stage pickup_box
-    python scripts/eval_h7_preflight.py --stage blocked
     python scripts/eval_h7_preflight.py --stage full_hand
 """
 
@@ -53,6 +59,7 @@ from src.envs.subgoal_env import (  # noqa: E402
     compose,
     give_key,
     open_door,
+    randomize_agent_pose,
     reachable_cells,
     relocate_blocker,
 )
@@ -74,6 +81,7 @@ from h7_nodes import (  # noqa: E402
     h7_primitive_specs,
     load_h7_primitive,
     load_unlock_graph,
+    pickup_box_attempt1_spec,
 )
 from train_primitives import UNLOCK  # noqa: E402
 
@@ -303,7 +311,8 @@ def solvable(u, goal: str) -> bool | None:
     """
     Exhaustive breadth-first search over MiniGrid's own movement rules, from the
     current state, for a state that satisfies `goal` ("box": carrying the box;
-    "move_blocker": no ball next to the door and an empty hand).
+    "move_blocker": no ball next to the door and an empty hand; "empty_hand":
+    carrying nothing, `{0,9} drop_held`'s goal).
 
     [H-7.1 deviation] The plan's audit was a flood fill: "a cell adjacent to the
     box is reachable". That calls a layout unsolvable when an object a policy
@@ -344,6 +353,8 @@ def solvable(u, goal: str) -> bool | None:
         _, _, _, cy, ob, _ = st
         if goal == "box":
             return cy is not None and cy[0] == "box"
+        if goal == "empty_hand":
+            return cy is None
         return cy is None and not any(t == "ball" and _adj((x, y), dpos) for x, y, t, _ in ob)
 
     seen = {start}
@@ -421,8 +432,25 @@ def _proxy_move_blocker(u):
             and len(drop) >= (2 if holding else 1))
 
 
+def _proxy_drop_held(u):
+    start = (int(u.agent_pos[0]), int(u.agent_pos[1]))
+    return any(u.grid.get(*c) is None and c != start for c in reachable_cells(u, start))
+
+
 def audit_pickup_box(env_id) -> dict:
-    return _audit(env_id, h7_primitive_specs()["pickup_box"]["hook"], "box", _proxy_pickup_box)
+    """The withdrawn attempt-1 hook (H-7.1's audit; `--stage base`)."""
+    return _audit(env_id, pickup_box_attempt1_spec()["hook"], "box", _proxy_pickup_box)
+
+
+def audit_h7a() -> list[dict]:
+    """[H-7a.1] The two amendment-1 reset distributions, on UnlockPickup."""
+    sp = h7_primitive_specs()
+    return [
+        {"node": sp["drop_held"]["node_id"],
+         **_audit(UNLOCKPICKUP, sp["drop_held"]["hook"], "empty_hand", _proxy_drop_held)},
+        {"node": sp["pickup_box"]["node_id"],
+         **_audit(UNLOCKPICKUP, sp["pickup_box"]["hook"], "box", _proxy_pickup_box)},
+    ]
 
 
 def audit_move_blocker() -> dict:
@@ -453,17 +481,43 @@ def stage_base(registry) -> dict:
     return out
 
 
+def stage_audit() -> dict:
+    print(f"solvability audits of the amendment-1 hooks ({len(AUDIT_SEEDS)} resets each):")
+    audits = audit_h7a()
+    for a in audits:
+        print(f"  {a['node']:<20}{a['hook']:<56}unsolvable {a['unsolvable']}/{a['n']} "
+              f"(search cut off {a['search_cut_off']}; flood-fill proxy fails "
+              f"{a['flood_fill_proxy_fails']})  key in hand {a['key_in_hand']}")
+    return {"solvability": audits}
+
+
 def stage_pickup_box(registry) -> dict:
+    """[H-7a.2] Amendment 1's three rows; replaces the attempt-1 rows of plan H-7.3."""
     _, t3 = load_unlock_graph(registry)
+    dh = load_h7_primitive("drop_held", registry)
     pb = load_h7_primitive("pickup_box", registry)
-    print("\nF29 rows, 50 held-out seeds:")
-    return {"rows": [
-        f29_row(pb, UNLOCKPICKUP, NO_HOOK, chain(t3), "after unlock_door ran (the handoff)", True),
-        f29_row(pb, UNLOCKPICKUP, NO_HOOK, None, "[expected fail] episode start, door shut", False),
-    ]}
+    print("\nF29 rows on UnlockPickup, 50 held-out seeds:")
+    rows = [
+        f29_row(dh, UNLOCKPICKUP, NO_HOOK, chain(t3), "drop_held after unlock_door (A2a)", True),
+        f29_row(pb, UNLOCKPICKUP, NO_HOOK, chain(t3, dh),
+                "pickup_box after unlock_door, drop_held (A2b)", True),
+    ]
+    # Not gating: pickup_box handed the key, as a goal-only parent may do. What
+    # it does with a full hand (V13: undefined is not the same as failing).
+    full = run_full_hand(pb, UNLOCKPICKUP, NO_HOOK, prepare=chain(t3))
+    label = "[not gating] pickup_box after unlock_door, key still in hand"
+    print(f"  {pb.id:<24}{'UnlockPickup-v0':<26}{label:<52}{full['success_rate']:>6.2f}"
+          f"{full['wilson_lower']:>7.3f}{full['mean_length']:>7.1f}   -   drop share "
+          f"{full['drop_share']:.3f}, holding at end {full['holding_at_end']}")
+    rows.append({"node": pb.id, "env": UNLOCKPICKUP, "hook": NO_HOOK.spec,
+                 "start_state": label, "gate": False, **full})
+    return {"rows": rows, "spec": "H-7 amendment 1"}
 
 
 def stage_blocked(registry, args) -> dict:
+    # [H-7 amendment 1, section 2] H-7b. Its rows depend on move_blocker and on a
+    # T7 whose children have changed; it is re-planned after H-7a's result.
+    raise SystemExit("--stage blocked: deferred to H-7b (H-7 amendment 1, section 2)")
     prims, t3 = load_unlock_graph(registry)
     mb_spec = None
     if args.move_blocker_fallback:
@@ -500,13 +554,15 @@ def stage_blocked(registry, args) -> dict:
             "move_blocker_hook": mb.train_hook}
 
 
-def run_full_hand(node, env_id, hook):
+def run_full_hand(node, env_id, hook, prepare=None):
     env = execution_env_factory(env_id, hook)()
     acts, end_hold = Counter(), Counter()
     ok = lengths = at_start = 0
     try:
         for seed in heldout_seeds(N_EVAL):
             obs, _ = env.reset(seed=seed)
+            if prepare is not None:
+                obs = prepare(env, obs)
             version = 0
             sv = build_state_view(env, version)
             at_start += int(bool(node.goal(sv)))
@@ -545,15 +601,15 @@ def stage_full_hand(registry) -> dict:
     prims, t3 = load_unlock_graph(registry)
     children = {"get_key": prims["get_key"], "open_door": prims["open_door"], "unlock_door": t3}
     skipped = []
-    for name in ("pickup_box", "move_blocker"):
+    for name in ("drop_held", "pickup_box", "move_blocker"):
         try:
             children[name] = load_h7_primitive(name, registry)
         except Exception as exc:                       # not trained yet
             skipped.append(f"{name}: {type(exc).__name__}")
-    if "pickup_box" in children:
+    if "pickup_box" in children and "drop_held" in children:
         try:
             from src.training.node_trainer import load_frozen_composite
-            up = build_unlock_pickup(t3, children["pickup_box"])
+            up = build_unlock_pickup(t3, children["drop_held"], children["pickup_box"])
             load_frozen_composite(up, registry, UNLOCKPICKUP, NO_HOOK)
             children["unlock_pickup"] = up
         except Exception as exc:
@@ -566,6 +622,8 @@ def stage_full_hand(registry) -> dict:
     def base(name, env_id):
         if name == "pickup_box":
             return [relocate_blocker(), open_door()]
+        if name == "drop_held":
+            return [relocate_blocker(), open_door(), randomize_agent_pose(anchor=None)]
         if name == "move_blocker":
             return []
         return [relocate_blocker()] if env_id == BLOCKED else []
@@ -592,7 +650,7 @@ def stage_full_hand(registry) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stage", required=True,
-                    choices=["base", "pickup_box", "blocked", "full_hand"])
+                    choices=["base", "audit", "pickup_box", "blocked", "full_hand"])
     ap.add_argument("--move-blocker-fallback", action="store_true",
                     help="load move_blocker trained with the empty-handed fallback hook")
     args = ap.parse_args()
@@ -604,6 +662,8 @@ def main() -> int:
 
     if args.stage == "base":
         doc["base"] = stage_base(registry)
+    elif args.stage == "audit":
+        doc["h7a_audit"] = stage_audit()
     elif args.stage == "pickup_box":
         doc["pickup_box"] = stage_pickup_box(registry)
     elif args.stage == "blocked":
@@ -613,7 +673,9 @@ def main() -> int:
 
     gating = [r for st in ("base", "pickup_box", "blocked") if st in doc
               for r in doc[st].get("rows", []) if r["gate"]]
-    unsolvable = sum(a["unsolvable"] for a in doc.get("base", {}).get("solvability", []))
+    # base: the attempt-1 and move_blocker hooks (H-7.1); h7a_audit: amendment 1.
+    unsolvable = sum(a["unsolvable"] for st in ("base", "h7a_audit")
+                     for a in doc.get(st, {}).get("solvability", []))
     doc["gate_passed"] = bool(gating) and all(r["success_rate"] >= GATE for r in gating) \
         and unsolvable == 0
     doc["gating_rows"] = [{"node": r["node"], "env": r["env"], "start_state": r["start_state"],

@@ -41,6 +41,16 @@ def carrying_nothing() -> Predicate:
     return Predicate("carrying:none", lambda sv: sv.carrying_type is None)
 
 
+def carrying_anything() -> Predicate:
+    """
+    The agent holds some object (T6b `drop_held`'s initiation, H-7 amendment 1).
+
+    The negation of `carrying_nothing()`, with its own spec string so the two
+    cannot hash alike.
+    """
+    return Predicate("carrying:any", lambda sv: sv.carrying_type is not None)
+
+
 def door_open(color: Optional[str] = None) -> Predicate:
     """A door is open (T2 `open_door`, T3 `unlock_door`)."""
     spec = "door:open" + (f":{color}" if color else "")
