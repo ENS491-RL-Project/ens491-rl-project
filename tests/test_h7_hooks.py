@@ -7,6 +7,11 @@ still in the room, away from the door -- and `door_approach_blocked()` is
 `door_approach_clear()` reads the grid, a carried ball is not on the grid, so
 "clear" alone becomes true the moment the ball is picked up. `move_blocker`'s
 goal must therefore stay false until the ball is put down and the hand is empty.
+
+H-7a.1 (amendment 1) adds `carrying_anything()` and `key_off_door()`, and the two
+reset distributions built from them: `{0,9} drop_held`'s and the re-specified
+`{0,4} pickup_box`'s. `PICKUP_BOX_HOOK` below is the withdrawn attempt-1 hook,
+kept because its tests still describe the hooks it is made of.
 """
 
 from __future__ import annotations
@@ -19,6 +24,8 @@ from src.envs.option_env import ResetHookEnv
 from src.envs.subgoal_env import (
     UnsuitableLayout,
     compose,
+    give_key,
+    key_off_door,
     open_door,
     randomize_agent_pose,
     randomize_carrying,
@@ -27,9 +34,12 @@ from src.envs.subgoal_env import (
 )
 from src.skills.predicates import (
     all_of,
+    carrying,
+    carrying_anything,
     carrying_nothing,
     door_approach_blocked,
     door_approach_clear,
+    door_open,
 )
 from src.skills.state import StateView, build_state_view
 
@@ -41,6 +51,10 @@ PICKUP_BOX_HOOK = compose(relocate_blocker(), open_door(),
                           randomize_carrying(0.5, "key"),
                           randomize_agent_pose(anchor=None))
 MOVE_BLOCKER_GOAL = all_of(door_approach_clear(), carrying_nothing())
+
+# [H-7 amendment 1] the two H-7a reset distributions, as scripts/h7_nodes.py builds them
+DROP_HELD_HOOK = compose(open_door(), give_key(), randomize_agent_pose(anchor=None))
+NEW_PICKUP_BOX_HOOK = compose(open_door(), key_off_door(), randomize_agent_pose(anchor=None))
 
 # minigrid actions
 LEFT, RIGHT, FORWARD, PICKUP, DROP = 0, 1, 2, 3, 4
@@ -240,3 +254,149 @@ def test_move_blocker_goal_is_false_if_the_ball_is_dropped_back_by_the_door():
     finally:
         env.close()
     pytest.fail("no usable seed")
+
+
+# == H-7a.1: carrying_anything, key_off_door and the two amendment-1 hooks ======
+
+def test_carrying_anything_is_the_negation_of_carrying_nothing():
+    assert carrying_anything().spec == "carrying:any"
+    assert carrying_anything().spec != carrying_nothing().spec
+    env = gym.make(UNLOCKPICKUP)
+    try:
+        for seed in range(20):
+            env.reset(seed=seed)
+            sv = build_state_view(env)
+            assert sv.carrying_type is None
+            assert not carrying_anything()(sv) and carrying_nothing()(sv)
+            give_key()(env)
+            sv = build_state_view(env)
+            assert carrying_anything()(sv) and not carrying_nothing()(sv)
+    finally:
+        env.close()
+    assert not carrying_anything()(StateView())
+
+
+def _key_and_door(env):
+    sv = build_state_view(env)
+    return sv.obj("key"), sv.door()
+
+
+def test_key_off_door_raises_only_when_a_key_is_next_to_the_door():
+    env = gym.make(UNLOCKPICKUP)
+    try:
+        for seed in range(50):
+            env.reset(seed=seed)
+            u = env.unwrapped
+            key, door = _key_and_door(env)
+            before = build_state_view(env)
+            if _adjacent(key.pos, door.pos):
+                with pytest.raises(UnsuitableLayout):
+                    key_off_door()(env)
+                continue
+            key_off_door()(env)                           # no-op: nothing moves
+            after = build_state_view(env)
+            assert after.objects == before.objects and after.agent_pos == before.agent_pos
+            # Now put the key on the door's approach cell: rejected.
+            dx, dy = door.pos
+            front = (dx - 1, dy)
+            if u.grid.get(*front) is None and tuple(u.agent_pos) != front:
+                k = u.grid.get(*key.pos)
+                u.grid.set(key.pos[0], key.pos[1], None)
+                u.grid.set(front[0], front[1], k)
+                k.cur_pos = np.array(front)
+                with pytest.raises(UnsuitableLayout):
+                    key_off_door()(env)
+    finally:
+        env.close()
+
+
+def test_key_off_door_spec_and_no_door_is_a_bug_not_a_resample():
+    assert key_off_door().spec == "key_off_door"
+    env = gym.make(UNLOCKPICKUP)
+    env.reset(seed=0)
+    u = env.unwrapped
+    door = build_state_view(env).door()
+    u.grid.set(door.pos[0], door.pos[1], None)
+    with pytest.raises(RuntimeError) as exc:
+        key_off_door()(env)
+    assert not isinstance(exc.value, UnsuitableLayout)
+    env.close()
+
+
+def test_new_pickup_box_hook_gives_its_initiation_and_never_a_key_by_the_door():
+    init = all_of(door_open(), carrying_nothing())
+    env = _env(UNLOCKPICKUP, NEW_PICKUP_BOX_HOOK)
+    try:
+        for seed in range(N):
+            env.reset(seed=seed)
+            sv = build_state_view(env)
+            assert init(sv), seed
+            assert not carrying("box")(sv), seed
+            key, door = _key_and_door(env)
+            assert key is not None, seed                  # the key stays on the floor
+            assert not _adjacent(key.pos, door.pos), seed
+            assert sv.obj("box") is not None
+    finally:
+        env.close()
+
+
+def test_new_pickup_box_hook_starts_in_both_rooms():
+    env = _env(UNLOCKPICKUP, NEW_PICKUP_BOX_HOOK)
+    left = 0
+    try:
+        for seed in range(N):
+            env.reset(seed=seed)
+            sv = build_state_view(env)
+            left += sv.agent_pos[0] < sv.door().pos[0]
+    finally:
+        env.close()
+    # The pose is drawn over the free cells of both rooms; the left room has
+    # one fewer free cell (the key), so a bit under half -- not all, not none.
+    assert 0.30 * N <= left <= 0.65 * N, left
+
+
+def test_drop_held_hook_starts_holding_the_key_with_the_door_open():
+    env = _env(UNLOCKPICKUP, DROP_HELD_HOOK)
+    try:
+        for seed in range(N):
+            env.reset(seed=seed)
+            sv = build_state_view(env)
+            assert sv.carrying_type == "key", seed
+            assert carrying_anything()(sv) and not carrying_nothing()(sv)
+            assert sv.door().is_open
+            assert sv.obj("key") is None                  # off the grid: in the hand
+    finally:
+        env.close()
+
+
+def test_drop_at_the_handoff_needs_a_turn_first():
+    """On the door-front cell facing the open door, `drop` does nothing (the door
+    occupies the forward cell); after a turn onto a free cell it empties the hand."""
+    env = gym.make(UNLOCKPICKUP)
+    tried = 0
+    try:
+        for seed in range(100):
+            env.reset(seed=seed)
+            give_key()(env)
+            open_door()(env)
+            u = env.unwrapped
+            dx, dy = build_state_view(env).door().pos
+            front = (dx - 1, dy)
+            if u.grid.get(*front) is not None:
+                continue
+            u.agent_pos, u.agent_dir = np.array(front), 0     # facing the door
+            env.step(DROP)
+            assert build_state_view(env).carrying_type == "key"
+            for turn in (LEFT, RIGHT, RIGHT):
+                env.step(turn)
+                fx, fy = (int(v) for v in u.front_pos)
+                if u.grid.get(fx, fy) is None:
+                    env.step(DROP)
+                    sv = build_state_view(env)
+                    assert carrying_nothing()(sv)
+                    assert not _adjacent(sv.obj("key").pos, sv.door().pos)
+                    tried += 1
+                    break
+    finally:
+        env.close()
+    assert tried >= 50

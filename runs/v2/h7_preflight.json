@@ -508,5 +508,36 @@
       "pickup_box: FileNotFoundError",
       "move_blocker: FileNotFoundError"
     ]
+  },
+  "h7a_audit": {
+    "solvability": [
+      {
+        "node": "{0,9} drop_held",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "open_door+give_key+randomize_agent_pose:any",
+        "goal": "empty_hand",
+        "n": 500,
+        "key_in_hand": 500,
+        "unsolvable": 0,
+        "unsolvable_seeds": [],
+        "search_cut_off": 0,
+        "flood_fill_proxy_fails": 0,
+        "flood_fill_proxy_fail_seeds": []
+      },
+      {
+        "node": "{0,4} pickup_box",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "open_door+key_off_door+randomize_agent_pose:any",
+        "goal": "box",
+        "n": 500,
+        "key_in_hand": 0,
+        "unsolvable": 0,
+        "unsolvable_seeds": [],
+        "search_cut_off": 0,
+        "flood_fill_proxy_fails": 0,
+        "flood_fill_proxy_fail_seeds": []
+      }
+    ],
+    "key_off_door_rejects_first_draw": "27/500"
   }
 }
