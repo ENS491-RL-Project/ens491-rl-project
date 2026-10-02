@@ -116,6 +116,69 @@ def clear_blocker() -> ResetHook:
     return ResetHook("clear_blocker", fn)
 
 
+def _adjacent(a: tuple[int, int], b: tuple[int, int]) -> bool:
+    return abs(a[0] - b[0]) + abs(a[1] - b[1]) == 1
+
+
+def relocate_blocker(*, tries: int = 64) -> ResetHook:
+    """
+    Move the ball that blocks the door to a reachable cell away from the door
+    (H-7 Part B; T6 `pickup_box`, and the A5 transfer rows).
+
+    BlockedUnlockPickup puts a ball on the only cell the door can be opened from.
+    `clear_blocker()` deletes it, which is NOT the state `{0,5} move_blocker`
+    leaves: after it the ball is still in the room, somewhere else. Whether the
+    frozen Unlock skills survive a ball lying on the floor -- an object no frozen
+    node has ever had in its observation (H-7 plan, V7) -- is exactly what the
+    A5 rows measure, so the hook has to reproduce the real state.
+
+    The new cell is drawn with the env's own `_rand_int` from the free cells
+    reachable from the agent (with the ball lifted off the grid) that are not
+    orthogonally adjacent to the door. A candidate is accepted only if, with the
+    ball on it, the agent can still stand next to the key, next to the door and
+    (if there is one on its side) next to the box: two obstacles in a 4x4 room can
+    isolate a corner, and an episode no policy can solve looks like a learning
+    plateau (H-6.6, deviation 2). No ball: a no-op, so one hook serves
+    UnlockPickup and BlockedUnlockPickup. No acceptable cell: `UnsuitableLayout`.
+    """
+
+    def fn(env):
+        u = env.unwrapped
+        ball_pos, ball = _find(u, "ball")
+        if ball is None:
+            return
+        door_pos, door = _find(u, "door")
+        if door is None:
+            raise RuntimeError("relocate_blocker: no door in this layout")
+        start = (int(u.agent_pos[0]), int(u.agent_pos[1]))
+        u.grid.set(ball_pos[0], ball_pos[1], None)
+
+        free = [c for c in reachable_cells(u, start)
+                if u.grid.get(*c) is None and c != start and not _adjacent(c, door_pos)]
+        # Whatever the agent could reach with the ball lifted must stay reachable
+        # with the ball put down -- the key always, the box only when it is on
+        # the agent's side (the door may be shut).
+        targets = [p for p, _ in (_find(u, "key"), _find(u, "box"))
+                   if p is not None and _standable(u, p, start)]
+        door_ok = _door_approachable(u, door_pos, start)
+
+        for _ in range(tries if free else 0):
+            c = free[u._rand_int(0, len(free))]
+            u.grid.set(c[0], c[1], ball)
+            ball.cur_pos = np.array(c)
+            if (_door_approachable(u, door_pos, start) == door_ok
+                    and all(_standable(u, t, start) for t in targets)):
+                return
+            u.grid.set(c[0], c[1], None)
+
+        u.grid.set(ball_pos[0], ball_pos[1], ball)
+        raise UnsuitableLayout(
+            f"relocate_blocker: no acceptable cell among {len(free)} free reachable cells"
+        )
+
+    return ResetHook("relocate_blocker", fn)
+
+
 def randomize_carrying(prob: float = 0.5, type_: str = "key") -> ResetHook:
     """
     With probability `prob`, start the episode already holding the object.

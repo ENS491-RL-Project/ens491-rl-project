@@ -1,0 +1,512 @@
+{
+  "n_eval": 50,
+  "seed_base": 20000,
+  "gate_threshold": 0.9,
+  "base": {
+    "facts": {
+      "V1": {
+        "MiniGrid-Unlock-v0": {
+          "width": 11,
+          "height": 6,
+          "max_steps": 288
+        },
+        "MiniGrid-UnlockPickup-v0": {
+          "width": 11,
+          "height": 6,
+          "max_steps": 288
+        },
+        "MiniGrid-BlockedUnlockPickup-v0": {
+          "width": 11,
+          "height": 6,
+          "max_steps": 576
+        }
+      },
+      "V2": {
+        "step_checks_carrying_is_obj": true,
+        "gen_grid_adds_box": true,
+        "box_right_of_door": "400/400"
+      },
+      "V3": {
+        "box_in_view_at_reset": "0/400"
+      },
+      "V4": {
+        "pickup_refused_with_key_in_hand": "400/400",
+        "drop_then_pickup_succeeds_and_terminates": "400/400"
+      },
+      "V5": {
+        "box_in_view_at_handoff": "400/400"
+      },
+      "V6": {
+        "ball_on_door_front_cell": "400/400",
+        "door_front_reachable_without_moving_ball": "0/400",
+        "key_reachable_without_moving_ball": "400/400",
+        "ball_in_view_at_reset": "250/400"
+      },
+      "V7": {
+        "frozen_nodes_env_ids": {
+          "0-1_get_key": [
+            "MiniGrid-Unlock-v0",
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "0-2_open_door": [
+            "MiniGrid-Unlock-v0",
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "0-3_go_to_goal": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "0-6_get_key_yellow": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "0-7_get_key_blue": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "0-8_open_door_tk": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "1-1_unlock_door": [
+            "MiniGrid-Unlock-v0"
+          ],
+          "1-2_unlock_matching": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ],
+          "2-1_solve_doorkey": [
+            "MiniGrid-DoorKey-6x6-v0"
+          ]
+        },
+        "nodes_trained_on_a_box_or_ball_env": []
+      }
+    },
+    "solvability": [
+      {
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "relocate_blocker+open_door+randomize_carrying:key:0.5+randomize_agent_pose:any",
+        "goal": "box",
+        "n": 500,
+        "key_in_hand": 252,
+        "unsolvable": 0,
+        "unsolvable_seeds": [],
+        "search_cut_off": 0,
+        "flood_fill_proxy_fails": 13,
+        "flood_fill_proxy_fail_seeds": [
+          26,
+          70,
+          100,
+          124,
+          144,
+          156,
+          174,
+          193,
+          233,
+          337,
+          349,
+          10019,
+          20022
+        ]
+      },
+      {
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "hook": "relocate_blocker+open_door+randomize_carrying:key:0.5+randomize_agent_pose:any",
+        "goal": "box",
+        "n": 500,
+        "key_in_hand": 229,
+        "unsolvable": 0,
+        "unsolvable_seeds": [],
+        "search_cut_off": 0,
+        "flood_fill_proxy_fails": 0,
+        "flood_fill_proxy_fail_seeds": []
+      },
+      {
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "hook": "randomize_carrying:key:0.5+randomize_agent_pose:any",
+        "goal": "move_blocker",
+        "n": 500,
+        "key_in_hand": 267,
+        "unsolvable": 0,
+        "unsolvable_seeds": [],
+        "search_cut_off": 0,
+        "flood_fill_proxy_fails": 3,
+        "flood_fill_proxy_fail_seeds": [
+          177,
+          278,
+          10013
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "node": "{1,1} unlock_door",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "hook": "none",
+        "start_state": "episode start (A1)",
+        "gate": true,
+        "n_episodes": 50,
+        "successes": 49,
+        "success_rate": 0.98,
+        "wilson_lower": 0.895,
+        "wilson_upper": 0.9965,
+        "mean_length": 19.82,
+        "seed_base": 20000,
+        "timeouts": 1,
+        "reselections": 1
+      },
+      {
+        "node": "{1,1} unlock_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "hook": "none",
+        "start_state": "[expected fail] episode start, ball on door-front",
+        "gate": false,
+        "n_episodes": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713,
+        "mean_length": 240.0,
+        "seed_base": 20000,
+        "timeouts": 50,
+        "reselections": 96
+      }
+    ]
+  },
+  "gate_passed": true,
+  "gating_rows": [
+    {
+      "node": "{1,1} unlock_door",
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "episode start (A1)",
+      "success_rate": 0.98
+    }
+  ],
+  "full_hand": {
+    "rows": [
+      {
+        "child": "{0,1} get_key",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "none",
+        "n": 50,
+        "successes": 49,
+        "success_rate": 0.98,
+        "wilson_lower": 0.895,
+        "goal_true_at_start": 0,
+        "mean_length": 8.7,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.2368,
+          "forward": 0.6506,
+          "pickup": 0.1126
+        },
+        "holding_at_end": {
+          "key": 49,
+          "nothing": 1
+        }
+      },
+      {
+        "child": "{0,1} get_key",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "key",
+        "hook": "give_key",
+        "n": 50,
+        "successes": 50,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "goal_true_at_start": 50,
+        "mean_length": 0.0,
+        "drop_share": 0.0,
+        "action_share": {},
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{0,1} get_key",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "relocate_blocker",
+        "n": 50,
+        "successes": 19,
+        "success_rate": 0.38,
+        "wilson_lower": 0.2586,
+        "goal_true_at_start": 0,
+        "mean_length": 76.8,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0437,
+          "forward": 0.1174,
+          "pickup": 0.8388
+        },
+        "holding_at_end": {
+          "ball": 29,
+          "key": 19,
+          "nothing": 2
+        }
+      },
+      {
+        "child": "{0,1} get_key",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "key",
+        "hook": "relocate_blocker+give_key",
+        "n": 50,
+        "successes": 50,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "goal_true_at_start": 50,
+        "mean_length": 0.0,
+        "drop_share": 0.0,
+        "action_share": {},
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{0,1} get_key",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "ball",
+        "hook": "relocate_blocker+hold:ball",
+        "n": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "goal_true_at_start": 0,
+        "mean_length": 120.0,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0438,
+          "forward": 0.0453,
+          "pickup": 0.9108
+        },
+        "holding_at_end": {
+          "ball": 50
+        }
+      },
+      {
+        "child": "{0,2} open_door",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "none",
+        "n": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "goal_true_at_start": 0,
+        "mean_length": 60.0,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0237,
+          "right": 0.019,
+          "forward": 0.323,
+          "toggle": 0.6343
+        },
+        "holding_at_end": {
+          "nothing": 50
+        }
+      },
+      {
+        "child": "{0,2} open_door",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "key",
+        "hook": "give_key",
+        "n": 50,
+        "successes": 50,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "goal_true_at_start": 0,
+        "mean_length": 8.12,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.2266,
+          "right": 0.1478,
+          "forward": 0.5025,
+          "toggle": 0.1232
+        },
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{0,2} open_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "relocate_blocker",
+        "n": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "goal_true_at_start": 0,
+        "mean_length": 60.0,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0187,
+          "right": 0.0167,
+          "forward": 0.5153,
+          "toggle": 0.4493
+        },
+        "holding_at_end": {
+          "nothing": 50
+        }
+      },
+      {
+        "child": "{0,2} open_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "key",
+        "hook": "relocate_blocker+give_key",
+        "n": 50,
+        "successes": 37,
+        "success_rate": 0.74,
+        "wilson_lower": 0.6045,
+        "goal_true_at_start": 0,
+        "mean_length": 21.8,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0633,
+          "right": 0.0569,
+          "forward": 0.8459,
+          "toggle": 0.0339
+        },
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{0,2} open_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "ball",
+        "hook": "relocate_blocker+hold:ball",
+        "n": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "goal_true_at_start": 0,
+        "mean_length": 60.0,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0157,
+          "right": 0.0213,
+          "forward": 0.3933,
+          "toggle": 0.5697
+        },
+        "holding_at_end": {
+          "ball": 50
+        }
+      },
+      {
+        "child": "{1,1} unlock_door",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "none",
+        "n": 50,
+        "successes": 49,
+        "success_rate": 0.98,
+        "wilson_lower": 0.895,
+        "goal_true_at_start": 0,
+        "mean_length": 19.82,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.1937,
+          "right": 0.0656,
+          "forward": 0.6418,
+          "pickup": 0.0494,
+          "toggle": 0.0494
+        },
+        "holding_at_end": {
+          "key": 49,
+          "nothing": 1
+        }
+      },
+      {
+        "child": "{1,1} unlock_door",
+        "env": "MiniGrid-UnlockPickup-v0",
+        "holding": "key",
+        "hook": "give_key",
+        "n": 50,
+        "successes": 50,
+        "success_rate": 1.0,
+        "wilson_lower": 0.9287,
+        "goal_true_at_start": 0,
+        "mean_length": 8.12,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.2266,
+          "right": 0.1478,
+          "forward": 0.5025,
+          "toggle": 0.1232
+        },
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{1,1} unlock_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "nothing",
+        "hook": "relocate_blocker",
+        "n": 50,
+        "successes": 17,
+        "success_rate": 0.34,
+        "wilson_lower": 0.2244,
+        "goal_true_at_start": 0,
+        "mean_length": 163.28,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0243,
+          "right": 0.0024,
+          "forward": 0.1504,
+          "pickup": 0.8208,
+          "toggle": 0.0021
+        },
+        "holding_at_end": {
+          "ball": 29,
+          "key": 19,
+          "nothing": 2
+        }
+      },
+      {
+        "child": "{1,1} unlock_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "key",
+        "hook": "relocate_blocker+give_key",
+        "n": 50,
+        "successes": 37,
+        "success_rate": 0.74,
+        "wilson_lower": 0.6045,
+        "goal_true_at_start": 0,
+        "mean_length": 68.6,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0201,
+          "right": 0.0181,
+          "forward": 0.951,
+          "toggle": 0.0108
+        },
+        "holding_at_end": {
+          "key": 50
+        }
+      },
+      {
+        "child": "{1,1} unlock_door",
+        "env": "MiniGrid-BlockedUnlockPickup-v0",
+        "holding": "ball",
+        "hook": "relocate_blocker+hold:ball",
+        "n": 50,
+        "successes": 0,
+        "success_rate": 0.0,
+        "wilson_lower": 0.0,
+        "goal_true_at_start": 0,
+        "mean_length": 240.0,
+        "drop_share": 0.0,
+        "action_share": {
+          "left": 0.0336,
+          "forward": 0.031,
+          "pickup": 0.9354
+        },
+        "holding_at_end": {
+          "ball": 50
+        }
+      }
+    ],
+    "skipped": [
+      "pickup_box: FileNotFoundError",
+      "move_blocker: FileNotFoundError"
+    ]
+  }
+}

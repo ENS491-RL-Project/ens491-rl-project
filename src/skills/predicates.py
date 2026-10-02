@@ -98,6 +98,25 @@ def door_approach_clear(color: Optional[str] = None) -> Predicate:
     return Predicate(spec, fn)
 
 
+def door_approach_blocked(color: Optional[str] = None) -> Predicate:
+    """
+    A ball is orthogonally adjacent to the door (T8 `move_blocker`'s initiation).
+
+    The negation of `door_approach_clear()` when there is a door, and False when
+    there is none -- "blocked" needs a door to be blocked. Note what neither
+    predicate sees: a carried ball is not on the grid, so the moment the ball is
+    picked up the door reads as clear (H-7 plan, V9). That is why T8's goal is
+    `all_of(door_approach_clear(), carrying_nothing())`, not the clear test alone.
+    """
+    spec = "door:approach_blocked" + (f":{color}" if color else "")
+    clear = door_approach_clear(color)
+
+    def fn(sv: StateView) -> bool:
+        return sv.door(color) is not None and not clear(sv)
+
+    return Predicate(spec, fn)
+
+
 def env_success() -> Predicate:
     """The underlying MiniGrid env signalled termination with success."""
     return Predicate("env:success", lambda sv: sv.env_terminated)
