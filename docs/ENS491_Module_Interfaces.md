@@ -1,5 +1,17 @@
 # ENS 491 — Module Interface Specification
 
+> ## ⚠️ PARTIALLY SUPERSEDED on 2026-10-01
+> These are the **v1** interface contracts. Under `ENS491_Target_Architecture_v2.md`:
+> - **Still valid:** Common Types (but the observation pipeline is `ImgObsWrapper` → `FlattenObservation`, not
+>   `FlatObsWrapper`), Module 1 (Autoencoder, plus per-channel input normalization), Module 2 (GRU Task Identifier,
+>   plus the task id → root node registry).
+> - **Superseded:** Module 3 (Column), Module 4 (Option), Module 5 (Meta-Controller), Module 6 (Task Lifecycle
+>   Manager), the Signal Flow section, and the hard constraint "`sub_layer` must exist". Their replacements are
+>   `SkillNode`, `Executor`, `SubgoalEnv`, `OptionEnv` and `EvaluationMonitor` (v2 §2–§5, migration map in §10).
+> - The new contracts will be written into this file as part of roadmap task H-1.
+
+---
+
 > Input/output contracts for every module. This is the reference during parallel development.  
 > Module internals can change — but these contracts do not.  
 > If a contract needs to change, update this document first, then the code.

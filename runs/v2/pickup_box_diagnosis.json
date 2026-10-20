@@ -1,0 +1,77 @@
+{
+  "node": "{0,4} pickup_box",
+  "checkpoint": "seed 42, TRAINING (not stable at 600,000)",
+  "spec_hash": "eedc2100c1b0e30e",
+  "rows": [
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "door open, holding nothing",
+      "hook": "relocate_blocker+open_door",
+      "n_episodes": 50,
+      "successes": 5,
+      "success_rate": 0.1,
+      "wilson_lower": 0.0435,
+      "wilson_upper": 0.2136,
+      "mean_length": 108.92,
+      "seed_base": 20000,
+      "timeouts": 45,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "door open, holding key",
+      "hook": "relocate_blocker+open_door+give_key",
+      "n_episodes": 50,
+      "successes": 1,
+      "success_rate": 0.02,
+      "wilson_lower": 0.0035,
+      "wilson_upper": 0.105,
+      "mean_length": 117.76,
+      "seed_base": 20000,
+      "timeouts": 49,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-BlockedUnlockPickup-v0",
+      "start_state": "door open, holding nothing",
+      "hook": "relocate_blocker+open_door",
+      "n_episodes": 50,
+      "successes": 0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "wilson_upper": 0.0713,
+      "mean_length": 120.0,
+      "seed_base": 20000,
+      "timeouts": 50,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-BlockedUnlockPickup-v0",
+      "start_state": "door open, holding key",
+      "hook": "relocate_blocker+open_door+give_key",
+      "n_episodes": 50,
+      "successes": 2,
+      "success_rate": 0.04,
+      "wilson_lower": 0.011,
+      "wilson_upper": 0.1346,
+      "mean_length": 115.76,
+      "seed_base": 20000,
+      "timeouts": 48,
+      "reselections": 0
+    },
+    {
+      "env": "MiniGrid-UnlockPickup-v0",
+      "start_state": "after unlock_door ran (the real handoff)",
+      "hook": "none",
+      "n_episodes": 50,
+      "successes": 5,
+      "success_rate": 0.1,
+      "wilson_lower": 0.0435,
+      "wilson_upper": 0.2136,
+      "mean_length": 107.24,
+      "seed_base": 20000,
+      "timeouts": 45,
+      "reselections": 0
+    }
+  ]
+}

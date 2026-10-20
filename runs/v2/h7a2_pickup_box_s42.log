@@ -1,0 +1,62 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+
+========================================================================
+{0,4} pickup_box  envs=['MiniGrid-UnlockPickup-v0']  timeout=120
+  hook=open_door+key_off_door+randomize_agent_pose:any
+  goal=carrying:box  initiation=and(carrying:none,door:open)
+  seed=42 budget=1,000,000 eval_every=20,000  freeze=True
+========================================================================
+  [   20000] {0,4} pickup_box: SR 0.040 (2/50), Wilson LB 0.011, mean length 115.2 | streak 0/2
+  [   40000] {0,4} pickup_box: SR 0.040 (2/50), Wilson LB 0.011, mean length 115.2 | streak 0/2
+  [   60000] {0,4} pickup_box: SR 0.040 (2/50), Wilson LB 0.011, mean length 115.2 | streak 0/2
+  [   80000] {0,4} pickup_box: SR 0.040 (2/50), Wilson LB 0.011, mean length 115.5 | streak 0/2
+  [  100000] {0,4} pickup_box: SR 0.080 (4/50), Wilson LB 0.032, mean length 110.7 | streak 0/2
+  [  120000] {0,4} pickup_box: SR 0.020 (1/50), Wilson LB 0.004, mean length 117.9 | streak 0/2
+  [  140000] {0,4} pickup_box: SR 0.080 (4/50), Wilson LB 0.032, mean length 111.1 | streak 0/2
+  [  160000] {0,4} pickup_box: SR 0.080 (4/50), Wilson LB 0.032, mean length 111.1 | streak 0/2
+  [  180000] {0,4} pickup_box: SR 0.060 (3/50), Wilson LB 0.021, mean length 113.4 | streak 0/2
+  [  200000] {0,4} pickup_box: SR 0.160 (8/50), Wilson LB 0.083, mean length 102.2 | streak 0/2
+  [  220000] {0,4} pickup_box: SR 0.160 (8/50), Wilson LB 0.083, mean length 102.3 | streak 0/2
+  [  240000] {0,4} pickup_box: SR 0.280 (14/50), Wilson LB 0.175, mean length 88.6 | streak 0/2
+  [  260000] {0,4} pickup_box: SR 0.240 (12/50), Wilson LB 0.143, mean length 93.5 | streak 0/2
+  [  280000] {0,4} pickup_box: SR 0.260 (13/50), Wilson LB 0.159, mean length 90.3 | streak 0/2
+  [  300000] {0,4} pickup_box: SR 0.340 (17/50), Wilson LB 0.224, mean length 81.4 | streak 0/2
+  [  320000] {0,4} pickup_box: SR 0.460 (23/50), Wilson LB 0.330, mean length 68.0 | streak 0/2
+  [  340000] {0,4} pickup_box: SR 0.400 (20/50), Wilson LB 0.276, mean length 74.8 | streak 0/2
+  [  360000] {0,4} pickup_box: SR 0.300 (15/50), Wilson LB 0.191, mean length 85.7 | streak 0/2
+  [  380000] {0,4} pickup_box: SR 0.500 (25/50), Wilson LB 0.366, mean length 63.5 | streak 0/2
+  [  400000] {0,4} pickup_box: SR 0.440 (22/50), Wilson LB 0.312, mean length 70.2 | streak 0/2
+  [  420000] {0,4} pickup_box: SR 0.380 (19/50), Wilson LB 0.259, mean length 76.5 | streak 0/2
+  [  440000] {0,4} pickup_box: SR 0.500 (25/50), Wilson LB 0.366, mean length 63.4 | streak 0/2
+  [  460000] {0,4} pickup_box: SR 0.560 (28/50), Wilson LB 0.423, mean length 57.0 | streak 0/2
+  [  480000] {0,4} pickup_box: SR 0.540 (27/50), Wilson LB 0.404, mean length 58.6 | streak 0/2
+  [  500000] {0,4} pickup_box: SR 0.500 (25/50), Wilson LB 0.366, mean length 62.9 | streak 0/2
+  [  520000] {0,4} pickup_box: SR 0.580 (29/50), Wilson LB 0.442, mean length 54.0 | streak 0/2
+  [  540000] {0,4} pickup_box: SR 0.520 (26/50), Wilson LB 0.385, mean length 61.2 | streak 0/2
+  [  560000] {0,4} pickup_box: SR 0.640 (32/50), Wilson LB 0.501, mean length 47.9 | streak 0/2
+  [  580000] {0,4} pickup_box: SR 0.600 (30/50), Wilson LB 0.462, mean length 52.2 | streak 0/2
+  [  600000] {0,4} pickup_box: SR 0.620 (31/50), Wilson LB 0.482, mean length 50.1 | streak 0/2
+  [  620000] {0,4} pickup_box: SR 0.560 (28/50), Wilson LB 0.423, mean length 56.4 | streak 0/2
+  [  640000] {0,4} pickup_box: SR 0.600 (30/50), Wilson LB 0.462, mean length 52.4 | streak 0/2
+  [  660000] {0,4} pickup_box: SR 0.620 (31/50), Wilson LB 0.482, mean length 49.7 | streak 0/2
+  [  680000] {0,4} pickup_box: SR 0.660 (33/50), Wilson LB 0.522, mean length 46.1 | streak 0/2
+  [  700000] {0,4} pickup_box: SR 0.640 (32/50), Wilson LB 0.501, mean length 48.2 | streak 0/2
+  [  720000] {0,4} pickup_box: SR 0.620 (31/50), Wilson LB 0.482, mean length 50.1 | streak 0/2
+  [  740000] {0,4} pickup_box: SR 0.600 (30/50), Wilson LB 0.462, mean length 51.9 | streak 0/2
+  [  760000] {0,4} pickup_box: SR 0.620 (31/50), Wilson LB 0.482, mean length 49.9 | streak 0/2
+  [  780000] {0,4} pickup_box: SR 0.600 (30/50), Wilson LB 0.462, mean length 52.3 | streak 0/2
+  [  800000] {0,4} pickup_box: SR 0.660 (33/50), Wilson LB 0.522, mean length 45.9 | streak 0/2
+  [  820000] {0,4} pickup_box: SR 0.560 (28/50), Wilson LB 0.423, mean length 56.7 | streak 0/2
+  [  840000] {0,4} pickup_box: SR 0.620 (31/50), Wilson LB 0.482, mean length 50.2 | streak 0/2
+  [  860000] {0,4} pickup_box: SR 0.640 (32/50), Wilson LB 0.501, mean length 47.8 | streak 0/2
+  [  880000] {0,4} pickup_box: SR 0.700 (35/50), Wilson LB 0.562, mean length 41.4 | streak 0/2
+  [  900000] {0,4} pickup_box: SR 0.680 (34/50), Wilson LB 0.542, mean length 43.7 | streak 0/2
+  [  920000] {0,4} pickup_box: SR 0.660 (33/50), Wilson LB 0.522, mean length 46.0 | streak 0/2
+  [  940000] {0,4} pickup_box: SR 0.660 (33/50), Wilson LB 0.522, mean length 45.6 | streak 0/2
+  [  960000] {0,4} pickup_box: SR 0.780 (39/50), Wilson LB 0.648, mean length 33.6 | streak 0/2
+  [  980000] {0,4} pickup_box: SR 0.780 (39/50), Wilson LB 0.648, mean length 33.4 | streak 0/2
+  [ 1000000] {0,4} pickup_box: SR 0.780 (39/50), Wilson LB 0.648, mean length 33.4 | streak 0/2
+  steps=1,001,472 wall=1448.3s (691.5 steps/s) stable=False
+  not frozen (not stable); held-out: SR 0.700 (35/50), Wilson LB 0.562, mean length 41.4
+[15:56:16] wrote runs\v2\pickup_box_s42.json

@@ -118,3 +118,32 @@ def test_column_as_option():
     opt = col.as_option()
     assert isinstance(opt, Option)
     assert opt.option_id == (0, 1)
+
+
+class RecordingPolicy(MockPolicy):
+    """MockPolicy that records the deterministic flag passed to predict()."""
+
+    def __init__(self):
+        super().__init__()
+        self.deterministic_calls: list[bool] = []
+
+    def predict(self, obs, deterministic=True):
+        self.deterministic_calls.append(deterministic)
+        return 3, None
+
+
+def test_frozen_column_acts_deterministically():
+    """
+    v2 §5.4: frozen nodes act deterministically; a node still training samples.
+    v1 had this inverted (deterministic=not self.frozen), so frozen columns —
+    the only ones ever reached through Option.step — sampled stochastically.
+    """
+    col = Column(n=0, m=1)
+    col.policy = RecordingPolicy()
+
+    col.forward(torch.randn(147))
+    assert col.policy.deterministic_calls == [False], "unfrozen column must sample"
+
+    col.freeze()
+    col.forward(torch.randn(147))
+    assert col.policy.deterministic_calls == [False, True], "frozen column must be deterministic"

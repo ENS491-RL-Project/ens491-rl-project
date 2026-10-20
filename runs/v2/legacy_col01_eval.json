@@ -1,0 +1,44 @@
+{
+  "node_id": "{0,1} legacy_col01",
+  "env_id": "MiniGrid-Empty-8x8-v0",
+  "timeout": 256,
+  "obs_pipeline": "ImgObs+Flatten",
+  "criterion": {
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8
+  },
+  "single_eval_passes": true,
+  "layout_deterministic": true,
+  "caveat": "Empty-8x8 has a fixed start and goal, so every evaluation episode is identical. The success rate has no variance and the Wilson bound is vacuous; this exercises the H-3 harness rather than measuring robustness.",
+  "results": {
+    "stopping": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 11.0,
+      "seed_base": 10000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    "held-out": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 11.0,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "stored_meta": {
+    "n": 0,
+    "m": 1,
+    "frozen": true
+  },
+  "v1_reported": {
+    "mean_reward": 0.958,
+    "steps_to_stable": 40000
+  }
+}

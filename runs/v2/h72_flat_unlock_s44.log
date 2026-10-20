@@ -1,0 +1,22 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+
+========================================================================
+{0,B} flat_unlock_ppo  n=0  (no children: plain PPO)
+  env=MiniGrid-Unlock-v0 timeout=240 goal=door:open
+  seed=44 budget=1,500,000 env steps eval_every=50,000
+========================================================================
+  [   50000] {0,B} flat_unlock_ppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 240.0 | streak 0/2
+  [  100000] {0,B} flat_unlock_ppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 240.0 | streak 0/2
+  [  150000] {0,B} flat_unlock_ppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 240.0 | streak 0/2
+  [  200000] {0,B} flat_unlock_ppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 240.0 | streak 0/2
+  [  250000] {0,B} flat_unlock_ppo: SR 0.240 (12/50), Wilson LB 0.143, mean length 185.8 | streak 0/2
+  [  300000] {0,B} flat_unlock_ppo: SR 0.600 (30/50), Wilson LB 0.462, mean length 103.3 | streak 0/2
+  [  350000] {0,B} flat_unlock_ppo: SR 0.900 (45/50), Wilson LB 0.786, mean length 35.0 | streak 0/2
+  [  400000] {0,B} flat_unlock_ppo: SR 0.980 (49/50), Wilson LB 0.895, mean length 15.6 | streak 1/2
+  [  450000] {0,B} flat_unlock_ppo: SR 1.000 (50/50), Wilson LB 0.929, mean length 10.9 | streak 2/2 -> STABLE
+  steps=450,000 wall=1304.6s (344.9 steps/s) stable=True
+  held-out: SR 0.920 (46/50), Wilson LB 0.812, mean length 28.5
+  saved to runs/v2/baselines/0-B_flat_unlock_ppo/ (baseline, never a child)
+
+wrote runs\v2\flat_unlock_ppo_s44.json

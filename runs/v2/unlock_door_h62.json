@@ -1,0 +1,103 @@
+{
+  "control_random_over_available": {
+    "n_episodes": 50,
+    "successes": 45,
+    "success_rate": 0.9,
+    "wilson_lower": 0.7864,
+    "mean_length": 85.34,
+    "seed_base": 20000,
+    "timeouts": 5,
+    "reselections": 0
+  },
+  "composite": {
+    "node_id": "{1,1} unlock_door",
+    "kind": "composite",
+    "children": [
+      "{0,1} get_key",
+      "{0,2} open_door"
+    ],
+    "level_n": 1,
+    "env_ids": [
+      "MiniGrid-Unlock-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 240,
+    "max_decisions": 8,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 42,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 2000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 60000,
+    "decisions_trained": 6000,
+    "env_steps_own": 131817,
+    "env_steps_per_decision": 21.97,
+    "env_steps_children": 280000,
+    "env_steps_total": 411817,
+    "wall_seconds": 72.5,
+    "decisions_per_second": 82.8,
+    "stable": true,
+    "decisions_to_stable": 6000,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 11,
+          "success_rate": 0.22,
+          "wilson_lower": 0.1275,
+          "mean_length": 193.88,
+          "seed_base": 10000,
+          "timeouts": 39,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "mean_length": 14.72,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "mean_length": 14.72,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "mean_length": 19.16,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 0
+    }
+  }
+}

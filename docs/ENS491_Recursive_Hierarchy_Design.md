@@ -1,5 +1,14 @@
 # ENS 491 — Recursive Hierarchy Design
 
+> ## ⛔ SUPERSEDED on 2026-10-01
+> This is the **v1** hierarchy design, kept for history only. It is replaced in full by
+> `ENS491_Target_Architecture_v2.md`. Do not implement anything from this file.
+> Main changes: tree → DAG; per-layer MetaController and `Column.sub_layer` → skill nodes with immutable
+> children; fixed 200-step termination → goal predicates + timeout; reward mean/std stabilization →
+> success rate. Full list: v2 §13.
+
+---
+
 > This document is the paper design required before starting PN-3 (architecture-specific custom PN).  
 > **🔒 Locked:** Decided and agreed upon — not open for debate.  
 > **⚠️ Open:** Pending supervisor confirmation or empirical resolution.  

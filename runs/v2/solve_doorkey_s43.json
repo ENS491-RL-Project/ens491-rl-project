@@ -1,0 +1,327 @@
+{
+  "seed": 43,
+  "node_id": "{2,1} solve_doorkey",
+  "env_id": "MiniGrid-DoorKey-6x6-v0",
+  "composite": {
+    "node_id": "{2,1} solve_doorkey",
+    "kind": "composite",
+    "children": [
+      "{1,1} unlock_door",
+      "{0,3} go_to_goal"
+    ],
+    "level_n": 2,
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 360,
+    "max_decisions": 8,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 43,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 1000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 20000,
+    "decisions_trained": 4000,
+    "env_steps_own": 154224,
+    "env_steps_per_decision": 38.56,
+    "env_steps_children": 611817,
+    "env_steps_total": 766041,
+    "wall_seconds": 126.2,
+    "decisions_per_second": 31.7,
+    "stable": true,
+    "decisions_to_stable": 4000,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 5,
+          "success_rate": 0.1,
+          "wilson_lower": 0.0435,
+          "wilson_upper": 0.2136,
+          "mean_length": 327.86,
+          "seed_base": 10000,
+          "timeouts": 45,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 5,
+          "success_rate": 0.1,
+          "wilson_lower": 0.0435,
+          "wilson_upper": 0.2136,
+          "mean_length": 327.86,
+          "seed_base": 10000,
+          "timeouts": 45,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    },
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "trained_with_strict_mask": {
+    "node_id": "{2,1} solve_doorkey",
+    "kind": "composite",
+    "children": [
+      "{1,1} unlock_door",
+      "{0,3} go_to_goal"
+    ],
+    "level_n": 2,
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 360,
+    "max_decisions": 8,
+    "initiation_masking": true,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 43,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 1000,
+    "ppo": {
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 20000,
+    "decisions_trained": 2000,
+    "env_steps_own": 14225,
+    "env_steps_per_decision": 7.11,
+    "env_steps_children": 611817,
+    "env_steps_total": 626042,
+    "wall_seconds": 12.3,
+    "decisions_per_second": 163.2,
+    "stable": true,
+    "decisions_to_stable": 2000,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 50,
+          "success_rate": 1.0,
+          "wilson_lower": 0.9287,
+          "wilson_upper": 1.0,
+          "mean_length": 13.76,
+          "seed_base": 10000,
+          "timeouts": 0,
+          "reselections": 0
+        }
+      ]
+    }
+  },
+  "arms": {
+    "random_over_all": {
+      "label": "random over all children (mask clipped)",
+      "n_episodes": 50,
+      "successes": 44,
+      "success_rate": 0.88,
+      "wilson_lower": 0.762,
+      "wilson_upper": 0.9438,
+      "mean_length": 120.16,
+      "seed_base": 20000,
+      "timeouts": 6,
+      "reselections": 18
+    },
+    "random_over_available": {
+      "label": "random over available children",
+      "n_episodes": 50,
+      "successes": 46,
+      "success_rate": 0.92,
+      "wilson_lower": 0.8116,
+      "wilson_upper": 0.9685,
+      "mean_length": 113.28,
+      "seed_base": 20000,
+      "timeouts": 4,
+      "reselections": 16
+    },
+    "random_strict_mask": {
+      "label": "random, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    "learned": {
+      "label": "learned composite",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    "learned_strict_mask": {
+      "label": "learned composite, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "wilson_upper": 1.0,
+      "mean_length": 14.24,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    }
+  },
+  "mask_divergence": {
+    "episodes": 20,
+    "decisions": 40,
+    "masks_differ": 20,
+    "would_have_blocked_learned_choice": 0
+  },
+  "trace": {
+    "seed": 20000,
+    "env_id": "MiniGrid-DoorKey-6x6-v0",
+    "success": true,
+    "env_steps": 25,
+    "max_stack_depth": 3,
+    "levels_selected": [
+      0,
+      1
+    ],
+    "selected_children": [
+      "{1,1} unlock_door",
+      "{0,1} get_key",
+      "{0,2} open_door",
+      "{0,3} go_to_goal"
+    ],
+    "trace": [
+      {
+        "depth": 2,
+        "node_id": "{1,1} unlock_door",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,1} get_key",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,1} get_key",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 10,
+        "version": 10
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,2} open_door",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 10
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,2} open_door",
+        "event": "CLOSE",
+        "outcome": "interrupted",
+        "steps": 11,
+        "version": 21
+      },
+      {
+        "depth": 2,
+        "node_id": "{1,1} unlock_door",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 21,
+        "version": 21
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,3} go_to_goal",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 21
+      }
+    ]
+  }
+}

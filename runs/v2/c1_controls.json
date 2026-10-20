@@ -1,0 +1,64 @@
+{
+  "controls": [
+    {
+      "label": "random over all children (mask clipped)",
+      "n_episodes": 50,
+      "successes": 47,
+      "success_rate": 0.94,
+      "wilson_lower": 0.8378,
+      "mean_length": 82.96,
+      "seed_base": 20000,
+      "timeouts": 3,
+      "reselections": 30
+    },
+    {
+      "label": "random over available children",
+      "n_episodes": 50,
+      "successes": 45,
+      "success_rate": 0.9,
+      "wilson_lower": 0.7864,
+      "mean_length": 85.34,
+      "seed_base": 20000,
+      "timeouts": 5,
+      "reselections": 33
+    },
+    {
+      "label": "random, initiation masking on",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "mean_length": 19.16,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 1
+    },
+    {
+      "label": "learned composite",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "mean_length": 19.16,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 1
+    },
+    {
+      "label": "learned composite, initiation masking on",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "mean_length": 19.16,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 1
+    }
+  ],
+  "mask_divergence": {
+    "decisions_where_masks_differ": 146,
+    "decisions_total": 304,
+    "would_have_blocked_learned_choice": 0
+  }
+}

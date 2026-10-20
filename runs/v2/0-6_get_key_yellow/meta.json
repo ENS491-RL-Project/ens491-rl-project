@@ -1,0 +1,192 @@
+{
+  "budget": 600000,
+  "children": [],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 103.34,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.14,
+        "successes": 7,
+        "timeouts": 43,
+        "wilson_lower": 0.0695,
+        "wilson_upper": 0.2619
+      },
+      {
+        "mean_length": 96.26,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.2,
+        "successes": 10,
+        "timeouts": 40,
+        "wilson_lower": 0.1124,
+        "wilson_upper": 0.3304
+      },
+      {
+        "mean_length": 120.0,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.0,
+        "successes": 0,
+        "timeouts": 50,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713
+      },
+      {
+        "mean_length": 93.9,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.22,
+        "successes": 11,
+        "timeouts": 39,
+        "wilson_lower": 0.1275,
+        "wilson_upper": 0.3524
+      },
+      {
+        "mean_length": 86.94,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.28,
+        "successes": 14,
+        "timeouts": 36,
+        "wilson_lower": 0.1747,
+        "wilson_upper": 0.4167
+      },
+      {
+        "mean_length": 84.72,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.3,
+        "successes": 15,
+        "timeouts": 35,
+        "wilson_lower": 0.191,
+        "wilson_upper": 0.4375
+      },
+      {
+        "mean_length": 75.22,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.38,
+        "successes": 19,
+        "timeouts": 31,
+        "wilson_lower": 0.2586,
+        "wilson_upper": 0.5185
+      },
+      {
+        "mean_length": 43.16,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.66,
+        "successes": 33,
+        "timeouts": 17,
+        "wilson_lower": 0.5215,
+        "wilson_upper": 0.7756
+      },
+      {
+        "mean_length": 22.08,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.84,
+        "successes": 42,
+        "timeouts": 8,
+        "wilson_lower": 0.7149,
+        "wilson_upper": 0.9166
+      },
+      {
+        "mean_length": 4.04,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      },
+      {
+        "mean_length": 6.12,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.98,
+        "successes": 49,
+        "timeouts": 1,
+        "wilson_lower": 0.895,
+        "wilson_upper": 0.9965
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-DoorKey-6x6-v0"
+  ],
+  "eval_every": 20000,
+  "heldout": {
+    "mean_length": 10.52,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 0.94,
+    "successes": 47,
+    "timeouts": 3,
+    "wilson_lower": 0.8378,
+    "wilson_upper": 0.9794
+  },
+  "id": "{0,6} get_key_yellow",
+  "lateral_sources": [],
+  "m": 6,
+  "n": 0,
+  "n_envs": 8,
+  "node_id": "{0,6} get_key_yellow",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door",
+  "seed": 42,
+  "spec": {
+    "children": [],
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "goal": "carrying:key:yellow",
+    "id": "{0,6} get_key_yellow",
+    "initiation": "carrying:none",
+    "lateral_sources": [],
+    "max_decisions": 64,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 120,
+    "train_hook": "recolor_door:yellow|blue+remove_keys+randomize_agent_pose:any+place_two_keys:yellow|blue:door_clear+face_toward:door"
+  },
+  "spec_hash": "d5d8cec8c48fe728",
+  "stable": true,
+  "status": "frozen",
+  "steps_per_second": 784.4,
+  "steps_trained": 220000,
+  "timeout": 120,
+  "wall_seconds": 280.5
+}

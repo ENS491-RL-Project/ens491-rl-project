@@ -1,0 +1,165 @@
+{
+  "budget_decisions": 51200,
+  "children": [
+    "{0,1} get_key",
+    "{0,2} open_door",
+    "{0,3} go_to_goal"
+  ],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 341.78,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.06,
+        "successes": 3,
+        "timeouts": 47,
+        "wilson_lower": 0.0206,
+        "wilson_upper": 0.1622
+      },
+      {
+        "mean_length": 159.84,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.62,
+        "successes": 31,
+        "timeouts": 19,
+        "wilson_lower": 0.4815,
+        "wilson_upper": 0.7414
+      },
+      {
+        "mean_length": 13.76,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      },
+      {
+        "mean_length": 13.76,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "curve": [
+    {
+      "mean_length": 341.78,
+      "success_rate": 0.06,
+      "wilson_lower": 0.0206,
+      "x_env_steps": 20239,
+      "x_native": 512
+    },
+    {
+      "mean_length": 159.84,
+      "success_rate": 0.62,
+      "wilson_lower": 0.4815,
+      "x_env_steps": 40479,
+      "x_native": 1024
+    },
+    {
+      "mean_length": 13.76,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "x_env_steps": 60718,
+      "x_native": 1536
+    },
+    {
+      "mean_length": 13.76,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "x_env_steps": 80957,
+      "x_native": 2048
+    }
+  ],
+  "decisions_per_second": 7.4,
+  "decisions_per_update": 512,
+  "decisions_to_stable": 2048,
+  "decisions_trained": 2048,
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-DoorKey-6x6-v0"
+  ],
+  "env_steps_children": 480000,
+  "env_steps_own": 80951,
+  "env_steps_per_decision": 39.53,
+  "env_steps_total": 560951,
+  "eval_every": 512,
+  "eval_extra": [],
+  "heldout": {
+    "mean_length": 14.24,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 1.0,
+    "successes": 50,
+    "timeouts": 0,
+    "wilson_lower": 0.9287,
+    "wilson_upper": 1.0
+  },
+  "id": "{1,B} flat_doorkey_options",
+  "initiation_masking": false,
+  "kind": "composite",
+  "lateral_sources": [],
+  "level_n": 1,
+  "m": 1,
+  "max_decisions": 12,
+  "n": 1,
+  "n_envs": 8,
+  "node_id": "{1,B} flat_doorkey_options",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "policy_updates": 4,
+  "ppo": {
+    "batch_size": 64,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 64
+  },
+  "reset_hook": "none",
+  "seed": 42,
+  "spec": {
+    "children": [
+      "b4915e667d7ae4b5",
+      "93d523882d512ba6",
+      "18196cad9cb78356"
+    ],
+    "env_ids": [
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "goal": "agent:on_goal",
+    "id": "{1,B} flat_doorkey_options",
+    "initiation": "always",
+    "lateral_sources": [],
+    "max_decisions": 12,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 360,
+    "train_hook": "none"
+  },
+  "spec_hash": "06b3285f96813706",
+  "stable": true,
+  "status": "frozen",
+  "timeout": 360,
+  "wall_seconds": 277.5
+}

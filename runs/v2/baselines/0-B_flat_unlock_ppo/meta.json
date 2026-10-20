@@ -1,0 +1,238 @@
+{
+  "budget": 1500000,
+  "children": [],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 240.0,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.0,
+        "successes": 0,
+        "timeouts": 50,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713
+      },
+      {
+        "mean_length": 240.0,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.0,
+        "successes": 0,
+        "timeouts": 50,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713
+      },
+      {
+        "mean_length": 240.0,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.0,
+        "successes": 0,
+        "timeouts": 50,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713
+      },
+      {
+        "mean_length": 240.0,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.0,
+        "successes": 0,
+        "timeouts": 50,
+        "wilson_lower": 0.0,
+        "wilson_upper": 0.0713
+      },
+      {
+        "mean_length": 185.84,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.24,
+        "successes": 12,
+        "timeouts": 38,
+        "wilson_lower": 0.143,
+        "wilson_upper": 0.3741
+      },
+      {
+        "mean_length": 103.34,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.6,
+        "successes": 30,
+        "timeouts": 20,
+        "wilson_lower": 0.4618,
+        "wilson_upper": 0.7239
+      },
+      {
+        "mean_length": 35.02,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.9,
+        "successes": 45,
+        "timeouts": 5,
+        "wilson_lower": 0.7864,
+        "wilson_upper": 0.9565
+      },
+      {
+        "mean_length": 15.56,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.98,
+        "successes": 49,
+        "timeouts": 1,
+        "wilson_lower": 0.895,
+        "wilson_upper": 0.9965
+      },
+      {
+        "mean_length": 10.88,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287,
+        "wilson_upper": 1.0
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "curve": [
+    {
+      "mean_length": 240.0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "x_env_steps": 50000,
+      "x_native": 50000
+    },
+    {
+      "mean_length": 240.0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "x_env_steps": 100000,
+      "x_native": 100000
+    },
+    {
+      "mean_length": 240.0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "x_env_steps": 150000,
+      "x_native": 150000
+    },
+    {
+      "mean_length": 240.0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "x_env_steps": 200000,
+      "x_native": 200000
+    },
+    {
+      "mean_length": 185.84,
+      "success_rate": 0.24,
+      "wilson_lower": 0.143,
+      "x_env_steps": 250000,
+      "x_native": 250000
+    },
+    {
+      "mean_length": 103.34,
+      "success_rate": 0.6,
+      "wilson_lower": 0.4618,
+      "x_env_steps": 300000,
+      "x_native": 300000
+    },
+    {
+      "mean_length": 35.02,
+      "success_rate": 0.9,
+      "wilson_lower": 0.7864,
+      "x_env_steps": 350000,
+      "x_native": 350000
+    },
+    {
+      "mean_length": 15.56,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "x_env_steps": 400000,
+      "x_native": 400000
+    },
+    {
+      "mean_length": 10.88,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "x_env_steps": 450000,
+      "x_native": 450000
+    }
+  ],
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-Unlock-v0"
+  ],
+  "env_steps_children": 0,
+  "env_steps_own": 450000,
+  "env_steps_total": 450000,
+  "eval_every": 50000,
+  "heldout": {
+    "mean_length": 28.54,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 0.92,
+    "successes": 46,
+    "timeouts": 4,
+    "wilson_lower": 0.8116,
+    "wilson_upper": 0.9685
+  },
+  "id": "{0,B} flat_unlock_ppo",
+  "lateral_sources": [],
+  "m": 1,
+  "n": 0,
+  "n_envs": 8,
+  "node_id": "{0,B} flat_unlock_ppo",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "none",
+  "seed": 44,
+  "spec": {
+    "children": [],
+    "env_ids": [
+      "MiniGrid-Unlock-v0"
+    ],
+    "goal": "door:open",
+    "id": "{0,B} flat_unlock_ppo",
+    "initiation": "always",
+    "lateral_sources": [],
+    "max_decisions": 64,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 240,
+    "train_hook": "none"
+  },
+  "spec_hash": "29a7f36108169dde",
+  "stable": true,
+  "status": "frozen",
+  "steps_per_second": 344.9,
+  "steps_trained": 450000,
+  "timeout": 240,
+  "wall_seconds": 1304.6
+}

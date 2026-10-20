@@ -1,0 +1,84 @@
+{
+  "node_id": "{0,9} drop_held",
+  "env_ids": [
+    "MiniGrid-UnlockPickup-v0"
+  ],
+  "reset_hook": "open_door+give_key+randomize_agent_pose:any",
+  "timeout": 30,
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "seed": 44,
+  "device": "cpu",
+  "n_envs": 8,
+  "eval_every": 10000,
+  "ppo": {
+    "n_steps": 256,
+    "batch_size": 256,
+    "n_epochs": 4,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.01
+  },
+  "budget": 100000,
+  "steps_trained": 30000,
+  "wall_seconds": 60.9,
+  "steps_per_second": 493.0,
+  "stable": true,
+  "criterion": {
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2,
+    "is_stable": true,
+    "history": [
+      {
+        "n_episodes": 50,
+        "successes": 32,
+        "success_rate": 0.64,
+        "wilson_lower": 0.5014,
+        "wilson_upper": 0.7586,
+        "mean_length": 11.44,
+        "seed_base": 10000,
+        "timeouts": 18,
+        "reselections": 0
+      },
+      {
+        "n_episodes": 50,
+        "successes": 46,
+        "success_rate": 0.92,
+        "wilson_lower": 0.8116,
+        "wilson_upper": 0.9685,
+        "mean_length": 3.62,
+        "seed_base": 10000,
+        "timeouts": 4,
+        "reselections": 0
+      },
+      {
+        "n_episodes": 50,
+        "successes": 48,
+        "success_rate": 0.96,
+        "wilson_lower": 0.8654,
+        "wilson_upper": 0.989,
+        "mean_length": 2.54,
+        "seed_base": 10000,
+        "timeouts": 2,
+        "reselections": 0
+      }
+    ]
+  },
+  "spec_hash": "ed693928545d8edc",
+  "heldout": {
+    "n_episodes": 50,
+    "successes": 49,
+    "success_rate": 0.98,
+    "wilson_lower": 0.895,
+    "wilson_upper": 0.9965,
+    "mean_length": 1.84,
+    "seed_base": 20000,
+    "timeouts": 1,
+    "reselections": 0
+  },
+  "weak_heldout": false
+}

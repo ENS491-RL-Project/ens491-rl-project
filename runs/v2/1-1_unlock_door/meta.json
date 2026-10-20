@@ -1,0 +1,115 @@
+{
+  "budget_decisions": 60000,
+  "children": [
+    "{0,1} get_key",
+    "{0,2} open_door"
+  ],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 193.88,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.22,
+        "successes": 11,
+        "timeouts": 39,
+        "wilson_lower": 0.1275
+      },
+      {
+        "mean_length": 14.72,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287
+      },
+      {
+        "mean_length": 14.72,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "decisions_per_second": 82.8,
+  "decisions_to_stable": 6000,
+  "decisions_trained": 6000,
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-Unlock-v0"
+  ],
+  "env_steps_children": 280000,
+  "env_steps_own": 131817,
+  "env_steps_per_decision": 21.97,
+  "env_steps_total": 411817,
+  "eval_every": 2000,
+  "heldout": {
+    "mean_length": 19.16,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 0.98,
+    "successes": 49,
+    "timeouts": 1,
+    "wilson_lower": 0.895
+  },
+  "id": "{1,1} unlock_door",
+  "initiation_masking": false,
+  "kind": "composite",
+  "lateral_sources": [],
+  "level_n": 1,
+  "m": 1,
+  "max_decisions": 8,
+  "n": 1,
+  "n_envs": 8,
+  "node_id": "{1,1} unlock_door",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "none",
+  "seed": 42,
+  "spec": {
+    "children": [
+      "b4915e667d7ae4b5",
+      "93d523882d512ba6"
+    ],
+    "env_ids": [
+      "MiniGrid-Unlock-v0"
+    ],
+    "goal": "door:open",
+    "id": "{1,1} unlock_door",
+    "initiation": "door:locked",
+    "lateral_sources": [],
+    "max_decisions": 8,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 240,
+    "train_hook": "none"
+  },
+  "spec_hash": "5e4108da044c9f99",
+  "stable": true,
+  "status": "frozen",
+  "timeout": 240,
+  "wall_seconds": 72.5
+}

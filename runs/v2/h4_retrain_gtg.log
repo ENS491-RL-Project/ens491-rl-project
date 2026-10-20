@@ -1,0 +1,22 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+device=cpu n_envs=8 budget=800,000 eval_every=20,000 seed=42
+
+========================================================================
+{0,3} go_to_goal  envs=['MiniGrid-DoorKey-6x6-v0']  timeout=120  hook=open_door+randomize_carrying:key:0.5+randomize_agent_pose:goal
+========================================================================
+  [   20000] {0,3} go_to_goal: SR 0.100 (5/50), Wilson LB 0.043, mean length 108.2 | streak 0/2
+  [   40000] {0,3} go_to_goal: SR 0.620 (31/50), Wilson LB 0.482, mean length 49.2 | streak 0/2
+  [   60000] {0,3} go_to_goal: SR 0.660 (33/50), Wilson LB 0.522, mean length 44.3 | streak 0/2
+  [   80000] {0,3} go_to_goal: SR 0.680 (34/50), Wilson LB 0.542, mean length 42.0 | streak 0/2
+  [  100000] {0,3} go_to_goal: SR 0.680 (34/50), Wilson LB 0.542, mean length 41.9 | streak 0/2
+  [  120000] {0,3} go_to_goal: SR 0.820 (41/50), Wilson LB 0.692, mean length 25.9 | streak 0/2
+  [  140000] {0,3} go_to_goal: SR 0.900 (45/50), Wilson LB 0.786, mean length 17.6 | streak 0/2
+  [  160000] {0,3} go_to_goal: SR 0.900 (45/50), Wilson LB 0.786, mean length 17.3 | streak 0/2
+  [  180000] {0,3} go_to_goal: SR 0.940 (47/50), Wilson LB 0.838, mean length 12.8 | streak 1/2
+  [  200000] {0,3} go_to_goal: SR 0.940 (47/50), Wilson LB 0.838, mean length 12.8 | streak 2/2 -> STABLE
+  steps=200,000 wall=187.6s throughput=1066.0 steps/s stable=True
+  FROZEN. held-out: {'n_episodes': 50, 'successes': 46, 'success_rate': 0.92, 'wilson_lower': 0.8116, 'mean_length': 16.06, 'seed_base': 20000, 'timeouts': 4, 'reselections': 0}
+  [19:45:28] wrote runs\v2\primitives.json
+
+wrote runs\v2\primitives.json
+stable: ['go_to_goal']

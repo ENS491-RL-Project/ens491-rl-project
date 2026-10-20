@@ -1,0 +1,30 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+loading frozen children:
+  loaded SkillNode('{0,1} get_key', n=0, primitive, frozen) spec_hash=b4915e667d7ae4b5
+  loaded SkillNode('{0,2} open_door', n=0, primitive, frozen) spec_hash=93d523882d512ba6
+
+C1 control (a) random-over-available: SR 0.900 (45/50), Wilson LB 0.786, mean length 85.3
+
+========================================================================
+{1,1} unlock_door  n=1  children=['{0,1} get_key', '{0,2} open_door']
+  timeout=240 max_decisions=8
+========================================================================
+  [    2000] {1,1} unlock_door: SR 0.220 (11/50), Wilson LB 0.128, mean length 193.9 | streak 0/2
+  [    4000] {1,1} unlock_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.7 | streak 1/2
+  [    6000] {1,1} unlock_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.7 | streak 2/2 -> STABLE
+  decisions=6,000 wall=97.8s (61.3 decisions/s) stable=True
+  FROZEN. held-out: SR 0.980 (49/50), Wilson LB 0.895, mean length 19.2
+
+========================================================================
+C1 control (b): the same run with initiation masking ON
+========================================================================
+  [    2000] {1,1} unlock_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.7 | streak 1/2
+  [    4000] {1,1} unlock_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.7 | streak 2/2 -> STABLE
+  decisions=4,000 stable=True
+
+wrote runs\v2\unlock_door.json
+
+--- C1 summary ---
+  random over available : SR 0.900
+  learned composite     : SR 0.98 (6,000 decisions)
+  + initiation masking  : stable=True (4,000 decisions)

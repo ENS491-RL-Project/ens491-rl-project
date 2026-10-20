@@ -1,0 +1,162 @@
+{
+  "budget": 800000,
+  "children": [],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 112.86,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.06,
+        "successes": 3,
+        "timeouts": 47,
+        "wilson_lower": 0.0206
+      },
+      {
+        "mean_length": 94.7,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.22,
+        "successes": 11,
+        "timeouts": 39,
+        "wilson_lower": 0.1275
+      },
+      {
+        "mean_length": 44.52,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.66,
+        "successes": 33,
+        "timeouts": 17,
+        "wilson_lower": 0.5215
+      },
+      {
+        "mean_length": 22.74,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.86,
+        "successes": 43,
+        "timeouts": 7,
+        "wilson_lower": 0.7381
+      },
+      {
+        "mean_length": 24.8,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.84,
+        "successes": 42,
+        "timeouts": 8,
+        "wilson_lower": 0.7149
+      },
+      {
+        "mean_length": 31.46,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.78,
+        "successes": 39,
+        "timeouts": 11,
+        "wilson_lower": 0.6476
+      },
+      {
+        "mean_length": 18.7,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.9,
+        "successes": 45,
+        "timeouts": 5,
+        "wilson_lower": 0.7864
+      },
+      {
+        "mean_length": 9.34,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.98,
+        "successes": 49,
+        "timeouts": 1,
+        "wilson_lower": 0.895
+      },
+      {
+        "mean_length": 5.88,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 1.0,
+        "successes": 50,
+        "timeouts": 0,
+        "wilson_lower": 0.9287
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-Unlock-v0",
+    "MiniGrid-DoorKey-6x6-v0"
+  ],
+  "eval_every": 20000,
+  "heldout": {
+    "mean_length": 5.82,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 1.0,
+    "successes": 50,
+    "timeouts": 0,
+    "wilson_lower": 0.9287
+  },
+  "id": "{0,1} get_key",
+  "lateral_sources": [],
+  "m": 1,
+  "n": 0,
+  "n_envs": 8,
+  "node_id": "{0,1} get_key",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "randomize_agent_pose:key",
+  "seed": 42,
+  "spec": {
+    "children": [],
+    "env_ids": [
+      "MiniGrid-Unlock-v0",
+      "MiniGrid-DoorKey-6x6-v0"
+    ],
+    "goal": "carrying:key",
+    "id": "{0,1} get_key",
+    "initiation": "carrying:none",
+    "lateral_sources": [],
+    "max_decisions": 64,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 120,
+    "train_hook": "randomize_agent_pose:key"
+  },
+  "spec_hash": "b4915e667d7ae4b5",
+  "stable": true,
+  "status": "frozen",
+  "steps_per_second": 1039.1,
+  "steps_trained": 180000,
+  "timeout": 120,
+  "wall_seconds": 173.2
+}

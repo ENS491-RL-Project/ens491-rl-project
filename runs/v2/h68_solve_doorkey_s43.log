@@ -1,0 +1,42 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+loading the frozen children:
+  loaded SkillNode('{0,1} get_key', n=0, primitive, frozen)  spec_hash=b4915e667d7ae4b5
+  loaded SkillNode('{0,2} open_door', n=0, primitive, frozen)  spec_hash=93d523882d512ba6
+  loaded SkillNode('{0,3} go_to_goal', n=0, primitive, frozen)  spec_hash=18196cad9cb78356
+  loaded SkillNode('{1,1} unlock_door', n=1, composite[2], frozen)  spec_hash=5e4108da044c9f99
+
+========================================================================
+{2,1} solve_doorkey  n=2  children=['{1,1} unlock_door', '{0,3} go_to_goal'] (levels [1, 0])
+  env=MiniGrid-DoorKey-6x6-v0 timeout=360 max_decisions=8
+  seed=43 budget=51,200 decisions
+========================================================================
+  [     512] {2,1} solve_doorkey: SR 0.100 (5/50), Wilson LB 0.043, mean length 327.9 | streak 0/2
+  [    1024] {2,1} solve_doorkey: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 1/2
+  [    1536] {2,1} solve_doorkey: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 2/2 -> STABLE
+  decisions=1,536 env_steps_own=48,887 (31.83/decision) wall=209.0s stable=True
+  held-out: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.2
+
+========================================================================
+C1 arm: the same run trained with initiation masking ON
+========================================================================
+  [     512] {2,1} solve_doorkey: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 1/2
+  [    1024] {2,1} solve_doorkey: SR 1.000 (50/50), Wilson LB 0.929, mean length 13.8 | streak 2/2 -> STABLE
+  decisions=1,024 env_steps_own=7,253 stable=True
+
+--- C1 arms, 50 held-out episodes (seed base 20000) ---
+  random over all children (mask clipped)      SR  0.88  [0.76,0.94]  mean env steps  120.2
+  random over available children               SR  0.92  [0.81,0.97]  mean env steps  113.3
+  random, initiation masking ON                SR  1.00  [0.93,1.00]  mean env steps   14.2
+  learned composite                            SR  1.00  [0.93,1.00]  mean env steps   14.2
+  learned composite, initiation masking ON     SR  1.00  [0.93,1.00]  mean env steps   14.2
+
+mask divergence over 20 episodes of the learned policy:
+  root decisions                                      40
+  where the strict mask differs from goal-only        20
+  of those, where it would have blocked the choice    0
+
+depth check (A6): max stack depth 3, levels selected [0, 1], success=True in 25 env steps
+  selected: {1,1} unlock_door -> {0,1} get_key -> {0,2} open_door -> {0,3} go_to_goal
+
+wrote runs\v2\solve_doorkey_h68_s43.json

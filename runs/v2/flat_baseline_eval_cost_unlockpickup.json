@@ -1,0 +1,7 @@
+{
+  "task": "unlockpickup",
+  "env_id": "MiniGrid-UnlockPickup-v0",
+  "seconds": 33.9,
+  "env_steps": 14400,
+  "success_rate": 0.0
+}

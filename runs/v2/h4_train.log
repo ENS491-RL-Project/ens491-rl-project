@@ -1,0 +1,50 @@
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+device=cpu n_envs=8 budget=800,000 eval_every=20,000 seed=42
+
+========================================================================
+{0,1} get_key  envs=['MiniGrid-Unlock-v0', 'MiniGrid-DoorKey-6x6-v0']  timeout=120  hook=randomize_agent_pose:key
+========================================================================
+  [   20000] {0,1} get_key: SR 0.060 (3/50), Wilson LB 0.021, mean length 112.9 | streak 0/2
+  [   40000] {0,1} get_key: SR 0.220 (11/50), Wilson LB 0.128, mean length 94.7 | streak 0/2
+  [   60000] {0,1} get_key: SR 0.660 (33/50), Wilson LB 0.522, mean length 44.5 | streak 0/2
+  [   80000] {0,1} get_key: SR 0.860 (43/50), Wilson LB 0.738, mean length 22.7 | streak 0/2
+  [  100000] {0,1} get_key: SR 0.840 (42/50), Wilson LB 0.715, mean length 24.8 | streak 0/2
+  [  120000] {0,1} get_key: SR 0.780 (39/50), Wilson LB 0.648, mean length 31.5 | streak 0/2
+  [  140000] {0,1} get_key: SR 0.900 (45/50), Wilson LB 0.786, mean length 18.7 | streak 0/2
+  [  160000] {0,1} get_key: SR 0.980 (49/50), Wilson LB 0.895, mean length 9.3 | streak 1/2
+  [  180000] {0,1} get_key: SR 1.000 (50/50), Wilson LB 0.929, mean length 5.9 | streak 2/2 -> STABLE
+  steps=180,000 wall=173.2s throughput=1039.1 steps/s stable=True
+  FROZEN. held-out: {'n_episodes': 50, 'successes': 50, 'success_rate': 1.0, 'wilson_lower': 0.9287, 'mean_length': 5.82, 'seed_base': 20000, 'timeouts': 0, 'reselections': 0}
+  [19:59:17] wrote runs\v2\primitives.json
+
+========================================================================
+{0,2} open_door  envs=['MiniGrid-Unlock-v0', 'MiniGrid-DoorKey-6x6-v0']  timeout=60  hook=give_key+randomize_agent_pose:any
+========================================================================
+  [   20000] {0,2} open_door: SR 0.060 (3/50), Wilson LB 0.021, mean length 56.5 | streak 0/2
+  [   40000] {0,2} open_door: SR 0.080 (4/50), Wilson LB 0.032, mean length 55.4 | streak 0/2
+  [   60000] {0,2} open_door: SR 0.600 (30/50), Wilson LB 0.462, mean length 26.8 | streak 0/2
+  [   80000] {0,2} open_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 5.8 | streak 1/2
+  [  100000] {0,2} open_door: SR 1.000 (50/50), Wilson LB 0.929, mean length 5.3 | streak 2/2 -> STABLE
+  steps=100,000 wall=89.6s throughput=1116.5 steps/s stable=True
+  FROZEN. held-out: {'n_episodes': 50, 'successes': 50, 'success_rate': 1.0, 'wilson_lower': 0.9287, 'mean_length': 6.16, 'seed_base': 20000, 'timeouts': 0, 'reselections': 0}
+  [20:00:47] wrote runs\v2\primitives.json
+
+========================================================================
+{0,3} go_to_goal  envs=['MiniGrid-DoorKey-6x6-v0']  timeout=120  hook=open_door+randomize_carrying:key:0.5+randomize_agent_pose:goal
+========================================================================
+  [   20000] {0,3} go_to_goal: SR 0.100 (5/50), Wilson LB 0.043, mean length 108.2 | streak 0/2
+  [   40000] {0,3} go_to_goal: SR 0.620 (31/50), Wilson LB 0.482, mean length 49.2 | streak 0/2
+  [   60000] {0,3} go_to_goal: SR 0.660 (33/50), Wilson LB 0.522, mean length 44.3 | streak 0/2
+  [   80000] {0,3} go_to_goal: SR 0.680 (34/50), Wilson LB 0.542, mean length 42.0 | streak 0/2
+  [  100000] {0,3} go_to_goal: SR 0.680 (34/50), Wilson LB 0.542, mean length 41.9 | streak 0/2
+  [  120000] {0,3} go_to_goal: SR 0.820 (41/50), Wilson LB 0.692, mean length 25.9 | streak 0/2
+  [  140000] {0,3} go_to_goal: SR 0.900 (45/50), Wilson LB 0.786, mean length 17.6 | streak 0/2
+  [  160000] {0,3} go_to_goal: SR 0.900 (45/50), Wilson LB 0.786, mean length 17.3 | streak 0/2
+  [  180000] {0,3} go_to_goal: SR 0.940 (47/50), Wilson LB 0.838, mean length 12.8 | streak 1/2
+  [  200000] {0,3} go_to_goal: SR 0.940 (47/50), Wilson LB 0.838, mean length 12.8 | streak 2/2 -> STABLE
+  steps=200,000 wall=179.0s throughput=1117.1 steps/s stable=True
+  FROZEN. held-out: {'n_episodes': 50, 'successes': 46, 'success_rate': 0.92, 'wilson_lower': 0.8116, 'mean_length': 16.06, 'seed_base': 20000, 'timeouts': 4, 'reselections': 0}
+  [20:03:47] wrote runs\v2\primitives.json
+
+wrote runs\v2\primitives.json
+stable: ['get_key', 'open_door', 'go_to_goal']

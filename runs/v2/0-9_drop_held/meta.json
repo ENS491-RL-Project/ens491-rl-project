@@ -1,0 +1,105 @@
+{
+  "budget": 100000,
+  "children": [],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 11.44,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.64,
+        "successes": 32,
+        "timeouts": 18,
+        "wilson_lower": 0.5014,
+        "wilson_upper": 0.7586
+      },
+      {
+        "mean_length": 3.04,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.94,
+        "successes": 47,
+        "timeouts": 3,
+        "wilson_lower": 0.8378,
+        "wilson_upper": 0.9794
+      },
+      {
+        "mean_length": 2.5,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.96,
+        "successes": 48,
+        "timeouts": 2,
+        "wilson_lower": 0.8654,
+        "wilson_upper": 0.989
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-UnlockPickup-v0"
+  ],
+  "eval_every": 10000,
+  "heldout": {
+    "mean_length": 1.28,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 1.0,
+    "successes": 50,
+    "timeouts": 0,
+    "wilson_lower": 0.9287,
+    "wilson_upper": 1.0
+  },
+  "id": "{0,9} drop_held",
+  "lateral_sources": [],
+  "m": 9,
+  "n": 0,
+  "n_envs": 8,
+  "node_id": "{0,9} drop_held",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "ppo": {
+    "batch_size": 256,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 256
+  },
+  "reset_hook": "open_door+give_key+randomize_agent_pose:any",
+  "seed": 42,
+  "spec": {
+    "children": [],
+    "env_ids": [
+      "MiniGrid-UnlockPickup-v0"
+    ],
+    "goal": "carrying:none",
+    "id": "{0,9} drop_held",
+    "initiation": "carrying:any",
+    "lateral_sources": [],
+    "max_decisions": 64,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 30,
+    "train_hook": "open_door+give_key+randomize_agent_pose:any"
+  },
+  "spec_hash": "ed693928545d8edc",
+  "stable": true,
+  "status": "frozen",
+  "steps_per_second": 490.6,
+  "steps_trained": 30000,
+  "timeout": 30,
+  "wall_seconds": 61.2,
+  "weak_heldout": false
+}

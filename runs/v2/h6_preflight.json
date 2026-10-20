@@ -1,0 +1,64 @@
+{
+  "n_eval": 50,
+  "seed_base": 20000,
+  "gate_threshold": 0.9,
+  "h5_recorded_unlock_door_sr": 0.98,
+  "rows": [
+    {
+      "node": "{1,1} unlock_door",
+      "env": "MiniGrid-Unlock-v0",
+      "start_state": "episode start (H-5 regression)",
+      "gate": true,
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "mean_length": 19.16,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 1
+    },
+    {
+      "node": "{1,1} unlock_door",
+      "env": "MiniGrid-DoorKey-6x6-v0",
+      "start_state": "episode start (layout transfer)",
+      "gate": true,
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 8.56,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    {
+      "node": "{0,3} go_to_goal",
+      "env": "MiniGrid-DoorKey-6x6-v0",
+      "start_state": "after unlock_door ran (the handoff)",
+      "gate": true,
+      "n_episodes": 50,
+      "successes": 50,
+      "success_rate": 1.0,
+      "wilson_lower": 0.9287,
+      "mean_length": 5.68,
+      "seed_base": 20000,
+      "timeouts": 0,
+      "reselections": 0
+    },
+    {
+      "node": "{0,3} go_to_goal",
+      "env": "MiniGrid-DoorKey-6x6-v0",
+      "start_state": "[expected fail] episode start, door shut",
+      "gate": false,
+      "n_episodes": 50,
+      "successes": 0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "mean_length": 120.0,
+      "seed_base": 20000,
+      "timeouts": 50,
+      "reselections": 0
+    }
+  ]
+}
