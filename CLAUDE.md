@@ -15,8 +15,10 @@ CLAUDE.local.md (gitignored, loaded after this file) and personal hooks in .clau
 graphify: graphify-out/ (graph.json, GRAPH_REPORT.md, graph.html, manifest.json, labels) is committed;
 cache/ and other machine-local state are gitignored. .gitattributes routes graph.json through graphify's
 union merge driver (registered by `graphify hook install`); clones without it fall back to a normal text merge.
-- The post-commit hook rebuilds the graph after each commit, so graph.json shows as modified afterwards.
-  Commit it with the next change; a large graph.json diff is expected.
+- .githooks/pre-commit runs `graphify update .` and stages graphify-out/, so the graph lands in the same commit
+  as the code (~2 s per commit; never blocks; skip once with GRAPHIFY_SKIP_HOOK=1). It reads the working tree,
+  so with partially staged files the graph can include unstaged code. Clones without it see graph.json modified
+  after commits (graphify's post-commit rebuild); commit it with the next change. Large graph.json diffs are expected.
 - Extra freshness (Claude Code hooks, `graphify watch .`) is each developer's own local setup.
 - graph.json is rewritten only when code topology changes, so an unchanged mtime is not a failed update.
 - After substantial changes under docs/, `/graphify . --update` refreshes the semantic (LLM) pass over docs.
@@ -48,7 +50,7 @@ pytest tests/test_skill_node.py -v   # one file
 streamlit run src/gui/app.py         # GUI
 ```
 
-Code graph (`graphify-out/`, committed): set up once per clone with `uv tool install graphifyy` and `graphify hook install`; run `graphify update .` after `git pull`. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
+Code graph (`graphify-out/`, committed): set up once per clone with `uv tool install graphifyy`, `graphify hook install` and `cp .githooks/pre-commit .git/hooks/`; run `graphify update .` after `git pull`. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
 
 ## Stack
 
