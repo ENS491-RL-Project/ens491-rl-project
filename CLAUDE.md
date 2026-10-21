@@ -12,11 +12,14 @@ This file and .claude/rules/ are shared by the whole team, on different machines
 machine-neutral: no personal paths, OS-specific services or one person's tool setup. Personal notes go in
 CLAUDE.local.md (gitignored, loaded after this file) and personal hooks in .claude/settings.json (gitignored).
 
-graphify (optional, per developer; `uv tool install graphifyy`; graphify-out/ is gitignored):
-- Without it nothing breaks: the `## graphify` rules below apply only when graphify-out/graph.json exists.
-- To use it, build the graph (`/graphify .`), install git hooks (`graphify hook install`) and, if you like,
-  Claude Code hooks or `graphify watch .` to keep it current. How you keep it current is your own setup.
+graphify: graphify-out/ (graph.json, GRAPH_REPORT.md, graph.html, manifest.json, labels) is committed;
+cache/ and other machine-local state are gitignored. .gitattributes routes graph.json through graphify's
+union merge driver (registered by `graphify hook install`); clones without it fall back to a normal text merge.
+- The post-commit hook rebuilds the graph after each commit, so graph.json shows as modified afterwards.
+  Commit it with the next change; a large graph.json diff is expected.
+- Extra freshness (Claude Code hooks, `graphify watch .`) is each developer's own local setup.
 - graph.json is rewritten only when code topology changes, so an unchanged mtime is not a failed update.
+- After substantial changes under docs/, `/graphify . --update` refreshes the semantic (LLM) pass over docs.
 - The `## graphify` section at the end is written by `graphify claude install`; edit it only through that command.
 -->
 
@@ -44,6 +47,8 @@ pytest tests/ -v                     # all tests
 pytest tests/test_skill_node.py -v   # one file
 streamlit run src/gui/app.py         # GUI
 ```
+
+Code graph (`graphify-out/`, committed): set up once per clone with `uv tool install graphifyy` and `graphify hook install`; run `graphify update .` after `git pull`. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
 
 ## Stack
 
