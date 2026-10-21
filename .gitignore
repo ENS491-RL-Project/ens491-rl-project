@@ -219,4 +219,15 @@ runs/*
 # SB3 model.zip files are not -- those stay ignored.
 !runs/v2/
 runs/v2/**/model.zip
-.claude/
+# Claude Code: settings stay local; path-scoped rules are shared
+.claude/*
+!.claude/rules/
+# graphify code graph: shared outputs are committed; machine-local state is not
+graphify-out/cache/
+graphify-out/cost.json
+graphify-out/needs_update
+graphify-out/.graphify_labels.pending.json
+graphify-out/.rebuild.lock
+graphify-out/.pending_changes
+# Personal Claude Code instructions (per developer)
+CLAUDE.local.md
