@@ -222,7 +222,7 @@ runs/v2/**/model.zip
 # Claude Code: settings stay local; path-scoped rules are shared
 .claude/*
 !.claude/rules/
-# graphify code graph (rebuilt locally)
+# graphify code graph: AST-only, rebuilt locally by graphify's git hooks
 graphify-out/
 # Personal Claude Code instructions (per developer)
 CLAUDE.local.md
