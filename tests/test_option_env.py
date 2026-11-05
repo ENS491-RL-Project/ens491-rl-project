@@ -223,6 +223,21 @@ def test_timeout_truncates():
     assert info["option_steps"] >= 100 or term
 
 
+def test_parent_timeout_interrupts_a_running_child():
+    """The Executor closes a child when the parent's timeout hits; so must OptionEnv."""
+    node = unlock_door_node(
+        timeout=45, max_decisions=10,
+        children=[primitive("{0,1} slow", NEVER, timeout=30)],
+    )
+    env = make_option_env(node, UNLOCK, seed=0)
+    env.reset(seed=0)
+    _, _, term, trunc, info = env.step(0)
+    assert info["option_steps"] == 30 and not trunc
+    _, reward, term, trunc, info = env.step(0)
+    assert info["option_steps"] == 45     # 30 + 15, not 30 + 30
+    assert trunc and not term and reward == 0.0
+
+
 def test_reset_refuses_a_goal_that_already_holds():
     """[A: F7]"""
     from src.envs.subgoal_env import open_door as open_door_hook

@@ -184,7 +184,9 @@ class OptionEnv(gym.Wrapper):
             self.sv = build_state_view(self.env, version=self.version)
             ex.observe_reward(0.0)
             k += 1
-            if env_term or env_trunc or self.node.goal(self.sv):
+            # the parent's own timeout also cuts a running child, as in the Executor (v2 §4.2)
+            if (env_term or env_trunc or self.node.goal(self.sv)
+                    or self.steps + k >= self.node.timeout):
                 break
 
         self.steps += k
