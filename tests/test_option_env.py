@@ -264,6 +264,64 @@ def test_strict_mask_reaches_nested_composites():
     assert inner.policy.masks[0] == [False, True]
 
 
+class FirstTrue:
+    def select(self, obs, mask, deterministic=True):
+        return list(mask).index(True)
+
+
+def _at(k):
+    return Predicate(f"step>={k}", lambda sv: sv.step_count >= k)
+
+
+def _composite(node_id, children, goal, timeout, max_decisions=20):
+    n = SkillNode(node_id, children=children, goal=goal, timeout=timeout,
+                  max_decisions=max_decisions, env_ids=[UNLOCK])
+    n.policy = FirstTrue()
+    n.status = NodeStatus.FROZEN
+    return n
+
+
+def _two_children(b_goal, b_initiation, parent_goal, timeout):
+    return _composite("{1,1} p", [primitive("{0,a} a", _at(3), timeout=10),
+                                  primitive("{0,b} b", b_goal, timeout=10,
+                                            initiation=b_initiation)],
+                      parent_goal, timeout)
+
+
+def _capped_inner():
+    slow = primitive("{0,s} slow", NEVER, timeout=1)
+    inner = _composite("{1,1} inner", [slow], NEVER, timeout=100, max_decisions=2)
+    return _composite("{2,1} root", [inner], NEVER, timeout=1000, max_decisions=10)
+
+
+@pytest.mark.parametrize("build, strict, expected", [
+    (lambda: _two_children(_at(5), ALWAYS, _at(5), 20), False, (True, 5)),
+    # b would run to step 17 on its own timeout; the parent's timeout is 12
+    (lambda: _two_children(_at(100), ALWAYS, _at(50), 12), False, (False, 12)),
+    (lambda: _two_children(_at(5), NEVER, _at(5), 20), True, (False, 3)),
+    (lambda: _two_children(_at(5), NEVER, _at(5), 20), False, (True, 5)),
+    # inner's cap of 2 and the root's cap of 10 are counted separately
+    (_capped_inner, False, (False, 20)),
+], ids=["success", "parent_timeout", "strict_mask", "goal_only_mask", "per_frame_cap"])
+def test_option_env_matches_the_executor(build, strict, expected):
+    """Training (OptionEnv) and evaluation (Executor) must play the same episode."""
+    from src.training.evaluation import run_episode
+    from src.training.node_trainer import execution_env_factory
+
+    seed = 7
+    env = make_option_env(build(), UNLOCK, seed=0, initiation_masking=strict)
+    env.reset(seed=seed)
+    while True:
+        _, _, term, trunc, info = env.step(env.action_masks().index(True))
+        if term or trunc:
+            break
+    trained = (term, info["option_steps"])
+
+    ok, steps, _ = run_episode(build(), execution_env_factory(UNLOCK)(), seed,
+                               initiation_masking=strict)
+    assert trained == (ok, steps) == expected
+
+
 def test_reset_refuses_a_goal_that_already_holds():
     """[A: F7]"""
     from src.envs.subgoal_env import open_door as open_door_hook
