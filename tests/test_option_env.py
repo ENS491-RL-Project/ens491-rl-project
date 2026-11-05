@@ -238,6 +238,32 @@ def test_parent_timeout_interrupts_a_running_child():
     assert trunc and not term and reward == 0.0
 
 
+def test_strict_mask_reaches_nested_composites():
+    """The Executor applies the strict mask at every depth; OptionEnv's child Executor must too."""
+    class RecordMask:
+        def __init__(self):
+            self.masks = []
+
+        def select(self, obs, mask, deterministic=True):
+            self.masks.append(list(mask))
+            return mask.index(True)
+
+    inner = SkillNode(
+        "{1,1} inner", goal=NEVER, timeout=40, max_decisions=3, env_ids=[UNLOCK],
+        children=[primitive("{0,1} blocked", NEVER, timeout=10, initiation=NEVER),
+                  primitive("{0,2} open", NEVER, timeout=10)],
+    )
+    inner.policy = RecordMask()
+    inner.status = NodeStatus.FROZEN
+    outer = SkillNode("{2,1} outer", children=[inner], goal=door_open(), timeout=60,
+                      max_decisions=3, env_ids=[UNLOCK])
+
+    env = make_option_env(outer, UNLOCK, seed=0, initiation_masking=True)
+    env.reset(seed=0)
+    env.step(0)
+    assert inner.policy.masks[0] == [False, True]
+
+
 def test_reset_refuses_a_goal_that_already_holds():
     """[A: F7]"""
     from src.envs.subgoal_env import open_door as open_door_hook

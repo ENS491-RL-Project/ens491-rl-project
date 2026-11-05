@@ -170,7 +170,8 @@ class OptionEnv(gym.Wrapper):
     def step(self, idx):
         idx = int(idx)
         child = self.node.children[idx]
-        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode)
+        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode,
+                      initiation_masking=self.initiation_masking)
 
         k = 0
         env_term = env_trunc = False
