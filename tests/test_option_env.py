@@ -259,6 +259,7 @@ def test_policy_updates_counts_real_train_calls(min_sr, budget, expected):
         eval_every=64, n_eval=5, criterion=StabilityCriterion(min_sr, min_sr, 1),
     )
     assert report["policy_updates"] == expected
+    assert report["policy_updates_semantics"] == "completed_train_calls"
 
 
 # ---------------------------------------------------------------------------
