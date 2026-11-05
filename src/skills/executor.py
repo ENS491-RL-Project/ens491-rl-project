@@ -24,6 +24,7 @@ class Frame:
     node: SkillNode
     steps: int = 0        # env steps since this node was pushed
     ret: float = 0.0      # discounted return since push
+    decisions: int = 0    # children this frame has selected, against its node's max_decisions
 
 
 @dataclass
@@ -142,9 +143,12 @@ class Executor:
             if top.is_primitive:
                 return int(top.policy.act(obs, deterministic=self.deterministic))
 
-            if self.decisions >= self.max_decisions:       # [A: F2]
-                self._close_from(0, Outcome.TIMEOUT, sv)
-                return None
+            # [A: F2] per composite frame, as OptionEnv counts it in training; the
+            # root's cap is the constructor's `max_decisions`.
+            cap = self.max_decisions if len(self.stack) == 1 else top.max_decisions
+            if self.stack[-1].decisions >= cap:
+                self._close_from(len(self.stack) - 1, Outcome.TIMEOUT, sv)
+                continue
 
             mask = [self._child_mask(c, sv) for c in top.children]
             if not any(mask):
@@ -168,6 +172,7 @@ class Executor:
                 self.reselections += 1
 
             self.decisions += 1
+            self.stack[-1].decisions += 1
             self.stack.append(Frame(child))
             self.trace.append(
                 TraceEvent(len(self.stack), child.id, "SELECT", None, 0, sv.version)
