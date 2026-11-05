@@ -352,6 +352,8 @@ def test_decision_cap_is_per_frame():
     root_picks = [e for e in ex.trace if e.event == "SELECT" and e.node_id == "inner"]
     assert len(root_picks) == 10                  # inner's cap of 2 did not eat the root's 10
     assert ex.decisions == 10 + 10 * 2
+    # every re-selected `inner` starts from zero (exactly two picks each); the root's count carries on
+    assert ex.selected_children() == ["inner", "slow", "slow"] * 10
     assert ex.last_outcome is Outcome.TIMEOUT
 
 
