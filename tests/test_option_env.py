@@ -254,12 +254,17 @@ def test_policy_updates_counts_real_train_calls(min_sr, budget, expected):
     from src.training.evaluation import StabilityCriterion
     from src.training.node_trainer import train_composite
 
-    report, _ = train_composite(
+    report, model = train_composite(
         unlock_door_node(), [UNLOCK], total_timesteps=budget, n_envs=1,
         eval_every=64, n_eval=5, criterion=StabilityCriterion(min_sr, min_sr, 1),
     )
     assert report["policy_updates"] == expected
     assert report["policy_updates_semantics"] == "completed_train_calls"
+    from pathlib import Path
+    import torch
+    saved = torch.load(Path(report["run_dir"]) / "policy_state_dict.pt", weights_only=True)
+    assert all(torch.equal(saved[k], v.cpu()) for k, v in model.policy.state_dict().items())
+    assert (Path(report["run_dir"]) / "model.zip").is_file()
 
 
 # ---------------------------------------------------------------------------

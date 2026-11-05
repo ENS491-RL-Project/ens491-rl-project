@@ -56,8 +56,11 @@ class NodeRegistry:
         *,
         extra_meta: Optional[dict[str, Any]] = None,
         run_dir: Optional[Path | str] = None,
+        overwrite: bool = False,
     ) -> Path:
         d = Path(run_dir) if run_dir is not None else self.node_dir(node.id)
+        if not overwrite and ((d / STATE_DICT_NAME).exists() or (d / META_NAME).exists()):
+            raise FileExistsError(f"{node.id}: checkpoint already exists in {d}; use a new run_dir")
         d.mkdir(parents=True, exist_ok=True)
 
         if node.policy is not None and hasattr(node.policy, "state_dict"):

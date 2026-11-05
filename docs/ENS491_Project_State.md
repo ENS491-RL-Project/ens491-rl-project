@@ -71,6 +71,8 @@ No predetermined correct answer. Implement each alternative and compare. Section
 
 > **Training parity audit (2026-11-05).** Eighteen paired old/new training runs (seeds 42–44: unlock_door goal-only; solve_doorkey goal-only and strict) reproduce identical PPO buffers and weights at every completed update. Unlock removes 3/5/5 stationary 48-step tails: only duration counters change; PPO does not consume `k`. Solve strict changes nested masks in 512 decisions per seed but leaves parent transitions unchanged. Actual train calls are 2 for unlock/solve goal and 1 for solve strict, not the legacy reports’ 3/2. See `plans/2026-11-05_training_parity_audit.md` and its JSON summary.
 
+> **Run persistence (2026-11-05).** Both v2 trainers now archive each attempt under a unique `runs/training/<run_id>` (including budget exhaustion and exceptions), with last model, policy weights, source snapshot, configuration and child policy hashes. Existing canonical registry files are protected from implicit overwrite. `freeze()` requires STABLE; frozen nodes cannot be retrained. The completion marker describes archive completeness, not task success. Exact environment/RNG resume remains outside this contract.
+
 ---
 
 ## Current Status (2026-10-01)

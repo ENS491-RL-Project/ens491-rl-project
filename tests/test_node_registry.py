@@ -29,6 +29,7 @@ def make_node(node_id="{0,1} get_key", timeout=120, goal_spec="carrying:key"):
         env_ids=["MiniGrid-Unlock-v0"],
     )
     n.policy = TinyPolicy()
+    n.status = NodeStatus.STABLE
     return n
 
 
@@ -106,6 +107,7 @@ def test_composite_hash_covers_its_children(tmp_path):
 
     parent = SkillNode("{1,1} p", children=[a], goal=NEVER, timeout=300)
     parent.policy = TinyPolicy()
+    parent.status = NodeStatus.STABLE
     parent.freeze()
     reg.save(parent)
 

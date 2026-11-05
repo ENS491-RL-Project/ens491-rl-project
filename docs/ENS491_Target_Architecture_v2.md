@@ -888,3 +888,17 @@ seed. Rationale in `plans/2026-10-02_H7_amendment_1.md`; the stop report is in
 | `{1,B} flat_unlockpickup_options` children T1, T2, T6 | T1, T2, T6b, T6 | same skills as T7 without the intermediate T3 |
 | T8, T9a, T9b in H-7 | deferred to H-7b, planned after H-7a's result | the H-7.1 pre-flight already shows the frozen Unlock skills break on BlockedUnlockPickup (`get_key` picks up the ball in 29/50) |
 | — | predicate `carrying_anything` (`"carrying:any"`), hook `key_off_door` (`"key_off_door"`) | T6b's initiation; T6's hook rejects a key on the door's approach cell, which an empty-handed policy could pass only by refilling its hand |
+
+### Run persistence and lifecycle amendment (2026-11-05)
+
+Every call to the v2 primitive/composite trainer gets a unique directory under
+`runs/training/` (or an explicitly configured run root). The trainer saves the last
+policy and SB3 model for stable, budget-exhausted and interrupted/failed runs.
+A run manifest records configuration, code identity, child policy hashes, counters
+and termination reason. `complete.json` is written last only after the artifacts
+and final manifest are durable; a missing marker means an incomplete run.
+These experimental runs never replace the canonical frozen registry implicitly.
+`SkillNode.freeze()` requires STABLE (or is idempotent for FROZEN). Test fixtures
+that construct policies without training must explicitly mark them STABLE.
+The saved SB3 model includes optimizer state, but is not a claim of exact training
+resume: live environment and RNG states are not restored by this protocol.
