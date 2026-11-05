@@ -170,7 +170,8 @@ class OptionEnv(gym.Wrapper):
     def step(self, idx):
         idx = int(idx)
         child = self.node.children[idx]
-        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode)
+        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode,
+                      initiation_masking=self.initiation_masking)
 
         k = 0
         env_term = env_trunc = False
@@ -184,7 +185,9 @@ class OptionEnv(gym.Wrapper):
             self.sv = build_state_view(self.env, version=self.version)
             ex.observe_reward(0.0)
             k += 1
-            if env_term or env_trunc or self.node.goal(self.sv):
+            # the parent's own timeout also cuts a running child, as in the Executor (v2 §4.2)
+            if (env_term or env_trunc or self.node.goal(self.sv)
+                    or self.steps + k >= self.node.timeout):
                 break
 
         self.steps += k
