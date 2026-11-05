@@ -535,7 +535,7 @@ def train_composite(
             round(env_steps_own / decisions, 2) if decisions else None
         ),
         "decisions_per_update": ppo_kwargs["n_steps"] * n_envs,
-        "policy_updates": decisions // (ppo_kwargs["n_steps"] * n_envs),
+        "policy_updates": callback.train_calls,
         "env_steps_children": children_env_steps(node),
         "env_steps_total": env_steps_own + children_env_steps(node),
         "wall_seconds": round(wall, 1),
