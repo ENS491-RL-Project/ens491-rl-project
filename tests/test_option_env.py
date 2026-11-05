@@ -305,6 +305,14 @@ def _log_acts(node):
     return log
 
 
+def _strict_dead_end():
+    """Under the strict mask `dead` is never applicable, so every frame re-selects with no env step."""
+    dead = primitive("{0,d} dead", NEVER, timeout=10, initiation=NEVER)
+    blocked = _composite("{1,1} blocked", [dead], NEVER, timeout=100, max_decisions=64)
+    inner = _composite("{2,1} inner", [blocked], NEVER, timeout=500, max_decisions=64)
+    return _composite("{3,1} root", [inner], NEVER, timeout=1000, max_decisions=64)
+
+
 @pytest.mark.parametrize("build, strict, expected", [
     (lambda: _two_children(_at(5), ALWAYS, _at(5), 20), False, (True, 5)),
     # b would run to step 17 on its own timeout; the parent's timeout is 12
@@ -316,8 +324,9 @@ def _log_acts(node):
     (lambda: _two_children(_at(5), NEVER, _at(5), 20), False, (True, 5)),
     # inner's cap of 2 and the root's cap of 10 are counted separately
     (_capped_inner, False, (False, 20)),
+    (_strict_dead_end, True, (False, 0)),
 ], ids=["success", "parent_timeout", "goal_on_timeout_step", "goal_after_timeout",
-         "strict_mask", "goal_only_mask", "per_frame_cap"])
+         "strict_mask", "goal_only_mask", "per_frame_cap", "strict_dead_end"])
 def test_option_env_matches_the_executor(build, strict, expected):
     """Training (OptionEnv) and evaluation (Executor) must play the same episode."""
     from src.training.evaluation import run_episode

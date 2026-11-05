@@ -64,7 +64,7 @@ class Executor:
         ex.observe_reward(r)
     """
 
-    MAX_ITERS = 256   # [A: F6] bound on one act() call; exceeding it is a bug
+    MAX_ITERS = 256   # [A: F6] floor of the bound on one act() call; exceeding the bound is a bug
 
     def __init__(
         self,
@@ -87,6 +87,7 @@ class Executor:
         self.initiation_masking = initiation_masking
 
         self.stack: list[Frame] = [Frame(root)]
+        self._max_iters = self._iteration_bound()
         self.decisions = 0
         self.reselections = 0
         self.last_outcome: Optional[Outcome] = None
@@ -120,7 +121,7 @@ class Executor:
         """
         self._refresh_cache(sv)
 
-        for _ in range(self.MAX_ITERS):
+        for _ in range(self._max_iters):
             if not self.stack:
                 return None
 
@@ -179,7 +180,7 @@ class Executor:
             )
 
         raise ExecutorError(
-            f"act() exceeded MAX_ITERS={self.MAX_ITERS} -- cyclic termination/selection "
+            f"act() exceeded {self._max_iters} iterations -- cyclic termination/selection "
             f"under {self.root.id}"
         )
 
@@ -200,6 +201,25 @@ class Executor:
         return [e.node_id for e in self.trace if e.event == "SELECT"]
 
     # -- internals -------------------------------------------------------
+
+    def _iteration_bound(self) -> int:
+        """
+        Passes one act() call can need. Every pass pushes or closes a frame, and each
+        composite frame pushes at most its cap of children, so the frames one call can
+        push are finite: strict-mask dead ends close and re-select with no env step
+        in between, and the per-frame caps multiply down the stack.
+        """
+        pushes: dict[int, int] = {}
+
+        def count(node: SkillNode) -> int:
+            if node.is_primitive:
+                return 1
+            if id(node) not in pushes:
+                cap = self.max_decisions if node is self.root else node.max_decisions
+                pushes[id(node)] = 1 + cap * max(count(c) for c in node.children)
+            return pushes[id(node)]
+
+        return max(self.MAX_ITERS, 2 * count(self.root) + 2)
 
     def _child_mask(self, child, sv: StateView) -> bool:
         ok = child.available(sv, self._cache)

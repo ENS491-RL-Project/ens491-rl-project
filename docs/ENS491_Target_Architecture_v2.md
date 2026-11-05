@@ -208,7 +208,7 @@ class Frame:
 class Executor:
     """One executor serves runtime, evaluation and OptionEnv. No code path depends on node.n."""
 
-    MAX_ITERS = 256       # [A: F6] bound; exceeding it is a bug, not a slow episode
+    MAX_ITERS = 256       # [A: F6] floor of the bound; the bound itself is computed from the per-frame caps (2026-11-05)
 
     def __init__(self, root, gamma=0.99, execution_mode="deterministic", max_decisions=64):
         self.stack = [Frame(root)]
@@ -906,3 +906,4 @@ seed. Rationale in `plans/2026-10-02_H7_amendment_1.md`; the stop report is in
 | §5.2 sketch: a running child is cut only by env end or the parent's goal | also by the parent's own `timeout` | A child could run past the parent's timeout, so a late goal counted as SUCCESS with reward below 0.1 (even negative); evaluation scores the same episode as a failure (§4.2) |
 | §5.2 sketch: the child's `Executor` gets no `initiation_masking` | it receives the composite's setting | The strict mask applied only at the trained composite; evaluation applies it at every depth |
 | §4.4 sketch: one `decisions` counter against the root's `max_decisions` | `max_decisions` counted per composite frame | Evaluation charged every depth's selections to the root's cap; `OptionEnv` counts each composite's own |
+| §4.4 sketch: `act()` is bounded by a fixed `MAX_ITERS = 256` | the bound is `max(256, 2 × pushes + 2)`, with `pushes` computed from the per-frame caps | With per-frame caps a strict-mask dead end (root → inner → blocked → a primitive that is never applicable) re-selects with no env step in between and needs more than 256 passes; it ended in `ExecutorError` where training ends in `TIMEOUT` |
