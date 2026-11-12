@@ -10,7 +10,7 @@
 | Frame | One active node on the executor's stack, with its own step and decision counters. (per-frame decision counter after PR #15) | §4 |
 | Availability | A node may be chosen if its goal is not reached and (for composites) some child is available. | §4 |
 | Strict mask / initiation masking | Also require the child's initiation predicate. A control condition, off in normal runs. | §4, Q8 |
-| `max_decisions` | Cap on a composite's child selections; mandatory. See decision 0009. | §4 |
+| `max_decisions` | Cap on a composite's child selections, counted per frame; mandatory. See decision 0009. | §4 |
 | SMDP / `OptionEnv` | A composite is trained on an env where one step = one whole child run. | §5.2 |
 | Execution mode | Whether frozen nodes act deterministically or by sampling. Open. | §5.4 |
 | DECLARED → TRAINING → STABLE → FROZEN | Node lifecycle. Only FROZEN nodes become children or roots. | §9 |

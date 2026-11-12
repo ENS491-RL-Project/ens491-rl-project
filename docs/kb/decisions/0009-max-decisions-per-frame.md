@@ -1,7 +1,7 @@
 # 0009 — `max_decisions` is counted per composite frame, not per tree
 
 Status: Accepted 2026-11-12, provided the final PR #15 keeps this design
-Date: 2026-11-05   Approved by: Emir (2026-11-12)   Source: PR #15 (Pekpak, in progress); v2 §4.4 and §13 as amended in PR #15 (not on main yet)
+Date: 2026-11-05   Approved by: Emir (2026-11-12)   Source: PR #15 (Pekpak, merged 2026-11-12); v2 §4.4 and §13 as amended in PR #15
 Reviewed by Emir: yes — 2026-11-12
 
 ## Decision
@@ -16,13 +16,14 @@ Each composite counts its own selections against its own `max_decisions`. When a
 
 ## Evidence
 - PR #15: 9 frozen nodes × 50 held-out seeds identical before/after; `unlock_door` and `solve_doorkey` training measured (Project_State note in the PR).
-- Results: PR #15's measurements are not on `main` yet; they are listed in [`status.md`](../status.md) and move to [`results.md`](../results.md) when it merges.
+- Results in [`results.md`](../results.md): training/evaluation parity (PR #15).
 - Rationale Emir must be able to give: training (`OptionEnv`) already counted per composite; evaluation must use the same rule.
 
 ## Affects
 [`src/skills/executor.py`](../../../src/skills/executor.py), [`src/envs/option_env.py`](../../../src/envs/option_env.py). Deep trees now get more decisions in evaluation (caps multiply).
 
 ## Open point
-Recheck when PR #15 is final.
+PR #15 merged on 2026-11-12 with this design; Emir sets Status.
+Caps multiply down the stack. Under the strict mask a dead end re-selects with no env step, and its cost grows with depth: see [open-questions](../open-questions.md) (frame that re-selects without an env step).
 
 History: Decide in PR #15's discussion, then set Status here. The two other parity rules in PR #15 (parent timeout cuts the child; strict mask at every depth) do not change a locked rule.
