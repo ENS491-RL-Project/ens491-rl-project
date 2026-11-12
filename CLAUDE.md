@@ -26,11 +26,12 @@ Revisit committing it only if the LLM semantic pass over docs/ is adopted (that 
 Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a frozen, reusable **skill node**; composite nodes select among earlier frozen nodes as options, to any depth. Freezing prevents forgetting; an autoencoder (novelty) and a GRU (task id) decide when a task is new and which known task is running. Curriculum: Unlock, DoorKey, UnlockPickup, BlockedUnlockPickup (v2 §11).
 
 ## Docs
-
-- `docs/ENS491_Target_Architecture_v2.md` is **the reference design** and overrides every other doc. Change it first before changing the design in code.
-- `docs/ENS491_Project_State.md`: status of every roadmap task (H-*, C-*, R-*, G-*) and the open empirical questions. Check it before starting roadmap work; update it when a task finishes.
-- `docs/plans/`: per-task plans and summaries. The newest `*_session_handoff.md` says where work stopped.
-- `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections still apply. `docs/ENS491_Recursive_Hierarchy_Design.md` is the superseded v1 design (history only).
+- Start at `docs/kb/README.md`. Where the project stands: `docs/ENS491_Project_State.md` until
+  `docs/kb/status.md` replaces it (next KB PR).
+- `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
+- Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
+- `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
+- `docs/plans/` holds raw plans and summaries; `docs/archive/` is history only.
 
 ## Code layout
 
@@ -104,6 +105,17 @@ SkillNode {n,m}
 **Scope**
 - Do not put FourRooms (or any single benchmark) on the hierarchy's critical path.
 - Do not reference or use the sandbox repo; build baselines from scratch here.
+
+**Decisions**
+- A change that touches a 🔒 rule in v2, or an item in `docs/kb/open-questions.md`: stop.
+  Write `docs/kb/decisions/NNNN-*.md` with `Status: Proposed` and do not implement it
+  until a human sets it to `Accepted`.
+- A Proposed decision names the experiment that settles it, under **Evidence**
+  (`docs/kb/decisions/0010-decide-empirically.md`). Do not settle a design question by argument alone.
+- Every experiment is recorded in `docs/kb/results.md` with links to its plan and result files,
+  and every decision it informs links back to it.
+- Every PR that changes results or roadmap state updates `docs/kb/status.md`
+  (and `results.md` when a measurement changed) in the same PR.
 
 ## graphify
 
