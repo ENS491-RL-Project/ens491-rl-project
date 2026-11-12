@@ -180,7 +180,10 @@ to learn. C1 would then be measuring the mask, not composition. So:
 is immediately available again in an unchanged state and the parent may select it again, forever. Two
 bounds, both mandatory and both recorded in `meta.json`: the parent's own `timeout`, and
 `max_decisions`, a cap on child invocations per episode (no longer "a guard against degenerate
-policies" — it is load-bearing). The executor counts re-selections per episode and logs the count.
+policies" — it is load-bearing). The cap is counted **per composite frame**: each composite counts
+only its own selections against its own `max_decisions`, as `OptionEnv` does in training; when it is
+reached that frame closes `TIMEOUT` and its parent selects again (amended 2026-11-05). The executor
+counts re-selections per episode and logs the count.
 
 **Availability is memoized [A: F4].** `available()` recurses over children, so in a DAG a node reachable
 by several paths is re-evaluated once per path — exponential in depth (branching 5 at depth 5 is ~5⁵
@@ -200,11 +203,12 @@ class Frame:
     node: SkillNode
     steps: int = 0        # env steps since this node was pushed
     ret: float = 0.0      # discounted return since push (logged; used by OptionEnv)
+    decisions: int = 0    # children this frame has selected, against its node's max_decisions
 
 class Executor:
     """One executor serves runtime, evaluation and OptionEnv. No code path depends on node.n."""
 
-    MAX_ITERS = 256       # [A: F6] bound; exceeding it is a bug, not a slow episode
+    MAX_ITERS = 256       # [A: F6] floor of the bound; the bound itself is computed from the per-frame caps (2026-11-05)
 
     def __init__(self, root, gamma=0.99, execution_mode="deterministic", max_decisions=64):
         self.stack = [Frame(root)]
@@ -233,9 +237,10 @@ class Executor:
             if top.is_primitive:
                 return top.policy.act(obs, deterministic=(self.execution_mode == "deterministic"))
 
-            if self.decisions >= self.max_decisions:    # [A: F2]
-                self._close_from(0, TIMEOUT)
-                return None
+            cap = self.max_decisions if len(self.stack) == 1 else top.max_decisions
+            if self.stack[-1].decisions >= cap:         # [A: F2] per composite frame
+                self._close_from(len(self.stack) - 1, TIMEOUT)
+                continue                                # the parent selects again; a root ends the loop
 
             mask = [self._available(c, sv) for c in top.children]
             if not any(mask):                           # [A: F3] never hand an empty mask to a policy
@@ -313,7 +318,8 @@ class OptionEnv(gym.Wrapper):
 
     def step(self, idx):
         child = node.children[idx]
-        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode)
+        ex = Executor(child, gamma=self.gamma, execution_mode=self.execution_mode,
+                      initiation_masking=self.initiation_masking)   # same mask at every depth
         k = 0
         while True:
             a = ex.act(self.obs, self.sv)
@@ -322,7 +328,8 @@ class OptionEnv(gym.Wrapper):
             self.obs, _, term, trunc, _ = self.env.step(a)   # env reward discarded [A: F10]
             self.sv = build_state_view(self.env)             # one snapshot per step [A: F5]
             ex.observe_reward(0.0); k += 1
-            if term or trunc or node.goal(self.sv):          # env end or the parent's goal interrupts
+            if (term or trunc or node.goal(self.sv)          # env end or the parent's goal interrupts
+                    or self.steps + k >= node.timeout):      # so does the parent's timeout (§4.2)
                 break
 
         self.steps += k
@@ -888,3 +895,15 @@ seed. Rationale in `plans/2026-10-02_H7_amendment_1.md`; the stop report is in
 | `{1,B} flat_unlockpickup_options` children T1, T2, T6 | T1, T2, T6b, T6 | same skills as T7 without the intermediate T3 |
 | T8, T9a, T9b in H-7 | deferred to H-7b, planned after H-7a's result | the H-7.1 pre-flight already shows the frozen Unlock skills break on BlockedUnlockPickup (`get_key` picks up the ball in 29/50) |
 | — | predicate `carrying_anything` (`"carrying:any"`), hook `key_off_door` (`"key_off_door"`) | T6b's initiation; T6's hook rejects a key on the door's approach cell, which an empty-handed policy could pass only by refilling its hand |
+
+### Amendments applied 2026-11-05 (training/evaluation parity)
+
+`OptionEnv` (training) and the `Executor` (evaluation) applied three rules differently. Fixed in
+`fix/train-eval-parity`; `tests/test_option_env.py::test_option_env_matches_the_executor` pins them.
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| §5.2 sketch: a running child is cut only by env end or the parent's goal | also by the parent's own `timeout` | A child could run past the parent's timeout, so a late goal counted as SUCCESS with reward below 0.1 (even negative); evaluation scores the same episode as a failure (§4.2) |
+| §5.2 sketch: the child's `Executor` gets no `initiation_masking` | it receives the composite's setting | The strict mask applied only at the trained composite; evaluation applies it at every depth |
+| §4.4 sketch: one `decisions` counter against the root's `max_decisions` | `max_decisions` counted per composite frame | Evaluation charged every depth's selections to the root's cap; `OptionEnv` counts each composite's own |
+| §4.4 sketch: `act()` is bounded by a fixed `MAX_ITERS = 256` | the bound is `max(256, 2 × pushes + 2)`, with `pushes` computed from the per-frame caps | With per-frame caps a strict-mask dead end (root → inner → blocked → a primitive that is never applicable) re-selects with no env step in between and needs more than 256 passes; it ended in `ExecutorError` where training ends in `TIMEOUT` |

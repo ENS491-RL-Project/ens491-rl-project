@@ -228,3 +228,6 @@ graphify-out/
 CLAUDE.local.md
 # Obsidian vault settings (per developer)
 .obsidian/
+
+# macOS
+.DS_Store
