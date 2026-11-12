@@ -340,6 +340,40 @@ def test_max_decisions_terminates_the_episode():
     assert ex.last_outcome is Outcome.TIMEOUT
 
 
+def test_decision_cap_is_per_frame():
+    """Each composite counts only its own selections, as OptionEnv does in training."""
+    slow = prim("slow", goal=NEVER, timeout=1)
+    inner = comp("inner", [slow], goal=NEVER, timeout=1_000, max_decisions=2)
+    root = comp("root", [inner], goal=NEVER, timeout=10_000, max_decisions=10)
+
+    ex = Executor(root)
+    run(ex, ToyWorld(), max_env_steps=200)
+
+    root_picks = [e for e in ex.trace if e.event == "SELECT" and e.node_id == "inner"]
+    assert len(root_picks) == 10                  # inner's cap of 2 did not eat the root's 10
+    assert ex.decisions == 10 + 10 * 2
+    # every re-selected `inner` starts from zero (exactly two picks each); the root's count carries on
+    assert ex.selected_children() == ["inner", "slow", "slow"] * 10
+    assert ex.last_outcome is Outcome.TIMEOUT
+
+
+def test_strict_dead_end_times_out_instead_of_tripping_the_iteration_bound():
+    """
+    root -> inner -> blocked -> dead, strict mask, default caps of 64. `dead` is never
+    applicable, so every frame re-selects its child without an env step in between.
+    Each frame's own cap ends that, but the whole thing is more than 256 loop passes.
+    """
+    dead = SkillNode("dead", goal=NEVER, initiation=NEVER, timeout=10)
+    dead.policy = FixedAction()
+    blocked = comp("blocked", [dead], timeout=100)
+    inner = comp("inner", [blocked], timeout=1_000)
+    root = comp("root", [inner], timeout=10_000)
+
+    ex = Executor(root, initiation_masking=True)
+    assert ex.act(None, ToyWorld().view()) is None
+    assert ex.last_outcome is Outcome.TIMEOUT
+
+
 def test_executor_cannot_hang():
     """
     [A: F6] A pathological graph must raise, not spin. `inner` has no children

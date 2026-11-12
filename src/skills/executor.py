@@ -24,6 +24,7 @@ class Frame:
     node: SkillNode
     steps: int = 0        # env steps since this node was pushed
     ret: float = 0.0      # discounted return since push
+    decisions: int = 0    # children this frame has selected, against its node's max_decisions
 
 
 @dataclass
@@ -63,7 +64,7 @@ class Executor:
         ex.observe_reward(r)
     """
 
-    MAX_ITERS = 256   # [A: F6] bound on one act() call; exceeding it is a bug
+    MAX_ITERS = 256   # [A: F6] floor of the bound on one act() call; exceeding the bound is a bug
 
     def __init__(
         self,
@@ -86,6 +87,7 @@ class Executor:
         self.initiation_masking = initiation_masking
 
         self.stack: list[Frame] = [Frame(root)]
+        self._max_iters = self._iteration_bound()
         self.decisions = 0
         self.reselections = 0
         self.last_outcome: Optional[Outcome] = None
@@ -119,7 +121,7 @@ class Executor:
         """
         self._refresh_cache(sv)
 
-        for _ in range(self.MAX_ITERS):
+        for _ in range(self._max_iters):
             if not self.stack:
                 return None
 
@@ -142,9 +144,12 @@ class Executor:
             if top.is_primitive:
                 return int(top.policy.act(obs, deterministic=self.deterministic))
 
-            if self.decisions >= self.max_decisions:       # [A: F2]
-                self._close_from(0, Outcome.TIMEOUT, sv)
-                return None
+            # [A: F2] per composite frame, as OptionEnv counts it in training; the
+            # root's cap is the constructor's `max_decisions`.
+            cap = self.max_decisions if len(self.stack) == 1 else top.max_decisions
+            if self.stack[-1].decisions >= cap:
+                self._close_from(len(self.stack) - 1, Outcome.TIMEOUT, sv)
+                continue
 
             mask = [self._child_mask(c, sv) for c in top.children]
             if not any(mask):
@@ -168,13 +173,14 @@ class Executor:
                 self.reselections += 1
 
             self.decisions += 1
+            self.stack[-1].decisions += 1
             self.stack.append(Frame(child))
             self.trace.append(
                 TraceEvent(len(self.stack), child.id, "SELECT", None, 0, sv.version)
             )
 
         raise ExecutorError(
-            f"act() exceeded MAX_ITERS={self.MAX_ITERS} -- cyclic termination/selection "
+            f"act() exceeded {self._max_iters} iterations -- cyclic termination/selection "
             f"under {self.root.id}"
         )
 
@@ -195,6 +201,25 @@ class Executor:
         return [e.node_id for e in self.trace if e.event == "SELECT"]
 
     # -- internals -------------------------------------------------------
+
+    def _iteration_bound(self) -> int:
+        """
+        Passes one act() call can need. Every pass pushes or closes a frame, and each
+        composite frame pushes at most its cap of children, so the frames one call can
+        push are finite: strict-mask dead ends close and re-select with no env step
+        in between, and the per-frame caps multiply down the stack.
+        """
+        pushes: dict[int, int] = {}
+
+        def count(node: SkillNode) -> int:
+            if node.is_primitive:
+                return 1
+            if id(node) not in pushes:
+                cap = self.max_decisions if node is self.root else node.max_decisions
+                pushes[id(node)] = 1 + cap * max(count(c) for c in node.children)
+            return pushes[id(node)]
+
+        return max(self.MAX_ITERS, 2 * count(self.root) + 2)
 
     def _child_mask(self, child, sv: StateView) -> bool:
         ok = child.available(sv, self._cache)
