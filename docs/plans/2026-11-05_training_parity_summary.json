@@ -1,0 +1,164 @@
+[
+  {
+    "task": "unlock",
+    "arm": "goal",
+    "seed": 42,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "k",
+      "option_steps",
+      "timeout_tail"
+    ],
+    "changed_duration_decisions": 3,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 34877,
+    "new_env_steps": 34733,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "unlock",
+    "arm": "goal",
+    "seed": 43,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "k",
+      "option_steps",
+      "timeout_tail"
+    ],
+    "changed_duration_decisions": 5,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 32869,
+    "new_env_steps": 32629,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "unlock",
+    "arm": "goal",
+    "seed": 44,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "k",
+      "option_steps",
+      "timeout_tail"
+    ],
+    "changed_duration_decisions": 5,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 33369,
+    "new_env_steps": 33129,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "solve",
+    "arm": "goal",
+    "seed": 42,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 55659,
+    "new_env_steps": 55659,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "solve",
+    "arm": "goal",
+    "seed": 43,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 48887,
+    "new_env_steps": 48887,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "solve",
+    "arm": "goal",
+    "seed": 44,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 0,
+    "old_env_steps": 53930,
+    "new_env_steps": 53930,
+    "actual_train_calls": 2,
+    "reported_policy_updates": 3,
+    "decisions": 1536
+  },
+  {
+    "task": "solve",
+    "arm": "strict",
+    "seed": 42,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "nested_masks"
+    ],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 512,
+    "old_env_steps": 7280,
+    "new_env_steps": 7280,
+    "actual_train_calls": 1,
+    "reported_policy_updates": 2,
+    "decisions": 1024
+  },
+  {
+    "task": "solve",
+    "arm": "strict",
+    "seed": 43,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "nested_masks"
+    ],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 512,
+    "old_env_steps": 7253,
+    "new_env_steps": 7253,
+    "actual_train_calls": 1,
+    "reported_policy_updates": 2,
+    "decisions": 1024
+  },
+  {
+    "task": "solve",
+    "arm": "strict",
+    "seed": 44,
+    "weights_equal": true,
+    "all_updates_equal": true,
+    "learner_transition_differences": 0,
+    "different_fields": [
+      "nested_masks"
+    ],
+    "changed_duration_decisions": 0,
+    "nested_mask_changed_decisions": 512,
+    "old_env_steps": 7240,
+    "new_env_steps": 7240,
+    "actual_train_calls": 1,
+    "reported_policy_updates": 2,
+    "decisions": 1024
+  }
+]
