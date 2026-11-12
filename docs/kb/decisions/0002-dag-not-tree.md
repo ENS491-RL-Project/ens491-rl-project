@@ -13,7 +13,7 @@ A composite may use any earlier FROZEN node as a child, from any level, and a no
 - Children from any level remove the need for dummy wrappers that 'lift' a primitive to the right layer.
 
 ## Rejected alternatives
-- Tree with one parent per column (v1, `ENS491_Recursive_Hierarchy_Design.md` §3.1): sharing impossible.
+- Tree with one parent per column (v1, [`ENS491_Recursive_Hierarchy_Design.md`](../../archive/ENS491_Recursive_Hierarchy_Design.md) §3.1): sharing impossible.
 
 ## Evidence
 - `{2,1} solve_doorkey` uses `{1,1} unlock_door` (level 1) and `{0,3} go_to_goal` (level 0) directly: [`plans/2026-10-02_H6_summary.md`](../../plans/2026-10-02_H6_summary.md).
