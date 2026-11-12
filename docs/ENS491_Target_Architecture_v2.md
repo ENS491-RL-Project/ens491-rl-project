@@ -3,7 +3,7 @@
 > **Status:** Locked on 2026-10-01; **amended 2026-10-01 (H-0.5)** with the corrections in
 > `plans/2026-10-01_v2_H0-H5_plan.md` Part A (items F1-F34). Amended passages are marked **[A: Fnn]**.
 > This is the reference design for all further work.
-> **Supersedes:** `ENS491_Recursive_Hierarchy_Design.md` (v1) entirely, and every conflicting rule in
+> **Supersedes:** `archive/ENS491_Recursive_Hierarchy_Design.md` (v1) entirely, and every conflicting rule in
 > `ENS491_Project_State.md`, `ENS491_Module_Interfaces.md` and `CLAUDE.md`. Where an older doc disagrees with this one, this one wins.
 >
 > 🔒 = locked decision · ⚠️ Qn = pending supervisor confirmation (see `SUPERVISOR_QUESTIONS.md`) · 🧪 = empirical, implement alternatives and compare
