@@ -26,8 +26,8 @@ Revisit committing it only if the LLM semantic pass over docs/ is adopted (that 
 Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a frozen, reusable **skill node**; composite nodes select among earlier frozen nodes as options, to any depth. Freezing prevents forgetting; an autoencoder (novelty) and a GRU (task id) decide when a task is new and which known task is running. Curriculum: Unlock, DoorKey, UnlockPickup, BlockedUnlockPickup (v2 §11).
 
 ## Docs
-- Start at `docs/kb/README.md`. Where the project stands: `docs/ENS491_Project_State.md` until
-  `docs/kb/status.md` replaces it (next KB PR).
+- Start at `docs/kb/README.md`. Where the project stands: `docs/kb/status.md`; measurements: `docs/kb/results.md`.
+  `docs/ENS491_Project_State.md` stays authoritative until PRs #15–#17 merge and it is migrated (next KB PR).
 - `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
 - Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
 - `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
@@ -74,7 +74,7 @@ SkillNode {n,m}
 - **Reward:** from the node's **own `goal` predicate**, never the env reward, at every level: `1 − 0.9·steps/timeout` on success, else 0.
 - **Masking is goal-only:** `available(s) = not goal(s) and (primitive or any child available)`. `initiation` is task metadata for reset hooks and does **not** mask.
 - **Roots:** the GRU's task id selects the root node through a task registry.
-- **Stabilization:** STABLE = success rate ≥ 0.90 *and* Wilson 95% lower bound ≥ 0.80 in two consecutive deterministic 50-episode evaluations on fixed seeds; the quoted success rate comes from a second, held-out seed set. Same rule for primitives and composites. (The v1 reward mean/std rule is retired.)
+- **Stabilization:** STABLE = success rate ≥ 0.90 *and* Wilson 95% lower bound ≥ 0.80 in two consecutive deterministic 50-episode evaluations on fixed seeds, at least one policy update apart; the quoted success rate comes from a second, held-out seed set. Same rule for primitives and composites. (The v1 reward mean/std rule is retired.)
 
 ## Hard rules
 
@@ -115,7 +115,8 @@ SkillNode {n,m}
 - Every experiment is recorded in `docs/kb/results.md` with links to its plan and result files,
   and every decision it informs links back to it.
 - Every PR that changes results or roadmap state updates `docs/kb/status.md`
-  (and `results.md` when a measurement changed) in the same PR.
+  (and `results.md` when a measurement changed) in the same PR. Until Project_State is migrated,
+  update `docs/ENS491_Project_State.md` too, so the two do not drift.
 
 ## graphify
 
