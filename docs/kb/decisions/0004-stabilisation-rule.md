@@ -20,6 +20,7 @@ Every `eval_every` steps, 50 episodes on a fixed seed set. STABLE when two conse
 ## Evidence
 - H-6.8: two evaluations of one network counted as two (identical pairs in every H-6 history): v2 §5.3.
 - Threshold alternatives (stricter / looser) not compared yet: empirical question 'Stabilization thresholds' in [`open-questions.md`](../open-questions.md).
+- Results in [`results.md`](../results.md): H-7a `drop_held` + `pickup_box` spec 2; execution-mode audit.
 
 ## Affects
 `EvaluationCallback`; `pickup_box` never met it (0.64–0.70 after 1M steps).

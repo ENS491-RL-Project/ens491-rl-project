@@ -16,6 +16,7 @@ Each composite counts its own selections against its own `max_decisions`. When a
 
 ## Evidence
 - PR #15: 9 frozen nodes × 50 held-out seeds identical before/after; `unlock_door` and `solve_doorkey` training measured (Project_State note in the PR).
+- Results: PR #15's measurements are not on `main` yet; they are listed in [`status.md`](../status.md) and move to [`results.md`](../results.md) when it merges.
 - Rationale Emir must be able to give: training (`OptionEnv`) already counted per composite; evaluation must use the same rule.
 
 ## Affects

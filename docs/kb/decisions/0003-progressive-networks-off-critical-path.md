@@ -17,6 +17,7 @@ Skills are frozen, so forgetting is prevented without PN. PN's contribution is m
 
 ## Evidence
 None yet. Settled by experiment C-2: train one primitive with and without a lateral from an earlier frozen primitive; compare steps to STABLE.
+Related results in [`results.md`](../results.md) (background, not C-2): v1 PN-4; H-3 legacy `col01`.
 
 ## Affects
 Track C in v2 §12; the PN-4 Empty-8x8 column ([`runs/pn4`](../../../runs/pn4)) must be retrained on normalised observations before it can be a lateral source (Q9).

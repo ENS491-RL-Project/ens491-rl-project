@@ -16,6 +16,7 @@ The experimenter declares each task (env, reset hook, goal, timeout, node kind, 
 
 ## Evidence
 No comparison run. Phase B (composite-first heuristic, G-1…G-3) is the next step, not an optional one.
+Related results in [`results.md`](../results.md): H-4 primitives T1, T2, T4.
 
 ## Affects
 All `scripts/train_*.py`; Track G.

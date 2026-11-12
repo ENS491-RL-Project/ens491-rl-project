@@ -17,6 +17,7 @@ A composite may use any earlier FROZEN node as a child, from any level, and a no
 
 ## Evidence
 - `{2,1} solve_doorkey` uses `{1,1} unlock_door` (level 1) and `{0,3} go_to_goal` (level 0) directly: [`plans/2026-10-02_H6_summary.md`](../../plans/2026-10-02_H6_summary.md).
+- Results in [`results.md`](../results.md): H-6 / H-6.8 `{2,1} solve_doorkey` vs flat PPO.
 
 ## Affects
 v2 §2–§3; executor availability is memoised per step because naive recursion is exponential on a DAG.

@@ -18,6 +18,7 @@ Everything the agent knows is a skill node (primitive or composite) with initiat
 ## Evidence
 - v1 outcome: one stable column (Empty-8x8), FourRooms column never stabilised: [`runs/pn4/NOTES.md`](../../../runs/pn4/NOTES.md).
 - v2 outcome: 9 frozen nodes, `solve_doorkey` 50/50 at depth 3: [`plans/2026-10-01_run_summary.md`](../../plans/2026-10-01_run_summary.md), [`plans/2026-10-02_H6_summary.md`](../../plans/2026-10-02_H6_summary.md); the 9th frozen node (`drop_held`): [`plans/2026-10-02_H7_summary.md`](../../plans/2026-10-02_H7_summary.md).
+- Results in [`results.md`](../results.md): v1 PN-4.
 
 ## Affects
 All of [`src/skills/`](../../../src/skills/), [`src/envs/option_env.py`](../../../src/envs/option_env.py), [`src/training/`](../../../src/training/). Old design archived in [`docs/archive/ENS491_Recursive_Hierarchy_Design.md`](../../archive/ENS491_Recursive_Hierarchy_Design.md).
