@@ -26,6 +26,8 @@ The project's main claim, in Emir's words: the agent **composes skills while it 
   composites without a human declaring children: Phase B (0005, 0007); (2) a composite reused by
   more than one later task; (3) retention of the recognition layer across the sequence (R-2);
   (4) possibly a flat baseline with memory, for a fair cost comparison.
+- Results in [`results.md`](../results.md): H-7 amortisation; H-7 `pickup_box` spec 1 and flat baselines;
+  H-6 / H-6.8 `{2,1} solve_doorkey` vs flat PPO.
 
 ## Rejected alternatives
 - "Hierarchy learns faster" (original framing): not supported by our measurements.
