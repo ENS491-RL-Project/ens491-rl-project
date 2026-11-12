@@ -227,6 +227,7 @@ def test_freeze_clears_grads_and_sets_status():
 
     node = prim("a")
     node.policy = P()
+    node.status = NodeStatus.STABLE
     node.freeze()
     assert node.frozen and node.status is NodeStatus.FROZEN
     assert all(not p.requires_grad for p in node.policy.parameters())

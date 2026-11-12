@@ -56,8 +56,11 @@ class NodeRegistry:
         *,
         extra_meta: Optional[dict[str, Any]] = None,
         run_dir: Optional[Path | str] = None,
+        overwrite: bool = False,
     ) -> Path:
         d = Path(run_dir) if run_dir is not None else self.node_dir(node.id)
+        if not overwrite and ((d / STATE_DICT_NAME).exists() or (d / META_NAME).exists()):
+            raise FileExistsError(f"{node.id}: checkpoint already exists in {d}; use a new run_dir")
         d.mkdir(parents=True, exist_ok=True)
 
         if node.policy is not None and hasattr(node.policy, "state_dict"):
@@ -127,6 +130,10 @@ class NodeRegistry:
                 raise RuntimeError(f"{node.id}: attach a policy before loading weights")
             state = torch.load(sd_path, map_location=map_location, weights_only=True)
             node.policy.load_state_dict(state)
+        elif hasattr(node.policy, "load_state_dict"):
+            # `save()` writes no file for a policy without a state dict, so only a
+            # loadable policy can be missing one; its meta alone must not mark it FROZEN.
+            raise FileNotFoundError(f"{node.id}: no {STATE_DICT_NAME} in {d}")
 
         node.status = NodeStatus(meta.get("status", NodeStatus.FROZEN.value))
         node.meta.update({k: v for k, v in meta.items() if k not in ("spec", "spec_hash")})
