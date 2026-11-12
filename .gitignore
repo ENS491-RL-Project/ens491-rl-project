@@ -226,3 +226,5 @@ runs/v2/**/model.zip
 graphify-out/
 # Personal Claude Code instructions (per developer)
 CLAUDE.local.md
+# Obsidian vault settings (per developer)
+.obsidian/
