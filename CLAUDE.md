@@ -48,7 +48,7 @@ pytest tests/test_skill_node.py -v   # one file
 streamlit run src/gui/app.py         # GUI
 ```
 
-Code graph (`graphify-out/`, gitignored, built locally): set up once per clone with `uv tool install graphifyy`, `graphify hook install` and `graphify update .`; graphify's git hooks then rebuild it after commits, pulls and branch switches. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
+Code graph (`graphify-out/`, gitignored, built locally): set up once per clone with `python scripts/setup_dev.py` inside the `ens491` env (installs `requirements-dev.txt`, which pins graphify, then runs `graphify hook install` and `graphify update .`); graphify's git hooks then rebuild it after commits, pulls and branch switches. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
 
 ## Stack
 
