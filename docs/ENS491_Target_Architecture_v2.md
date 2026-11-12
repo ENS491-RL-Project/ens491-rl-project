@@ -409,6 +409,17 @@ episodes still prove noisy: N = 100 with LB ≥ 0.85 (binds at 92/100, LB 0.850)
 is optimistically biased. At freeze time the node is evaluated once more on a seed set never used for
 stopping, and both numbers go in `meta.json`. Only the second is quoted as the node's success rate.
 
+**A third seed set, the final test (amended 2026-11-12).** The held-out set (20,000+) has been read many
+times: preflights, audits, diagnoses and every node's freeze score. It is development data. Numbers
+presented as *untouched* come from a separate **final set**: 200 seeds from `FINAL_SEED_BASE = 50,000`,
+disjoint from the stopping and held-out ranges and referenced by one script, `scripts/eval_final.py`.
+The protocol is: (1) `--freeze-manifest` records every evaluated node's `spec_hash`, weights hash and
+the code commit, and the manifest is committed; (2) `--open` refuses unless every hash matches the
+manifest, and refuses a second time because it claims `runs/v2/final_results.json` exclusively; (3) the
+results are reported per training seed with Wilson intervals. If anything is retrained or re-tuned
+after the set was opened, that set is no longer final and a new base must be chosen. The 200-episode
+size narrows the interval: 195/200 gives a Wilson lower bound of about 0.94, against 0.81 at 46/50.
+
 Why the old rule had to go: MiniGrid's reward depends on path length. In environments with random start and goal positions (FourRooms), a policy that succeeds 100 % of the time typically still has reward std above 0.05, because path lengths differ from episode to episode, so the old rule can be impossible to satisfy regardless of learning quality. The PN-4 FourRooms run also used a relaxed 0.75 threshold in `train_pn4.py` while docs said 0.85; v2 retires both numbers.
 
 The thresholds (0.90, two evaluations, N = 50) are defaults, fixed per experiment and reported 🧪. The same rule applies to primitive and composite nodes.
@@ -921,3 +932,25 @@ These experimental runs never replace the canonical frozen registry implicitly.
 that construct policies without training must explicitly mark them STABLE.
 The saved SB3 model includes optimizer state, but is not a claim of exact training
 resume: live environment and RNG states are not restored by this protocol.
+
+### Amendment applied 2026-11-12 (final test protocol)
+
+| v2 as it stood | v2 as amended | Reason |
+|---|---|---|
+| §5.3: a second seed set (20,000+), used once at freeze | plus a third **final** set (50,000+, 200 episodes), opened once through a hash-checked manifest | The held-out set was read repeatedly during development, so it cannot carry an "untouched" claim |
+
+### Final evaluation reservation (2026-11-12)
+
+The repeatedly inspected 10,000 stopping seeds and 20,000 held-out seeds are
+stopping/development evidence. A separate final-only manifest reserves 200 seeds
+outside all integer values found in available historical JSON records. Seed
+separation does not guarantee different MiniGrid layouts. Final evaluation must
+wait until one prespecified configuration and one checkpoint per training seed
+(42, 43, 44) are locked. The lock pins the seed manifest, node/dependency weights,
+environment/reset hook/mask settings and evaluator source hashes. The guarded
+entry point refuses missing/changed locks and records a single evaluation claim
+per candidate before any episodes run. Changing a result path cannot rerun it.
+A failed claim requires an explicit, documented recovery decision; never silently
+select another checkpoint after viewing final outcomes. Report each training
+seed's success, Wilson interval, episode lengths, plus the across-seed mean and
+range; do not treat all episodes across training seeds as independent replicates.
