@@ -27,7 +27,7 @@ Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a fr
 
 ## Docs
 - Start at `docs/kb/README.md`. Where the project stands: `docs/kb/status.md`; measurements: `docs/kb/results.md`.
-  `docs/ENS491_Project_State.md` stays authoritative until PRs #15–#17 merge and it is migrated (next KB PR).
+  `docs/ENS491_Project_State.md` stays authoritative until PRs #16 and #17 merge and it is migrated (KB sync PR).
 - `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
 - Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
 - `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
@@ -95,7 +95,7 @@ SkillNode {n,m}
 - Unbounded depth: never hardcode the number of levels or nodes, never branch on `n` (`if level == 1:`). Executor and trainers must work at any depth.
 - No per-layer MetaController: a composite's policy is its meta-controller.
 - Availability is evaluated recursively and **memoized per env step** (exponential on a DAG otherwise). A mask handed to a policy always has at least one True; when nothing is available the episode ends (MaskablePPO cannot take an empty mask).
-- `max_decisions` is mandatory on every composite: under goal-only masking a parent could otherwise re-select a timed-out child forever.
+- `max_decisions` is mandatory on every composite: under goal-only masking a parent could otherwise re-select a timed-out child forever. It is counted per composite frame: each composite counts only its own selections against its own cap, in `OptionEnv` and `Executor` alike (v2 §4.4, decision 0009).
 - `OptionEnv` uses `DummyVecEnv` only, never `SubprocVecEnv`.
 
 **Signals**
