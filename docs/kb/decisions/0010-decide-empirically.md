@@ -8,7 +8,7 @@ Source: Emir, 2026-11-12
 ## Decision
 - A design question is settled by trying the alternatives and keeping what works, not by asking
   the supervisor for an answer.
-- Every experiment is recorded (`results.md`, linking its plan and result files), and every decision
+- Every experiment is recorded ([`results.md`](../results.md), linking its plan and result files), and every decision
   file lists the experiments behind it under **Evidence**. "None yet" is allowed but must name the
   experiment that would settle it.
 - The supervisor is consulted on scope, framing and direction, and is shown the evidence.
@@ -22,4 +22,4 @@ questions as empirical ([`open-questions.md`](../open-questions.md), last sectio
 Not applicable (process rule).
 
 ## Affects
-Every decision file (Evidence section), [`open-questions.md`](../open-questions.md) (how-to-settle column), `results.md`.
+Every decision file (Evidence section), [`open-questions.md`](../open-questions.md) (how-to-settle column), [`results.md`](../results.md).
