@@ -58,9 +58,9 @@ def primitive(registry, name, spec):
     return node, spec["env_ids"], spec["hook"]
 
 
-def main() -> int:
-    registry = NodeRegistry(RUNS)
-    rows = []
+def load_library(registry):
+    """Every FROZEN node as (node, env_ids, hook, composite): primitives first, then composites, children first."""
+    library = []
     nodes = {}
 
     # ---- primitives ---------------------------------------------------
@@ -82,9 +82,7 @@ def main() -> int:
             print(f"SKIP {name}: {type(exc).__name__}: {exc}")
             continue
         nodes[name] = node
-        res = pooled_eval_fn(node, env_ids, hook, n_episodes=N_EVAL,
-                             seed_base=heldout_seeds(1)[0])()
-        rows.append((node, res, node.meta.get("heldout", {}).get("success_rate")))
+        library.append((node, env_ids, hook, False))
 
     # ---- composites, children first ------------------------------------
     composites = []
@@ -111,9 +109,16 @@ def main() -> int:
         except Exception as exc:
             print(f"SKIP {node.id}: {type(exc).__name__}: {exc}")
             continue
+        library.append((node, env_ids, hook, True))
+    return library
+
+
+def main() -> int:
+    rows = []
+    for node, env_ids, hook, composite in load_library(NodeRegistry(RUNS)):
         res = pooled_eval_fn(node, env_ids, hook, n_episodes=N_EVAL,
                              seed_base=heldout_seeds(1)[0],
-                             env_factory_fn=execution_env_factory)()
+                             **({"env_factory_fn": execution_env_factory} if composite else {}))()
         rows.append((node, res, node.meta.get("heldout", {}).get("success_rate")))
 
     # ---- report --------------------------------------------------------
