@@ -27,7 +27,7 @@ Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a fr
 
 ## Docs
 - Start at `docs/kb/README.md`. Where the project stands: `docs/kb/status.md`; measurements: `docs/kb/results.md`.
-  `docs/ENS491_Project_State.md` stays authoritative until PRs #16 and #17 merge and it is migrated (KB sync PR).
+  `docs/ENS491_Project_State.md` stays authoritative until it is migrated (KB sync PR #22).
 - `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
 - Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
 - `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
@@ -35,7 +35,7 @@ Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a fr
 
 ## Code layout
 
-- v2 (extend this): `src/skills/` (`SkillNode`, `Executor`, `NodeRegistry`, predicates, `StateView`), `src/envs/` (`apply_obs_pipeline`, `SubgoalEnv`, `OptionEnv`), `src/training/` (`node_trainer`, `evaluation` = stabilization via `StabilityCriterion` / `EvaluationCallback`, `device`). Experiments are `scripts/train_*.py`, `scripts/eval_*.py`; runs go to `runs/v2/`.
+- v2 (extend this): `src/skills/` (`SkillNode`, `Executor`, `NodeRegistry`, predicates, `StateView`), `src/envs/` (`apply_obs_pipeline`, `SubgoalEnv`, `OptionEnv`), `src/training/` (`node_trainer`, `evaluation` = stabilization via `StabilityCriterion` / `EvaluationCallback`, `device`). Experiments are `scripts/train_*.py`, `scripts/eval_*.py`; frozen checkpoints and result JSONs go to `runs/v2/` (tracked), every training attempt is archived under `runs/training/` by `src/training/run_store.py` (ignored).
 - Reused from v1: `ColumnPolicy` / `LateralMlpExtractor` (primitive network), `AutoencoderModule`, `GRUTaskIdentifier`, seeding/checkpoint code in `pn_trainer.py`.
 - v1-only, do not extend: `src/options/` (`meta_controller.py`, `option.py`, `task_lifecycle.py`) and `src/continual_learning/stabilization.py`. Replace per v2 §10. Do not delete `stabilization.py` while `ColumnTrainer` imports it. Keep their tests green until the module is replaced; every replacement lands with its own tests.
 
@@ -90,6 +90,9 @@ SkillNode {n,m}
 - Level `n` is derived from children, never assigned by hand.
 - Validate at creation: `timeout ≥ max(child.timeout)`, root `timeout ≤ env.max_steps`.
 - `spec_hash` covers env, predicates, timeout, obs pipeline and children's hashes. A hash mismatch on load is an error, never a warning.
+- `freeze()` requires STABLE, and a FROZEN node is never retrained (`record_training` refuses it).
+- `NodeRegistry.save` never overwrites a checkpoint unless called with `overwrite=True`. A script that saves to the registry calls `registry.ensure_can_save(node)` before training, so an existing checkpoint stops the run at once.
+- `train_primitive` / `train_composite` archive every attempt (stable, budget exhausted or failed) under `runs/training/<run_id>/`; tests redirect it through `ENS491_RUNS_ROOT` (`tests/conftest.py`).
 
 **Hierarchy**
 - Unbounded depth: never hardcode the number of levels or nodes, never branch on `n` (`if level == 1:`). Executor and trainers must work at any depth.
