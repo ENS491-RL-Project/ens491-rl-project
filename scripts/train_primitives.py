@@ -142,6 +142,7 @@ def main() -> int:
         print(f"\n{'='*72}\n{node.id}  envs={spec['env_ids']}  "
               f"timeout={node.timeout}  hook={spec['hook'].spec}\n{'='*72}")
 
+        registry.ensure_can_save(node)     # saved whether STABLE or not; fail before training
         t0 = time.perf_counter()
         report, model = train_primitive(
             node,

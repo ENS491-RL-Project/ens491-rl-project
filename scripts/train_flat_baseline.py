@@ -265,6 +265,7 @@ def main() -> int:
               f"\n  env={env_id} timeout={node.timeout} goal={node.goal.spec}"
               f"\n  seed={args.seed} budget={args.budget:,} env steps "
               f"eval_every={args.eval_every:,}\n{'=' * 72}")
+        baseline_registry.ensure_can_save(node)     # fail now, not after training
         report, _model = train_primitive(
             node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
@@ -288,6 +289,7 @@ def main() -> int:
               f"\n  env={env_id} timeout={node.timeout} "
               f"max_decisions={node.max_decisions}"
               f"\n  seed={args.seed} budget={args.budget:,} decisions\n{'=' * 72}")
+        baseline_registry.ensure_can_save(node)     # fail now, not after training
         report, _model = train_composite(
             node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,

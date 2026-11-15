@@ -272,6 +272,8 @@ class SkillNode:
         """
         if self.policy is None:
             raise RuntimeError(f"{self.id}: cannot freeze -- policy is None")
+        if self.status not in (NodeStatus.STABLE, NodeStatus.FROZEN):
+            raise RuntimeError(f"{self.id}: cannot freeze -- status must be STABLE, got {self.status.value}")
         params = getattr(self.policy, "parameters", None)
         if callable(params):
             for p in params():

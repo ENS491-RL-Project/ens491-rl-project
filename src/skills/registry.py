@@ -50,14 +50,30 @@ class NodeRegistry:
 
     # -- save ------------------------------------------------------------
 
+    def ensure_can_save(self, node: SkillNode, *, run_dir: Optional[Path | str] = None) -> Path:
+        """
+        Raise FileExistsError if `save()` would refuse to write `node`. Training
+        scripts call this before training, so a run that cannot be saved fails
+        at once instead of after the whole budget.
+        """
+        d = Path(run_dir) if run_dir is not None else self.node_dir(node.id)
+        if (d / STATE_DICT_NAME).exists() or (d / META_NAME).exists():
+            raise FileExistsError(
+                f"{node.id}: checkpoint already exists in {d}; move it away, pass a new "
+                "run_dir, or save with overwrite=True")
+        return d
+
     def save(
         self,
         node: SkillNode,
         *,
         extra_meta: Optional[dict[str, Any]] = None,
         run_dir: Optional[Path | str] = None,
+        overwrite: bool = False,
     ) -> Path:
         d = Path(run_dir) if run_dir is not None else self.node_dir(node.id)
+        if not overwrite:
+            self.ensure_can_save(node, run_dir=d)
         d.mkdir(parents=True, exist_ok=True)
 
         if node.policy is not None and hasattr(node.policy, "state_dict"):

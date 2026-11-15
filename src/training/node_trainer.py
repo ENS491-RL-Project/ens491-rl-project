@@ -26,6 +26,7 @@ from src.envs.obs import apply_obs_pipeline, obs_pipeline_name
 from src.envs.subgoal_env import NO_HOOK, ResetHook, SubgoalEnv
 from src.skills.node import SkillNode
 from src.training.device import resolve_device
+from src.training.run_store import record_training, track_model
 from src.training.evaluation import (
     DEFAULT_N_EVAL,
     EvalResult,
@@ -218,6 +219,7 @@ def measure_throughput(vec_env, model, n_steps: int = 2048) -> float:
     return n_steps / dt if dt > 0 else float("nan")
 
 
+@record_training
 def train_primitive(
     node: SkillNode,
     env_ids: Sequence[str],
@@ -230,6 +232,7 @@ def train_primitive(
     seed: int = 42,
     device: str = "cpu",
     lateral_source=None,
+    run_root: Optional[Path | str] = None,
     normalize: bool = True,
     ppo_overrides: Optional[dict] = None,
     criterion: Optional[StabilityCriterion] = None,
@@ -263,6 +266,7 @@ def train_primitive(
         **ppo_kwargs,
     )
     node.policy = PrimitivePolicyAdapter(model.policy)
+    track_model(model)
 
     criterion = criterion or StabilityCriterion()
     callback = EvaluationCallback(
@@ -296,6 +300,8 @@ def train_primitive(
         "ppo": ppo_kwargs,
         "budget": total_timesteps,
         "steps_trained": steps_done,
+        "policy_updates": callback.train_calls,
+        "policy_updates_semantics": "completed_train_calls",
         "wall_seconds": round(wall, 1),
         "steps_per_second": round(steps_done / wall, 1) if wall > 0 else None,
         "stable": criterion.is_stable,
@@ -431,6 +437,7 @@ def execution_env_factory(
     return _make
 
 
+@record_training
 def train_composite(
     node: SkillNode,
     env_ids: Sequence[str],
@@ -447,6 +454,7 @@ def train_composite(
     ppo_overrides: Optional[dict] = None,
     criterion: Optional[StabilityCriterion] = None,
     extra_metrics: Optional[Callable[[], dict]] = None,
+    run_root: Optional[Path | str] = None,
     verbose: int = 0,
 ) -> tuple[dict, object]:
     """
@@ -483,6 +491,7 @@ def train_composite(
     ppo_kwargs.update(ppo_overrides or {})
     model = MaskablePPO("MlpPolicy", vec, seed=seed, device=dev, verbose=0, **ppo_kwargs)
     node.policy = CompositePolicyAdapter(model.policy)
+    track_model(model)
 
     criterion = criterion or StabilityCriterion()
     # The ablation must be SCORED under the mask it was TRAINED with, or the
