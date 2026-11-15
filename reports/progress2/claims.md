@@ -359,6 +359,7 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
 | P10 | 0009: "Accepted 12 November, provided the final pull request kept the design; merged unchanged the same day" | `0009-…md` lines 3, 26 | Table 2 |
 | P11 | Compute: every training result file that records a device says `cpu`; one single-seed `mps` GRU check not used; W7 fixes one thread per run because the thread count changes results | results.md R-2 row; W7 summary lines 111–115 | §1.4 |
 | P12 | A child's timeout may not exceed its parent's (validated at creation) | CLAUDE.md "Validate at creation"; roadmap W5 | §2.1 |
+| P14 | Two held-out scores below 0.90: `get_key_blue` 43/50 (met 0004 on stopping seeds), `pickup_box` 41/50, Wilson 95 % lower bound 0.692 (never met 0004) | Table 3 rows; Wilson computed from 41/50 | §2.3.1 |
 | P13 | Timetable dates: PR-II week 7 = 15 Nov (Sunday); Draft Final week 12 = 20 Dec; Final week 14 = 3 Jan 2027; presentation upload in the first week of finals = 10 Jan; assumes no break weeks | ENS 491/492 Student Handbook, course-flow table (items 2–5) | Table 16 |
 
 ---

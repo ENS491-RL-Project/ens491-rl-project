@@ -211,8 +211,9 @@ p("Eleven skills are frozen (Table 3). Eight are primitives: three for the Unloc
   "UnlockPickup. Three are composites: `unlock_door` (level 1), `solve_doorkey` and `unlock_pickup` "
   "(level 2). Ten were frozen when they met decision 0004; `pickup_box` never met it and was frozen "
   "under the accepted exception of decision 0014 (Section 2.3.7). The held-out scores are quoted as "
-  "measured, including one below 0.90 (`get_key_blue`, 43/50), which is possible because the "
-  "stopping rule is applied on a different seed set from the held-out score. The first eight skills "
+  "measured, and two are below 0.90. `get_key_blue` (43/50) met decision 0004 on the stopping "
+  "seeds and scores lower on the separate held-out set. `pickup_box` (41/50, Wilson 95 % lower "
+  "bound 0.69) never met decision 0004 and is accepted for one parent only. The first eight skills "
   "(the seven original primitives and `unlock_door`) cost about 1.2 million environment steps "
   "together.")
 tab("Table 3. The frozen library (held-out 50 episodes, argmax; training seed 42 unless noted).",

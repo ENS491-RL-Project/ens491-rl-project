@@ -53,9 +53,10 @@ def runs(text: str, *, base_rpr: str = "", size: int | None = None) -> str:
 _bm = [900]
 
 
-def h1(text):
+def h1(text, new_page=False):
     _bm[0] += 1
-    return (f'<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr>'
+    pbb = '<w:pageBreakBefore/>' if new_page else ''
+    return (f'<w:p><w:pPr><w:pStyle w:val="Heading1"/>{pbb}</w:pPr>'
             f'<w:bookmarkStart w:id="{_bm[0]}" w:name="_TocPR2_{_bm[0]}"/>'
             f'<w:r><w:t>{escape(text)}</w:t></w:r><w:bookmarkEnd w:id="{_bm[0]}"/></w:p>')
 
@@ -244,13 +245,14 @@ def main(src, dst, figdir):
 
     body = []
     seen_h1 = False
+    pending_pb = False
     for blk in content.BLOCKS:
         kind = blk[0]
         if kind == "h1":
-            if seen_h1:  # every main section after the first starts on a new page (Emir's layout)
-                body.append(pagebreak())
+            # every main section after the first starts on a new page (Emir's layout); the break is
+            # the heading's own "page break before", so no empty line is left above the heading
+            body.append(h1(blk[1], new_page=seen_h1))
             seen_h1 = True
-            body.append(h1(blk[1]))
         elif kind == "h2":
             body.append(h2(blk[1]))
         elif kind == "h3":
@@ -268,12 +270,15 @@ def main(src, dst, figdir):
             if cap:
                 body.append(table_caption(cap))
             body.append(table(header, rows, widths, note=note))
-        elif kind == "uh":  # unnumbered heading (front matter), kept out of the TOC
-            body.append(f'<w:p><w:pPr><w:pStyle w:val="TOCHeading"/></w:pPr>{runs(blk[1], base_rpr=UH_RPR)}</w:p>')
+        elif kind == "uh":  # unnumbered heading, kept out of the TOC
+            pbb = '<w:pageBreakBefore/>' if pending_pb else ''
+            pending_pb = False
+            body.append(f'<w:p><w:pPr><w:pStyle w:val="TOCHeading"/>{pbb}</w:pPr>{runs(blk[1], base_rpr=UH_RPR)}</w:p>')
         elif kind == "ref":
             body.append(refentry(blk[1]))
         elif kind == "pb":
-            body.append(pagebreak())
+            pending_pb = True  # applied to the next unnumbered heading as "page break before"
+            continue
         else:
             raise ValueError(kind)
 
