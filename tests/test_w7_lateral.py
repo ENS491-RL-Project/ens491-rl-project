@@ -85,3 +85,40 @@ def test_arm_b_source_is_the_frozen_open_door():
     node = w7.node_trainer_build_node(w7.specs()["go_to_goal"], node_id="x",
                                       lateral_sources=lateral_sources)
     assert node.spec()["lateral_sources"] == [src.spec_hash()]
+
+
+# --------------------------------------------------------------------------
+# The paired test of the plan's "Criterion" (scripts/analyse_w7_lateral.py)
+# --------------------------------------------------------------------------
+
+import analyse_w7_lateral as an  # noqa: E402
+
+
+def test_wilcoxon_exact_hand_worked_tie_free():
+    # |d| ranks 1, 2, 3, 4; only d = 4 is positive, so W+ = 4. Subsets of
+    # {1,2,3,4} with sum <= 4: {}, {1}, {2}, {3}, {4}, {1,2}, {1,3} -> 7 of 16.
+    t = an.wilcoxon_exact_lower([-1, -2, -3, 4])
+    assert t["m"] == 4 and t["w_plus"] == 4 and t["p"] == 7 / 16
+
+
+def test_wilcoxon_all_faster_smallest_p_and_m_below_5_cannot_pass():
+    assert an.wilcoxon_exact_lower([-1, -2, -3, -4, -5])["p"] == 1 / 32
+    assert an.wilcoxon_exact_lower([-1, -2, -3, -4])["p"] == 1 / 16 > an.ALPHA
+
+
+def test_wilcoxon_drops_zeros_and_averages_tied_ranks():
+    # zeros dropped (m = 3); |d| = 4096, 4096, 8192 -> ranks 1.5, 1.5, 3; W+ = 3.
+    # Sign subsets with rank sum <= 3: {}, {1.5}, {1.5'}, {3}, {1.5, 1.5'} -> 5 of 8.
+    t = an.wilcoxon_exact_lower([0, -4096, 0, -4096, 8192])
+    assert t["m"] == 3 and t["w_plus"] == 3 and t["p"] == 5 / 8
+    assert an.wilcoxon_exact_lower([0, 0])["p"] == 1.0
+
+
+def test_beats_needs_both_p_and_ratio():
+    a = {s: 200_000 for s in range(10)}
+    fast = {s: 100_000 + s for s in range(10)}        # every pair faster, ratio ~0.5
+    slightly = {s: 190_000 + s for s in range(10)}    # every pair faster, ratio 0.95
+    assert an.beats(fast, a)["beats"]
+    r = an.beats(slightly, a)
+    assert r["p"] < an.ALPHA and not r["beats"]
+    assert not an.beats(a, fast)["beats"]
