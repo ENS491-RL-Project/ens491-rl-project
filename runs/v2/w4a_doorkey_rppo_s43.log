@@ -1,0 +1,24 @@
+torch 2.14.1 | accelerator: mps | default device: cpu
+torch threads: 1
+
+{0,B} flat_doorkey_rppo  env=MiniGrid-DoorKey-6x6-v0 timeout=360 goal=agent:on_goal
+  seed=43 budget=1,500,000 env steps eval_every=50,000
+  [   50000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  100000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  150000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  200000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  250000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  300000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  350000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  400000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  450000] {0,B} flat_doorkey_rppo: SR 0.000 (0/50), Wilson LB 0.000, mean length 360.0 | streak 0/2
+  [  500000] {0,B} flat_doorkey_rppo: SR 0.060 (3/50), Wilson LB 0.021, mean length 340.4 | streak 0/2
+  [  550000] {0,B} flat_doorkey_rppo: SR 0.360 (18/50), Wilson LB 0.241, mean length 238.7 | streak 0/2
+  [  600000] {0,B} flat_doorkey_rppo: SR 0.800 (40/50), Wilson LB 0.670, mean length 86.5 | streak 0/2
+  [  650000] {0,B} flat_doorkey_rppo: SR 1.000 (50/50), Wilson LB 0.929, mean length 14.2 | streak 1/2
+  [  700000] {0,B} flat_doorkey_rppo: SR 0.980 (49/50), Wilson LB 0.895, mean length 21.3 | streak 2/2 -> STABLE
+  steps=700,000 wall=1527.7s (458.2 steps/s) stable=True
+  held-out: SR 0.980 (49/50), Wilson LB 0.895, mean length 21.3
+  saved to runs/v2/baselines/0-B_flat_doorkey_rppo_s43/ (frozen; baseline, never a child)
+
+wrote runs/v2/flat_doorkey_rppo_s43.json
