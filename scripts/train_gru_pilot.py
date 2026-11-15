@@ -1,3 +1,4 @@
+import argparse
 
 from pathlib import Path
 import copy
@@ -9,6 +10,7 @@ from torch import nn
 from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
 
 from src.task_detection.gru_identifier import GRUTaskIdentifier
+from src.training.device import VALID as DEVICES, resolve_device
 
 
 DATA_PATH = Path("data/gru/pilot_dataset.npz")
@@ -110,11 +112,12 @@ def evaluate(model, loader, device, num_tasks):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--device", choices=DEVICES, default="cpu")
+    args = parser.parse_args()
     set_seed(SEED)
 
-    device = torch.device(
-        "mps" if torch.backends.mps.is_available() else "cpu"
-    )
+    device = torch.device(resolve_device(args.device))
     print("Device:", device)
 
     with np.load(DATA_PATH, allow_pickle=False) as data:

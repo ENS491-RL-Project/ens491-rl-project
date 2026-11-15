@@ -13,6 +13,7 @@ import torch
 from torch.utils.data import DataLoader
 from scripts.train_gru_task import TASKS, POLICIES, POLICY_TO_TASK, WindowDataset, collate, load_episodes, logits_for
 from src.task_detection.gru_identifier import GRUTaskIdentifier
+from src.training.device import VALID as DEVICES, resolve_device
 
 
 def main():
@@ -21,6 +22,9 @@ def main():
     p.add_argument('--model-dir', type=Path, default=Path('models/gru_task_500'))
     p.add_argument('--seq-len', type=int, default=20)
     p.add_argument('--batch-size', type=int, default=64)
+    p.add_argument('--device', choices=DEVICES, default='cpu')
+    # metrics.json is also copied here; runs/v2/ is tracked, so the result can be committed
+    p.add_argument('--results-dir', type=Path, default=Path('runs/v2/gru'))
     args = p.parse_args()
     model_path = args.model_dir / f'gru_seq{args.seq_len}_best.pt'
     split_path = args.model_dir / f'gru_seq{args.seq_len}_splits.json'
@@ -34,7 +38,7 @@ def main():
         assert episodes[i]['success'] == bool(r['success'])
     ds = WindowDataset(episodes, test_indices, args.seq_len)
     loader = DataLoader(ds, batch_size=args.batch_size, shuffle=False, collate_fn=collate)
-    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    device = torch.device(resolve_device(args.device))
     checkpoint = torch.load(model_path, map_location='cpu', weights_only=True)
     assert checkpoint['seq_len'] == args.seq_len
     assert checkpoint['num_tasks'] == len(TASKS)
@@ -95,6 +99,9 @@ def main():
                'confusion_matrix_task_order': list(TASKS), 'confusion_matrix_window_counts': conf.tolist(),
                'note': 'Episode-balanced accuracy averages window correctness within each episode, not episode-majority-vote accuracy.'}
     (out / 'metrics.json').write_text(json.dumps(results, indent=2), encoding='utf-8')
+    args.results_dir.mkdir(parents=True, exist_ok=True)
+    (args.results_dir / f'task_seq{args.seq_len}_metrics.json').write_text(
+        json.dumps(results, indent=2), encoding='utf-8')
     print(f'\nSaved evaluation outputs to: {out}')
     print('Note: episode-balanced accuracy averages window correctness within each episode.')
 

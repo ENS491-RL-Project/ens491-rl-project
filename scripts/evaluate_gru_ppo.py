@@ -22,6 +22,7 @@ from scripts.train_gru_ppo import (
     logits_for,
 )
 from src.task_detection.gru_identifier import GRUTaskIdentifier
+from src.training.device import VALID as DEVICES, resolve_device
 
 
 def main():
@@ -38,6 +39,7 @@ def main():
         default=Path("models/gru_ppo_pilot"),
     )
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--device", choices=DEVICES, default="cpu")
     args = parser.parse_args()
 
     model_path = (
@@ -82,9 +84,7 @@ def main():
         collate_fn=collate,
     )
 
-    device = torch.device(
-        "mps" if torch.backends.mps.is_available() else "cpu"
-    )
+    device = torch.device(resolve_device(args.device))
 
     checkpoint = torch.load(
         model_path,

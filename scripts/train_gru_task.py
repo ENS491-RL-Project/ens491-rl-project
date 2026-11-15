@@ -1,7 +1,7 @@
 """Train a 9-task GRU from 11 frozen PPO rollout datasets.
 
 Run from the project root:
-    python -m scripts.train_gru_ppo --seq-len 10
+    python -m scripts.train_gru_task --seq-len 10
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from torch.nn.utils.rnn import pack_padded_sequence
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from src.task_detection.gru_identifier import GRUTaskIdentifier
+from src.training.device import VALID as DEVICES, resolve_device
 
 POLICIES = (
     "get_key", "open_door", "go_to_goal", "get_key_yellow",
@@ -206,15 +207,19 @@ def main():
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--patience", type=int, default=6)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--original-splits", type=Path, default=Path("models/gru_ppo_500/gru_seq20_splits.json"))
+    # Reuse the splits of an earlier run (e.g. train_gru_ppo --seq-len 20) to compare models on the
+    # same test episodes; without it the episodes are split fresh from --seed.
+    parser.add_argument("--original-splits", type=Path, default=None)
     parser.add_argument("--output-dir", type=Path, default=Path("models/gru_task_500"))
+    parser.add_argument("--device", choices=DEVICES, default="cpu")
     args = parser.parse_args()
     if args.seq_len < 1 or args.epochs < 1 or args.batch_size < 1 or args.patience < 1:
         parser.error("seq-len, epochs, batch-size, and patience must be positive")
     set_seed(args.seed)
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = torch.device(resolve_device(args.device))
     episodes = load_episodes(args.data_dir)
-    splits = load_original_splits(args.original_splits, episodes)
+    splits = (load_original_splits(args.original_splits, episodes) if args.original_splits
+              else split_episodes(episodes, args.seed))
     assert len(set(splits["train"]) & set(splits["val"])) == 0
     assert len(set(splits["train"]) & set(splits["test"])) == 0
     assert len(set(splits["val"]) & set(splits["test"])) == 0

@@ -220,3 +220,6 @@ runs/*
 !runs/v2/
 runs/v2/**/model.zip
 .claude/
+# GRU rollout datasets and model checkpoints (local; results go to runs/v2/gru/)
+data/
+models/

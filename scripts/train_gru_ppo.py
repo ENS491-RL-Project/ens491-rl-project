@@ -18,6 +18,7 @@ from torch.nn.utils.rnn import pack_padded_sequence
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from src.task_detection.gru_identifier import GRUTaskIdentifier
+from src.training.device import VALID as DEVICES, resolve_device
 
 POLICIES = (
     "get_key", "open_door", "go_to_goal", "get_key_yellow",
@@ -182,11 +183,12 @@ def main():
     parser.add_argument("--patience", type=int, default=6)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=Path, default=Path("models/gru_ppo_pilot"))
+    parser.add_argument("--device", choices=DEVICES, default="cpu")
     args = parser.parse_args()
     if args.seq_len < 1 or args.epochs < 1 or args.batch_size < 1 or args.patience < 1:
         parser.error("seq-len, epochs, batch-size, and patience must be positive")
     set_seed(args.seed)
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = torch.device(resolve_device(args.device))
     episodes = load_episodes(args.data_dir)
     splits = split_episodes(episodes, args.seed)
     assert len(set(splits["train"]) & set(splits["val"])) == 0
