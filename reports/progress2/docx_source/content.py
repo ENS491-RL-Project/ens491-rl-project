@@ -104,8 +104,8 @@ p("Two things changed, both recorded as design decisions (Section 2.2). First, t
 p("**State on 15 November.** Eleven skills are frozen, among them composites for three of the four "
   "curriculum tasks: Unlock, DoorKey and UnlockPickup. DoorKey and UnlockPickup both reuse the Unlock "
   "composite untouched; UnlockPickup, on which flat PPO scored 0 of 50, has a frozen composite since "
-  "15 November (one result; its `pickup_box` child was frozen under the exception of decision 0014, "
-  "Section 2.3.7). The fourth task, BlockedUnlockPickup, has not been run.")
+  "15 November (one result, Section 2.3.7; its `pickup_box` child was frozen under an accepted "
+  "exception to the stabilisation rule). The fourth task, BlockedUnlockPickup, has not been run.")
 p("Table 1 maps the Proposal's objectives to the claim in measurable form. Each row names what "
   "would refute it and what exists today.")
 tab("Table 1. The claim in measurable form (decision 0006).",
