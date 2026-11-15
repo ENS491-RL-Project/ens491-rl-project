@@ -260,6 +260,7 @@ def stage_primitives(args, registry) -> dict:
         crit = spec.get("criterion")
         if crit:
             print(f"  stopping rule (overridden, recorded in meta.json): {crit}")
+        registry.ensure_can_save(node)     # saved whether STABLE or not; fail before training
         report, _model = train_primitive(
             node, spec["env_ids"], spec["hook"],
             total_timesteps=args.budget, eval_every=args.eval_every,
@@ -464,6 +465,8 @@ def stage_composite(args, registry) -> dict:
         [("goal_only", False), ("strict", True)] if args.mask == "both"
         else [(args.mask, args.mask == "strict")]
     )
+    if not args.no_freeze:
+        registry.ensure_can_save(build_t11(children))     # fail now, not after training
     nodes = {}
     for label, masking in conditions:
         node, report = train_one(args, children, hook, initiation_masking=masking)
