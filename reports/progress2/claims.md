@@ -286,9 +286,9 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
 | X7 | **total** | X1 + X2 + X3 + X5 + X6 | 92,777.6 | **25.8** | Table 13, §4.6 ("about 26") |
 | X8 | `solve_doorkey` stack as built: `get_key` + `open_door` + `go_to_goal` + `unlock_door` + `solve_doorkey` | 5 metas | 640.8 | 0.18 | not used |
 | X9 | W1a + spec-3 scoring (evaluation) | `w1a_*sampled*.json` → `wall_seconds` | 4,422.1 | 1.23 | not used |
-| X10 | energy at an **assumed 65 W** average draw per process: 25.8 h × 65 W ≈ **1.7 kWh** `[EMIR: confirm W]` | assumption, labelled | — | — | Table 13 note |
+| X10 | energy at an **assumed 90 W** average draw per process (confirmed by Emir): 25.8 h × 90 W ≈ **2.3 kWh** (2.32) | assumption, labelled | — | — | Table 13 note |
 | X11 | PR-I / Proposal estimate: 10–30 GPU-hours, 1.5–4.5 kWh, 0.4 kg CO₂/kWh, $3–$15 per run | PR-I §4.4 | — | — | Table 13 note |
-| X12 | 1.7 kWh × 0.4 kg CO₂/kWh ≈ 0.7 kg CO₂e (same grid factor as PR-I) | derived from X10, X11 | — | — | Table 13 note |
+| X12 | 2.32 kWh × 0.4 kg CO₂/kWh ≈ 0.9 kg CO₂e (same grid factor as PR-I) | derived from X10, X11 | — | — | Table 13 note |
 
 ## 13. Sustainability comparison (Section 4.5)
 
@@ -303,7 +303,7 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
 | ID | Value | Source | Sentence |
 |---|---|---|---|
 | T1 | PR-I §5.8: FourRooms W14; AE calibration W14; BWT/FWT logging W15; lateral baseline W15; MetaController upgrade W16; GRU baseline + AE–GRU handoff W16; dynamic options W17; dashboard W17; Phase 2 integration W19; no-AE/no-GRU ablations W21; Phase 3 scope review W22 (11 rows) | PR-I docx §5.8 table | Table 12 |
-| T2 | Draft Final Report week 12, Final Report week 14 `[EMIR: confirm against the course deadlines]` | brief | §5, Table 16 |
+| T2 | this report week 7, Draft Final Report week 12, Final Report week 14 (confirmed by Emir) | brief | §5, Table 16 |
 | T3 | PR-I date May 24th, 2026; this report November 15th, 2026 | PR-I cover; brief | cover; Table 12 intro |
 
 

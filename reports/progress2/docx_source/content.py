@@ -658,7 +658,7 @@ tab("Table 13. Recorded training time since PR-I (sum of per-run wall-clock seco
         ["`drop_held` and `unlock_pickup` (3 seeds each), other composite runs, choice task, option-set baseline", "25", "4.54"],
         ["**Total**", "", "**25.8**"],
     ], [6.2, 1.2, 1.6],
-    "At an assumed average draw of 65 W per process [EMIR: confirm W for the machines used], 25.8 h is about 1.7 kWh, or about 0.7 kg CO₂e at the 0.4 kg CO₂/kWh factor used in the Proposal and PR-I. The Proposal estimated 10–30 GPU-hours (1.5–4.5 kWh) per full run.")
+    "At an assumed average draw of 90 W per process, 25.8 h is about 2.3 kWh, or about 0.9 kg CO₂e at the 0.4 kg CO₂/kWh factor used in the Proposal and PR-I. The Proposal estimated 10–30 GPU-hours (1.5–4.5 kWh) per full run.")
 p("Two other contributors are repeated experiments and storage. The project's rule of fixing pass "
   "criteria before a run and using declared extensions instead of open-ended retraining limits "
   "repeated runs; checkpoints and logs are small (a frozen primitive is a 147→64→64 network).")
@@ -718,9 +718,8 @@ tab("Table 15. Remaining work in priority order.",
         ["8", "Choice task redesigned so that a wrong pick is unrecoverable", "Detailed design, testing", "If time"],
     ], [0.5, 6.0, 2.2, 1.5])
 p("Table 16 is the week-by-week schedule. It is deliberately tight: every experiment ends by week "
-  "10, so that week 11 is left for writing the draft and as a buffer for one repeated run. [EMIR: "
-  "confirm the week numbers against the course deadlines; the table assumes this report falls in "
-  "week 7, the Draft Final Report in week 12 and the Final Report in week 14.]")
+  "10, so that week 11 is left for writing the draft and as a buffer for one repeated run. This "
+  "report falls in week 7; the Draft Final Report is due in week 12 and the Final Report in week 14.")
 tab("Table 16. Timetable to the Final Report.",
     ["Week", "Work", "Done when"],
     [
