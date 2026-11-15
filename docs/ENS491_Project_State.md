@@ -137,7 +137,7 @@ Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
 | # | Task | SP | Status |
 |---|---|---|---|
 | R-1 | AE normalization, calibration, ROC-AUC; single vs per-task AE | 5 | ⬜ |
-| R-2 | GRU dataset, accuracy vs N, old-task accuracy | 5 | ⬜ |
+| R-2 | GRU dataset, accuracy vs N, old-task accuracy | 5 | 🔄 2026-11-15 (PR #18) — dataset and accuracy vs N done: 9 tasks, task-episode macro 63 / 83 / 85 / 85 / 85 % at N = 1 / 5 / 10 / 20 / 50 (3 seeds); old-task accuracy not measured |
 | R-3 | Task registry: GRU task id → root node | 3 | ⬜ |
 
 ### Track G — Growth (after H-6)
