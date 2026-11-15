@@ -1,0 +1,183 @@
+{
+ "plan": "docs/plans/2026-11-15_W1b-1_unlock_pickup_plan.md (revision 3), step 1",
+ "decision": "docs/kb/decisions/0014-freeze-without-live-stable.md (Proposed)",
+ "node_id": "{0,4} pickup_box",
+ "spec_hash": "6c6428043d97ac75",
+ "seed": 45,
+ "source_run_id": "20261115T125406-03312e12d82048218c20b91fa6cad0fc",
+ "policy_sha256": "b05ae151ac43c398f4fb2597d13e1a7845fd07a9584f44510a42c5891bd32f93",
+ "checkpoint": "runs/w1b/0-4_pickup_box_spec3_s45 (git-ignored)",
+ "meta": {
+  "source_run_id": "20261115T125406-03312e12d82048218c20b91fa6cad0fc",
+  "source_policy_sha256": "b05ae151ac43c398f4fb2597d13e1a7845fd07a9584f44510a42c5891bd32f93",
+  "steps_trained": 1001472,
+  "chain_env_steps_in_training_resets": 372063,
+  "met_0004": false,
+  "frozen_under": "0014 (Proposed)",
+  "execution_mode": "argmax",
+  "accepted_for_parent": "{2,2} unlock_pickup",
+  "acceptance": {
+   "a_w1a_test_sampled": {
+    "own_hook": "459/500",
+    "handoff": "488/488",
+    "passed": true
+   },
+   "b_argmax_handoff": {
+    "successes": "485/488",
+    "wilson_lower": 0.9821
+   },
+   "argmax_own_hook_known_limit": {
+    "successes": "305/500",
+    "failures_with_state_repeat": 195,
+    "failures": 195
+   },
+   "decision_0004_during_training": "not met; budget exhausted (v2 \u00a79: ABANDONED)",
+   "ranges": {
+    "own_hook": "52000-52499",
+    "handoff": "53000-53499"
+   }
+  },
+  "plan": "docs/plans/2026-11-15_W1b-1_unlock_pickup_plan.md (revision 3), step 1"
+ },
+ "load_check": {
+  "recorded": [
+   41,
+   27.18
+  ],
+  "now": [
+   41,
+   27.18
+  ],
+  "identical": true
+ },
+ "gate_p2_rule": {
+  "rule": "(a) W1a's test passed (test.passes) and (b) argmax handoff Wilson 95 % lower bound >= 0.95 on >= 475 valid episodes; smallest seed meeting both",
+  "seeds": {
+   "43": {
+    "file": "runs/v2/w1a_spec3_sampled.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "464/488",
+    "b_wilson_lower": 0.9279,
+    "b_met": false,
+    "meets_rule": false
+   },
+   "44": {
+    "file": "runs/v2/w1a_spec3_sampled.json",
+    "a_w1a_test_passed": false,
+    "b_argmax_handoff": "486/488",
+    "b_wilson_lower": 0.9852,
+    "b_met": true,
+    "meets_rule": false
+   },
+   "45": {
+    "file": "runs/v2/w1a_spec3_sampled.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "485/488",
+    "b_wilson_lower": 0.9821,
+    "b_met": true,
+    "meets_rule": true
+   },
+   "46": {
+    "file": "runs/v2/w1a_spec3_sampled.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "488/488",
+    "b_wilson_lower": 0.9922,
+    "b_met": true,
+    "meets_rule": true
+   },
+   "47": {
+    "file": "runs/v2/w1a_spec3_sampled.json",
+    "a_w1a_test_passed": false,
+    "b_argmax_handoff": "440/488",
+    "b_wilson_lower": 0.872,
+    "b_met": false,
+    "meets_rule": false
+   },
+   "48": {
+    "file": "runs/v2/w1a_spec3_sampled_ext.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "478/488",
+    "b_wilson_lower": 0.9627,
+    "b_met": true,
+    "meets_rule": true
+   },
+   "49": {
+    "file": "runs/v2/w1a_spec3_sampled_ext.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "488/488",
+    "b_wilson_lower": 0.9922,
+    "b_met": true,
+    "meets_rule": true
+   },
+   "50": {
+    "file": "runs/v2/w1a_spec3_sampled_ext.json",
+    "a_w1a_test_passed": false,
+    "b_argmax_handoff": "469/488",
+    "b_wilson_lower": 0.94,
+    "b_met": false,
+    "meets_rule": false
+   },
+   "51": {
+    "file": "runs/v2/w1a_spec3_sampled_ext.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "485/488",
+    "b_wilson_lower": 0.9821,
+    "b_met": true,
+    "meets_rule": true
+   },
+   "52": {
+    "file": "runs/v2/w1a_spec3_sampled_ext.json",
+    "a_w1a_test_passed": true,
+    "b_argmax_handoff": "487/488",
+    "b_wilson_lower": 0.9885,
+    "b_met": true,
+    "meets_rule": true
+   }
+  },
+  "seeds_meeting_rule": [
+   45,
+   46,
+   48,
+   49,
+   51,
+   52
+  ],
+  "chosen": 45,
+  "passed": true
+ },
+ "gate_p1_reproduces_record": {
+  "seeds": "53000-53499",
+  "episodes_compared": 1000,
+  "episodes_differing": 0,
+  "argmax_now": {
+   "valid": 488,
+   "successes": 485
+  },
+  "first_differences": [],
+  "sampled_now": {
+   "valid": 488,
+   "successes": 488
+  },
+  "passed": true,
+  "record_successes": {
+   "argmax": 485,
+   "sampled": 488
+  }
+ },
+ "gate_p3_load_back": {
+  "seeds": "53000-53049",
+  "episodes_compared": 50,
+  "episodes_differing": 0,
+  "argmax_now": {
+   "valid": 49,
+   "successes": 48
+  },
+  "first_differences": [],
+  "passed": true,
+  "status": "frozen",
+  "policy_sha256_equal": true,
+  "spec_hash_equal": true
+ },
+ "note": "nothing trained; runs/v2/0-4_pickup_box/ (spec 2) untouched",
+ "wall_seconds": 24.6
+}
