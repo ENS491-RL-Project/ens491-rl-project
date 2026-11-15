@@ -164,9 +164,10 @@ p("**Detailed design (v2).** Figure 1 summarises the implemented design. Primiti
 fig("arch", 6.3,
     "Figure 1. v2 architecture. (a) A skill node and its life cycle. (b) Execution: one stack from "
     "the root task to the primitive that acts; termination is checked top-down every environment "
-    "step. (c) Training one new node while all others stay frozen, and the stabilisation rule. "
-    "(d) Recognition: the GRU task identifier exists and is evaluated offline; the autoencoder and "
-    "the task registry that would let the GRU choose the root are not built yet.")
+    "step. (c) Adding one task: the new node is trained while all others stay frozen, accepted by "
+    "the stabilisation rule, frozen, and then available as a child of later composites. Task "
+    "recognition is not shown: the GRU task identifier is evaluated offline (Section 2.3.9), and the "
+    "task registry that would let it choose the root is not built yet.")
 p("Figure 2 shows the skill graph as it stands. Eleven nodes are frozen. The DoorKey and "
   "UnlockPickup tasks are each executed by a three-frame stack (root → unlock-door composite → "
   "primitive), and the unlock-door composite, trained on the Unlock task, is reused untouched inside "
