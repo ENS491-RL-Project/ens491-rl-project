@@ -1,0 +1,49 @@
+{
+ "decisions": [
+  "0011 (Accepted)",
+  "0014 (Accepted 2026-11-15)"
+ ],
+ "pickup_box": {
+  "dir": "runs/v2/0-4_pickup_box",
+  "spec_hash": "6c6428043d97ac75",
+  "policy_sha256": "b05ae151ac43c398f4fb2597d13e1a7845fd07a9584f44510a42c5891bd32f93",
+  "equals_step1_record": true
+ },
+ "unlock_pickup": {
+  "dir": "runs/v2/2-2_unlock_pickup",
+  "spec_hash": "3012137ea5300693",
+  "run_id": "20261115T164215-53bd94e3bf704accaef8282bd4ed8a41",
+  "policy_sha256": "66bfe0d807968f2a4734fc9ee0ccefe9ee324676ed2fa3e04831573c6376af03",
+  "heldout_reproduced": {
+   "n_episodes": 50,
+   "successes": 49,
+   "success_rate": 0.98,
+   "wilson_lower": 0.895,
+   "wilson_upper": 0.9965,
+   "mean_length": 29.02,
+   "seed_base": 20000,
+   "timeouts": 1,
+   "reselections": 0
+  }
+ },
+ "load_back": {
+  "all_frozen": true,
+  "t7_spec_hash_equal": true,
+  "pickup_box_sha_equal": true,
+  "t7_sha_equal": true,
+  "heldout": {
+   "n_episodes": 50,
+   "successes": 49,
+   "success_rate": 0.98,
+   "wilson_lower": 0.895,
+   "wilson_upper": 0.9965,
+   "mean_length": 29.02,
+   "seed_base": 20000,
+   "timeouts": 1,
+   "reselections": 0
+  },
+  "heldout_equal": true
+ },
+ "passed": true,
+ "wall_seconds": 3.4
+}

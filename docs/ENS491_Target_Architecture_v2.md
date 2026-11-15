@@ -424,6 +424,7 @@ updates. The numbers are experiment parameters and go in each run's `meta.json` 
 ### 5.4 Freezing and execution mode 🔒
 
 - STABLE → FROZEN: `requires_grad_(False)` on all policy parameters. The forward pass keeps running (needed by laterals and by parents).
+- **One exception (decision 0014, 2026-11-15):** a *primitive* whose training never met §5.3 may be frozen from its fixed-budget final model if it passed a two-row test whose criterion was fixed before training and its argmax success from one named parent's real handoff has a Wilson 95 % lower bound ≥ 0.95 on ≥ 475 valid fresh episodes. Argmax only; the acceptance holds for that parent alone, and another parent needs its own handoff row first. The node's `meta.json` records `met_0004: false`, the mode and its weak rows. First and only use: `{0,4} pickup_box` spec 3 under `{2,2} unlock_pickup`.
 - A frozen node is never modified, for any reason.
 - **Execution mode:** frozen nodes act **deterministically** by default. Stabilization is evaluated in the same mode. (Fixes v1's `deterministic=not self.frozen`, which made frozen columns sample stochastically — done in H-0.) Deterministic MiniGrid policies can loop under partial observability; `timeout` bounds the damage, and stochastic execution is a 🧪 alternative.
 - **The mode is a constructor argument, not a constant [A: F17].** `Executor(execution_mode=...)` takes
@@ -519,6 +520,8 @@ DECLARED ──train──▶ TRAINING ──eval: SR ≥ 0.90 twice──▶ ST
                        └── budget exhausted ──▶ ABANDONED (kept in the log, never used)
 ```
 
+A budget-exhausted *primitive* may instead be frozen under decision 0014 (§5.4); it is then not ABANDONED.
+
 - Only FROZEN nodes may be children or registered roots 🔒 (v1's "never add an unstabilized option" rule, kept).
 - **Importing external policies** (supervisor requirement for the GUI): an externally trained policy is imported as a FROZEN primitive node by supplying its goal predicate, initiation predicate and timeout. It then behaves like any other node.
 - **Planning hook (Phase 3 stretch):** every node declares `initiation` and `goal`, so a planner can chain nodes whose goal satisfies the next node's initiation. No v2 component depends on this.
@@ -613,7 +616,7 @@ not only from hook states.
 | T3 | `{1,1} unlock_door` | composite | T1, T2 | `MiniGrid-Unlock-v0` | door open (env success) |
 | T4 | `{0,3} go_to_goal` | primitive | — | DoorKey, reset with door open | agent on goal tile |
 | T5 | `{2,1} solve_doorkey` | composite | T3, T4 | `MiniGrid-DoorKey-6x6-v0` | env success |
-| T6 | `{0,4} pickup_box` | primitive (I: door open and carrying nothing) | — | UnlockPickup, reset with the door open, the hand empty and no key on the door's approach cell | agent carries the box |
+| T6 | `{0,4} pickup_box` | primitive (I: door open and carrying nothing) | — | UnlockPickup; half the resets with the door open, the hand empty and no key on the door's approach cell, half at the real handoff (spec 3, decision 0011) | agent carries the box |
 | T6b | `{0,9} drop_held` | primitive (I: carrying anything) | — | UnlockPickup, reset with the door open and the key in hand | agent carries nothing |
 | T7 | `{2,2} unlock_pickup` | composite (I: door locked) | T3, T6b, T6 | `MiniGrid-UnlockPickup-v0` | agent carries the box (env success) |
 | T8 | `{0,5} move_blocker` | primitive (I: a ball is adjacent to the door) | — | BlockedUnlockPickup | **no ball adjacent to the door and the agent carries nothing** |
@@ -625,7 +628,7 @@ amendment 1).** Rationale in `plans/2026-10-02_H7_plan.md` and `plans/2026-10-02
 
 | # | timeout | `max_decisions` | reset hook |
 |---|---|---|---|
-| T6 `{0,4} pickup_box` | 120 | — | `open_door`, `key_off_door`, `randomize_agent_pose(any)` |
+| T6 `{0,4} pickup_box` | 120 | — | spec 3 (decision 0011): with probability 0.5 `open_door`, `key_off_door`, `randomize_agent_pose(any)`; else the frozen `unlock_door` → `drop_held` run from the env's reset (`handoff_chain`) |
 | T6b `{0,9} drop_held` | 30 | — | `open_door`, `give_key`, `randomize_agent_pose(any)` |
 | T7 `{2,2} unlock_pickup` | 288 | 8 | none |
 | T8 `{0,5} move_blocker` | 120 | — | `randomize_carrying(0.5, key)`, `randomize_agent_pose(any)` — H-7b |
@@ -645,7 +648,7 @@ amendment 1).** Rationale in `plans/2026-10-02_H7_plan.md` and `plans/2026-10-02
   selectable with a full hand, where it times out; T7 has to learn unlock → drop → pick up from that.
 - **T6b `{0,9} drop_held`.** Goal `carrying:none`, initiation `carrying:any`, timeout 30, trained on
   UnlockPickup from the door-open, key-in-hand state at any reachable pose.
-- **One re-specification only.** If T6b or the new T6 does not stabilise within its budget
+- **One re-specification only** (set aside once by decision 0011: spec 3 is T6's third and last specification). If T6b or the new T6 does not stabilise within its budget
   (100,000 and 1,000,000 env steps), that is the finding and H-7a stops. The first `pickup_box`
   attempt's cost (3 × 600,064 env steps) is reported, not counted (caveat 4 of the amortisation
   table).
@@ -931,3 +934,7 @@ C-2's lateral source is the frozen `{0,2} open_door` instead of the legacy `col0
 and C-2 alone has a control arm whose lateral source is an untrained network that is not a node, so v2
 itself carries this exception to §7's FROZEN-source rule (§7 [F23], §10, §12; plan
 `plans/2026-11-15_W7_pn_lateral_plan.md`).
+
+### `pickup_box` spec 3 and freezing without live STABLE (2026-11-15, decisions 0011, 0014)
+
+T6 `{0,4} pickup_box` is re-specified a second time (0011): half of its training resets start at the real handoff, reached by running the frozen `unlock_door` → `drop_held` inside the reset; spec 2 and its hash are kept for the record. No spec-3 run met §5.3 in 1,000,000 env steps; training seed 45 was frozen under 0014 (§5.4, §9) after passing W1a's test and an argmax handoff lower bound of 0.982. `{2,2} unlock_pickup` (T7) over it is STABLE under §5.3 unchanged on 3 of 3 seeds; seed 43 is registered. The `§13 run-persistence` rule that `SkillNode.freeze()` requires STABLE is unchanged in code: the freezing script sets STABLE itself, citing 0014. Plan and result: `plans/2026-11-15_W1b-1_unlock_pickup_plan.md`, `plans/2026-11-15_W1b-1_summary.md`.

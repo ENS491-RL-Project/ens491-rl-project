@@ -1,10 +1,10 @@
 # 0014 — A primitive that never met 0004 in training may be frozen on a fixed-budget test
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-15   Source: [`plans/2026-11-15_W1b-1_unlock_pickup_plan.md`](../../plans/2026-11-15_W1b-1_unlock_pickup_plan.md) (revision 3)
-Reviewed by Emir: not yet
+Reviewed by Emir: yes — 2026-11-15 (line set at his instruction in chat)
 
-## Decision (proposed)
+## Decision
 A primitive whose training run ended with its budget exhausted, never STABLE under
 [0004](0004-stabilisation-rule.md), may be frozen from its **fixed-budget final model** if both hold:
 
@@ -85,6 +85,10 @@ and the seed it selects are not blind. Every `unlock_pickup` result is still uns
   "chain" reading did not occur; `{2,2} unlock_pickup` is STABLE under 0004 on 3 of 3 seeds, fresh
   486/500 on each. The three seeds act identically (one result).
   [Summary](../../plans/2026-11-15_W1b-1_summary.md), [`results.md`](../results.md).
+- Accepted on that result (2026-11-15). Registered the same day: `pickup_box` (spec 3, seed 45, weights
+  unchanged from `runs/w1b/`) in `runs/v2/0-4_pickup_box/`, `unlock_pickup` (seed 43) in
+  `runs/v2/2-2_unlock_pickup/`; spec 2's seed-42 checkpoint moved to
+  `runs/v2/attempts/0-4_pickup_box_spec2_s42/`. Checks in `runs/v2/w1b_register.json`.
 - Behind the selection, in [`results.md`](../results.md): W1a spec 3 (7/10),
   `runs/v2/w1a_spec3_sampled.json` and `w1a_spec3_sampled_ext.json`.
 

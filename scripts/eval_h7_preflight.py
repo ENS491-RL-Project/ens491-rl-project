@@ -503,7 +503,9 @@ def load_unstable_pickup_box(registry):
     spec = h7_primitive_specs()["pickup_box"]
     node = build_node(spec)
     attach_sb3_primitive_policy(node, UNLOCKPICKUP, spec["hook"])
-    registry.load_into(node, require_frozen=False)
+    # Moved out of the canonical registry when spec 3 was registered (2026-11-15).
+    from h7_nodes import SPEC2_S42_DIR
+    registry.load_into(node, run_dir=SPEC2_S42_DIR, require_frozen=False)
     print(f"  loaded {node} (TRAINING, diagnostic only)  spec_hash={node.spec_hash()}")
     return node
 
