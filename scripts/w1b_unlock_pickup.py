@@ -41,6 +41,7 @@ from src.skills.state import build_state_view  # noqa: E402
 from src.training.evaluation import heldout_seeds, stopping_seeds, wilson_lower  # noqa: E402
 from src.training.node_trainer import (  # noqa: E402
     attach_sb3_primitive_policy,
+    RandomOverAvailable,
     execution_env_factory,
     pooled_eval_fn,
     set_torch_threads,
@@ -221,6 +222,16 @@ def train(args) -> int:
                  "stable": rep["stable"], "decisions_to_stable": rep["decisions_to_stable"],
                  "fresh_seeds": f"{FRESH_SEEDS[0]}-{FRESH_SEEDS[n_fresh - 1]}", "execution_mode": "argmax",
                  "fresh": fr.as_dict(), "fresh_wall_seconds": round(time.perf_counter() - t1, 1)}
+        # Plan addendum (19:40, before step 3): descriptive control on the same fresh seeds.
+        probe = build_unlock_pickup(unlock_door, drop_held, pickup_box)
+        probe.policy = RandomOverAvailable(args.seed)
+        rnd = pooled_eval_fn(probe, [UNLOCKPICKUP], NO_HOOK, n_episodes=n_fresh,
+                             seed_base=FRESH_SEEDS[0], env_factory_fn=execution_env_factory)()
+        fresh["random_over_available_control"] = {
+            **rnd.as_dict(), "rng_seed": args.seed,
+            "note": "descriptive, not part of the verdict (plan addendum before step 3)"}
+        fresh["step_efficiency"] = {"learned_mean_env_steps": round(fr.mean_length, 2),
+                                    "random_mean_env_steps": round(rnd.mean_length, 2)}
         if args.rerun_of:
             same_hist = (first.get("state") is not None and
                          json.loads((runs_root() / args.rerun_of / "report.json").read_text(encoding="utf-8"))
@@ -230,6 +241,7 @@ def train(args) -> int:
                                  "policy_sha256_equal": same_sha, "counts": same_hist and same_sha}
         fresh_path.write_text(json.dumps(fresh, indent=1), encoding="utf-8")
         print(f"\nfresh row ({fresh['fresh_seeds']}): {fr}  timeouts {fr.timeouts}")
+        print(f"random over available (control, same seeds): {rnd}  timeouts {rnd.timeouts}")
         print(f"policy_sha256 {sha[:16]} equals run-store manifest: {sha_ok}")
         print(f"wrote {fresh_path.relative_to(REPO)}")
         if smoke:

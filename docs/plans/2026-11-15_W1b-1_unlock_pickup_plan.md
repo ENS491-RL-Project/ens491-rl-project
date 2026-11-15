@@ -166,6 +166,15 @@ searched.
   gate's counts, the C1 evaluation arms, mask divergence and selection sequences from `run`
   (with `--skip-strict` the strict-mask arms are evaluations of the goal-only policy).
 
+**Addendum before step 3** (2026-11-15, 19:40, after step 2; no training result seen, only the
+10 episodes of step 2's smoke run on seed 42). On the same 500 fresh seeds (54000–54499) the
+control "random over available children" (`RandomOverAvailable`, goal-only mask, children argmax)
+is measured: successes and mean env steps. It is **not part of the verdict**. Its difference from
+the learned selector is reported as step efficiency. Why: in the smoke run random selection
+already scored 0.70–0.90 (10 episodes), so a passing W1b-1 shows reuse (`unlock_door` untouched,
+a task flat PPO did not solve), not that the selector learned something the mask does not give
+it; the write-up says so.
+
 ## What follows (fixed now)
 
 - **Passes.** Allowed wording: "`{2,2} unlock_pickup` is STABLE under 0004 (argmax) on k of 3
