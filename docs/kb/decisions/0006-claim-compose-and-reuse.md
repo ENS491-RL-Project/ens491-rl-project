@@ -12,7 +12,8 @@ The project's main claim, in Emir's words: the agent **composes skills while it 
 - No-forgetting is part of the claim, measured on the whole system as the library grows, not only
   on frozen skills (which cannot forget by construction). Where forgetting can happen is the
   recognition layer (AE/GRU, v2 §6.3).
-- PN forward transfer is claimed only if C-2 shows it (0003).
+- PN forward transfer is claimed only if C-2 shows it (0003). C-2 (W7, 2026-11-15) did not show it on its one pair
+  (`go_to_goal` reading `open_door`: no measurable benefit), so **PN forward transfer is not claimed** on this evidence.
 - Not claimed: the hierarchy learns a single task faster than flat PPO.
 
 ## Why
@@ -26,7 +27,7 @@ The project's main claim, in Emir's words: the agent **composes skills while it 
   composites without a human declaring children: Phase B (0005, 0007); (2) a composite reused by
   more than one later task; (3) retention of the recognition layer across the sequence (R-2);
   (4) possibly a flat baseline with memory, for a fair cost comparison.
-- Results in [`results.md`](../results.md): H-7 amortisation; H-7 `pickup_box` spec 1 and flat baselines;
+- Results in [`results.md`](../results.md): W7 (C-2, PN forward transfer not shown); H-7 amortisation; H-7 `pickup_box` spec 1 and flat baselines;
   H-6 / H-6.8 `{2,1} solve_doorkey` vs flat PPO.
 
 ## Rejected alternatives

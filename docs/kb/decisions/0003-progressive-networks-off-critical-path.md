@@ -16,11 +16,11 @@ Skills are frozen, so forgetting is prevented without PN. PN's contribution is m
 - Dropping PN from the report: rejected, it contradicts the supervisor ('later', not 'never').
 
 ## Evidence
-None yet. Settled by experiment C-2: train one primitive with and without a lateral from an earlier frozen primitive; compare steps to STABLE.
+C-2 ran as W7 (2026-11-15, [`results.md`](../results.md)): `go_to_goal` with no lateral, with a lateral from the frozen `{0,2} open_door`, and with a lateral from an untrained network, ten seeds each. **No measurable benefit**: no arm beats another on steps to STABLE (medians 190,464 / 178,176 / 184,320); a reduction of 25 % or more would have passed 8 times in 10. One pair only ([W7 summary](../../plans/2026-11-15_W7_summary.md)).
 Related results in [`results.md`](../results.md) (background, not C-2): v1 PN-4; H-3 legacy `col01`.
 
 ## Affects
-Track C in v2 §12; the PN-4 Empty-8x8 column ([`runs/pn4`](../../../runs/pn4)) must be retrained on normalised observations before it can be a lateral source (Q9).
+Track C in v2 §12. C-2 did not need the PN-4 Empty-8x8 column ([`runs/pn4`](../../../runs/pn4)) retrained: its source is the frozen `{0,2} open_door` ([0013](0013-c2-lateral-source-open-door.md)).
 
 ## Open point
 Decided 2026-11-12: start C-2 with laterals between primitives. Laterals between composites are decided by a later experiment, not by default. Whether PN is part of the reported contribution follows from C-2's result (see 0006).
