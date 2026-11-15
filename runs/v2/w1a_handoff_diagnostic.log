@@ -1,0 +1,14 @@
+  seed 42: gate 480/480 (0 differ) PASSED | K 491/491 (1.0) | T 490/491 (0.998) | unchanged 480/491; failures 11: key 11, never right 6, box never seen 0, timeouts 11
+  seed 43: gate 482/482 (0 differ) PASSED | K 491/491 (1.0) | T 490/491 (0.998) | unchanged 482/491; failures 9: key 7, never right 5, box never seen 0, timeouts 9
+  seed 44: gate 451/451 (0 differ) PASSED | K 489/491 (0.9959) | T 470/491 (0.9572) | unchanged 451/491; failures 40: key 40, never right 22, box never seen 0, timeouts 40
+  seed 45: gate 477/477 (0 differ) PASSED | K 491/491 (1.0) | T 487/491 (0.9919) | unchanged 477/491; failures 14: key 14, never right 6, box never seen 0, timeouts 14
+  seed 46: gate 429/429 (0 differ) PASSED | K 475/491 (0.9674) | T 445/491 (0.9063) | unchanged 429/491; failures 62: key 59, never right 52, box never seen 0, timeouts 62
+  seed 47: gate 430/430 (0 differ) PASSED | K 490/491 (0.998) | T 450/491 (0.9165) | unchanged 430/491; failures 61: key 53, never right 54, box never seen 0, timeouts 61
+  seed 48: gate 470/470 (0 differ) PASSED | K 488/491 (0.9939) | T 484/491 (0.9857) | unchanged 470/491; failures 21: key 20, never right 15, box never seen 0, timeouts 21
+  seed 49: gate 474/474 (0 differ) PASSED | K 488/491 (0.9939) | T 485/491 (0.9878) | unchanged 474/491; failures 17: key 17, never right 14, box never seen 0, timeouts 17
+  seed 50: gate 431/431 (0 differ) PASSED | K 490/491 (0.998) | T 454/491 (0.9246) | unchanged 431/491; failures 60: key 56, never right 53, box never seen 0, timeouts 60
+  seed 51: gate 476/476 (0 differ) PASSED | K 490/491 (0.998) | T 482/491 (0.9817) | unchanged 476/491; failures 15: key 15, never right 4, box never seen 0, timeouts 15
+  seed 52: gate 438/438 (0 differ) PASSED | K 480/491 (0.9776) | T 460/491 (0.9369) | unchanged 438/491; failures 53: key 26, never right 40, box never seen 0, timeouts 53
+  failing pooled: unchanged 1728/1964; failures 236, no key and box never seen 0; K 1935/1964 = 0.9852; T 1809/1964 = 0.9211  -> Key
+  passing pooled: unchanged 2830/2946; failures 116, no key and box never seen 0; K 2937/2946 = 0.9969; T 2898/2946 = 0.9837  -> Key + Time
+wrote C:\Users\memir\AppData\Local\Temp\claude\cf37883aed08250a\7f3e8871-9cb4-4b76-8aa1-82f55cf5617d\scratchpad\diag_step3_full.json (537.5s)
