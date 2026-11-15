@@ -119,14 +119,17 @@ def table(header, rows, widths, *, note=None, size=20):
            f'</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>'
            + "".join(f'<w:gridCol w:w="{c}"/>' for c in cols) + "</w:tblGrid>"]
 
-    def row(cells, head=False):
+    keep = len(rows) <= 9  # short tables are kept on one page (each row keeps with the next)
+
+    def row(cells, head=False, last=False):
+        kn = '<w:keepNext/>' if keep and not last else ''
         trpr = '<w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>' if head else '<w:trPr><w:cantSplit/></w:trPr>'
         r = [f"<w:tr>{trpr}"]
         for c, w in zip(cells, cols):
             shade = '<w:shd w:val="clear" w:color="auto" w:fill="E7E6E6"/>' if head else ""
             paras_ = str(c).split("\n")
             ps = "".join(
-                f'<w:p><w:pPr><w:spacing w:before="20" w:after="20" w:line="240" w:lineRule="auto"/>'
+                f'<w:p><w:pPr>{kn}<w:spacing w:before="30" w:after="30" w:line="240" w:lineRule="auto"/>'
                 f'<w:rPr>{TNR}</w:rPr></w:pPr>'
                 f'{runs(t, base_rpr=("<w:b/><w:bCs/>" if head else ""), size=size)}</w:p>' for t in paras_)
             r.append(f'<w:tc><w:tcPr><w:tcW w:w="{w}" w:type="dxa"/>{shade}</w:tcPr>{ps}</w:tc>')
@@ -134,13 +137,14 @@ def table(header, rows, widths, *, note=None, size=20):
         return "".join(r)
 
     out.append(row(header, head=True))
-    out.extend(row(r) for r in rows)
+    out.extend(row(r, last=(i == len(rows) - 1)) for i, r in enumerate(rows))
     out.append("</w:tbl>")
     if note:
-        out.append(f'<w:p><w:pPr><w:spacing w:before="40" w:after="160"/><w:jc w:val="both"/>'
-                   f'<w:rPr>{TNR}</w:rPr></w:pPr>{runs(note, size=18)}</w:p>')
+        out.append(f'<w:p><w:pPr><w:spacing w:before="60" w:after="200"/><w:jc w:val="both"/>'
+                   f'<w:rPr>{TNR}</w:rPr></w:pPr>{runs(note, size=20)}</w:p>')
     else:
-        out.append('<w:p><w:pPr><w:spacing w:before="0" w:after="80"/></w:pPr></w:p>')
+        out.append('<w:p><w:pPr><w:spacing w:before="0" w:after="200" w:line="240" w:lineRule="auto"/>'
+                   '<w:rPr><w:sz w:val="12"/><w:szCs w:val="12"/></w:rPr></w:pPr></w:p>')
     return "".join(out)
 
 

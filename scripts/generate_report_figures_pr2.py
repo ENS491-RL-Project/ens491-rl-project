@@ -216,8 +216,11 @@ def fig2_skill_graph(out: Path) -> None:
         hs = m.get("heldout")
         if hs:
             return name, nm, f"{hs['successes']}/{hs['n_episodes']}"
-        row_ = m["acceptance"]["b_argmax_handoff"]["successes"]  # frozen under decision 0014
-        return name, nm, f"{row_}*"
+        # frozen under decision 0014: its meta has no held-out row; the held-out score on its
+        # mixed training start states is recorded with the specification-3 test (seed 45)
+        spec3 = json.loads((ROOT / "runs/v2/w1a_spec3_sampled.json").read_text(encoding="utf-8"))
+        hs = spec3["models"]["45"]["load_check_heldout_mixed_hook"]["recorded"][0]
+        return name, nm, f"{hs}/50*"
 
     def xy(k):
         c, r = pos[k]
@@ -284,8 +287,8 @@ def fig2_skill_graph(out: Path) -> None:
     ax.legend(handles=handles, loc="upper left", fontsize=8, handlelength=1.8,
               borderaxespad=0, bbox_to_anchor=(leg_x, leg_y), bbox_transform=ax.transData)
     ax.text(leg_x, 0.85 * row, "Right-hand number: held-out successes of 50 (argmax).\n"
-            "* Frozen under decision 0014: deterministic success\n"
-            "from the UnlockPickup handoff on 488 fresh episodes.",
+            "* Frozen under decision 0014; held-out from its\n"
+            "mixed training start states (Table 3).",
             fontsize=7.5, va="top", ha="left", color=INK_2, linespacing=1.2)
     _save(fig, out, "fig2_skill_graph")
 

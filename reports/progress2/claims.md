@@ -255,8 +255,8 @@ Task-episode macro accuracy, mean over seeds 42–44, 9 tasks, CPU.
 | U4 | 20 | 85.3 % | 86.1 / 85.5 / 84.3 | `task_seq20_s*` | Table 10, §2.3.9 |
 | U5 | 50 | 85.1 % | 85.6 / 84.8 / 85.0 | `task_seq50_s*` | Table 10, §2.3.9 |
 | U6 | 825 test episodes (70/15/15 split, 3,850 / 825 / 825) | | | `test_episodes`; GRU validation summary | §2.3.9 |
-| U7 | chance 11 % (1/9) | | | results.md R-2 row | §2.3.9 |
-| U8 | `unlock` hardest: 70 % at N = 20 | | | results.md R-2 row; `per_task_episode_balanced_accuracy.unlock` (s42: 0.699) | §2.3.9 |
+| U7 | uniform guess 11 % (1/9), stated as not the right baseline (start states differ per task; R-0 not done) | | | results.md R-2 row; roadmap W6 R-0 | §2.3.9 |
+| U8 | weakest: `unlock` 70 % at N = 20; `get_key` lowest at N = 50, 66.1 % (0.746 / 0.681 / 0.557) | | | results.md R-2 row; `per_task_episode_balanced_accuracy.unlock` (s42: 0.699) | §2.3.9 |
 | U9 | not measured: old-task accuracy, switching latency | | | status.md Track R | §2.3.9 |
 
 ## 11. Evaluation infrastructure (Section 2.3.9)
@@ -342,6 +342,24 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
 | N17 | flat UnlockPickup 0/50 on the same held-out seeds, > 3,000,320 per run, censored | F1 | §2.3.7, Table 8, Table 14 |
 | N18 | `unlock_pickup` wall 46.4 / 42.9 / 42.6 s → "other" group 25 runs, 4.54 h; total still 25.8 h (92,909.5 s) | `w1b_unlock_pickup_s*.json` → `wall_seconds` | Table 13 |
 | N19 | W2 first: T9a `{2,3}` (`move_blocker`, `unlock_door`, `pickup_box`) vs T9b `{3,1}` (`move_blocker`, `unlock_pickup`); `pickup_box` needs its own handoff row under T9a | v2 §11 table; `status.md` Track H "Next" | Table 15, Table 16 |
+
+### 17. Second review round (15 November, evening)
+
+| # | Sentence in the report | Source | Where |
+|---|---|---|---|
+| P1 | `pickup_box` seed 45 held-out 41/50 (argmax, mixed hook); 485/488 is on the selection range 53000–53499, so a selection figure | `w1a_spec3_sampled.json` → `models.45.load_check_heldout_mixed_hook.recorded` = [41, 27.18]; `meta.acceptance.ranges.handoff` | Table 3, Fig. 2 |
+| P2 | Choice task: 3 seeds × 2 masks; then 4 strict-mask runs: arm (a) s42 repeats H-6.8 s42 exactly, arm (b) s42–44 at `ent_coef` 0.05; six distinct strict runs; weak dependence p 0.0037 (0.01), 0.021, 0.0214 (0.05) | `choice_conditioning.json` → `rows` | §2.3.4 |
+| P3 | Key state "rarely produced in training; how rarely was not measured" | decision 0011 lines 50–52; W1a spec-3 plan lines 27–28 | §2.3.6 |
+| P4 | Handoff rows: 491 valid (W1a), 488 valid (spec 3) of 500 | W1b-1 plan line 60; spec-3 summary line 37 | §2.3.6, Fig. 3 |
+| P5 | 2.8 % loss before the handoff stated as an inference (fresh JSON has no handoff-reached field) | `w1b_unlock_pickup_s*_fresh.json` (no such field); gate 48/48, 49/49 | §2.3.7, §2.4 |
+| P6 | Cost: DoorKey alone not cheaper (660,704–667,476 vs 300,000–450,000); Unlock + DoorKey about the same (561,756–570,536 re-measured, 773,955 as built, vs 650,000–900,000) | Table 4 rows (see section 3) | §2.3.2, §3.1, §4.5 |
+| P7 | Flat PPO evaluated every 50,000 steps (UnlockPickup 100,000) | `scripts/train_flat_baseline.py` `TASKS` | Table 4 note |
+| P8 | No commits June–September 2026 (summer break) | `git log --all` by month: 2026-05 20, 2026-10 58 | §2.1, §3.1 |
+| P9 | GRU rollouts deterministic, env seeds 20000–20499 | `docs/plans/2026-11-13_gru_task_identification_validation.md` line 11 | §2.3.9 |
+| P10 | 0009: "Accepted 12 November, provided the final pull request kept the design; merged unchanged the same day" | `0009-…md` lines 3, 26 | Table 2 |
+| P11 | Compute: every training result file that records a device says `cpu`; one single-seed `mps` GRU check not used; W7 fixes one thread per run because the thread count changes results | results.md R-2 row; W7 summary lines 111–115 | §1.4 |
+| P12 | A child's timeout may not exceed its parent's (validated at creation) | CLAUDE.md "Validate at creation"; roadmap W5 | §2.1 |
+| P13 | Timetable dates: PR-II week 7 = 15 Nov (Sunday); Draft Final week 12 = 20 Dec; Final week 14 = 3 Jan 2027; presentation upload in the first week of finals = 10 Jan; assumes no break weeks | ENS 491/492 Student Handbook, course-flow table (items 2–5) | Table 16 |
 
 ---
 
