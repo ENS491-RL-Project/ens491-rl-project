@@ -92,7 +92,8 @@ def main():
         writer.writerow(['actual\\predicted', *TASKS])
         for task, row in zip(TASKS, normalized):
             writer.writerow([task, *[f'{v:.6f}' for v in row]])
-    results = {'sequence_length': args.seq_len, 'test_episodes': len(test_indices), 'test_windows': len(ds.windows),
+    results = {'sequence_length': args.seq_len, 'seed': checkpoint['seed'], 'best_epoch': checkpoint['best_epoch'],
+               'test_episodes': len(test_indices), 'test_windows': len(ds.windows),
                'window_accuracy': window_acc, 'window_macro_accuracy': window_macro,
                'episode_balanced_accuracy': episode_balanced, 'task_episode_macro_accuracy': task_episode_macro,
                'per_task_episode_balanced_accuracy': per_task, 'per_ppo_episode_balanced_accuracy': per_policy,
@@ -100,7 +101,8 @@ def main():
                'note': 'Episode-balanced accuracy averages window correctness within each episode, not episode-majority-vote accuracy.'}
     (out / 'metrics.json').write_text(json.dumps(results, indent=2), encoding='utf-8')
     args.results_dir.mkdir(parents=True, exist_ok=True)
-    (args.results_dir / f'task_seq{args.seq_len}_metrics.json').write_text(
+    # One file per (sequence length, training seed), so several seeds can be committed side by side.
+    (args.results_dir / f"task_seq{args.seq_len}_s{checkpoint['seed']}_metrics.json").write_text(
         json.dumps(results, indent=2), encoding='utf-8')
     print(f'\nSaved evaluation outputs to: {out}')
     print('Note: episode-balanced accuracy averages window correctness within each episode.')
