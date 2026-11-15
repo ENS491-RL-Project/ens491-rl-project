@@ -11,7 +11,7 @@ p.add_argument('--variant', choices=['old', 'new'], required=True)
 p.add_argument('--task', choices=['unlock', 'solve'], default='unlock')
 p.add_argument('--strict', action='store_true')
 p.add_argument('--seed', type=int, default=42)
-p.add_argument('--out-dir', type=Path, default=Path('output/training_parity_audit'))
+p.add_argument('--out-dir', type=Path, default=Path('runs/training_parity_audit'))
 a = p.parse_args()
 a.out_dir.mkdir(parents=True, exist_ok=True)
 repo = Path(__file__).resolve().parents[1]
@@ -20,11 +20,10 @@ import numpy as np
 import src.skills.executor as executor_module
 import src.envs.option_env as option_module
 runtime_ref = '917665e' if a.variant == 'old' else '584b4be'
-if runtime_ref:
-    for module, path in [(executor_module, 'src/skills/executor.py'),
-                         (option_module, 'src/envs/option_env.py')]:
-        source = subprocess.check_output(['git', 'show', f'{runtime_ref}:{path}'], cwd=repo, text=True)
-        exec(compile(source, f'{runtime_ref}:{path}', 'exec'), module.__dict__)
+for module, path in [(executor_module, 'src/skills/executor.py'),
+                     (option_module, 'src/envs/option_env.py')]:
+    source = subprocess.check_output(['git', 'show', f'{runtime_ref}:{path}'], cwd=repo, text=True)
+    exec(compile(source, f'{runtime_ref}:{path}', 'exec'), module.__dict__)
 from sb3_contrib import MaskablePPO
 from src.envs.subgoal_env import NO_HOOK
 from src.skills.registry import NodeRegistry
