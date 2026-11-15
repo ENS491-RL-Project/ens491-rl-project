@@ -267,10 +267,6 @@ def main(src, dst, figdir):
 
     new_doc = head + TOC + "".join(body) + tail
 
-    # PR-I was formatted with EndNote; its document variables make the EndNote add-in look for
-    # PR-I's library on every open. The new body has no EndNote fields, so drop them.
-    settings = re.sub(r'<w:docVar w:name="EN\.[^"]*" w:val="[^"]*"/>', "", settings)
-    settings = re.sub(r"<w:docVars>\s*</w:docVars>|<w:docVars/>", "", settings)
     if "<w:updateFields" not in settings:
         settings = re.sub(r"(<w:settings[^>]*>)", r'\1<w:updateFields w:val="true"/>', settings, count=1)
 
