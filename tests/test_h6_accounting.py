@@ -204,11 +204,13 @@ def _real_children():
     get_key = SkillNode("{0,x} get_key_t", goal=carrying("key"), timeout=20,
                         env_ids=[UNLOCK], train_hook="none")
     attach_sb3_primitive_policy(get_key, UNLOCK, NO_HOOK)
+    get_key.status = NodeStatus.STABLE
     get_key.freeze()
 
     open_d = SkillNode("{0,y} open_door_t", goal=door_open(), initiation=carrying("key"),
                        timeout=20, env_ids=[UNLOCK], train_hook="give_key")
     attach_sb3_primitive_policy(open_d, UNLOCK, give_key())
+    open_d.status = NodeStatus.STABLE
     open_d.freeze()
     return [get_key, open_d]
 

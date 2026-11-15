@@ -318,6 +318,7 @@ class EvaluationCallback(BaseCallback):
                 f"eval_every >= n_steps * n_envs."
             )
         self.update_every = update_every
+        self.train_calls = 0      # rollouts SB3 went on to train on
         # [H-6.8] Per-evaluation diagnostics recorded beside the success rate.
         # The choice task needs first-key accuracy by door colour AT EVERY
         # evaluation, not only at the end: a policy that converges to
@@ -365,6 +366,11 @@ class EvaluationCallback(BaseCallback):
             self.logger.record("eval/wilson_lower", result.wilson_lower)
             self.logger.record("eval/mean_length", result.mean_length)
         return result
+
+    def _on_rollout_end(self) -> None:
+        # SB3 calls this only for a completed rollout, and train() follows it. A rollout
+        # cut short by _on_step() returning False never reaches here and is not trained on.
+        self.train_calls += 1
 
     def _on_step(self) -> bool:
         if self.num_timesteps >= self._next_eval:

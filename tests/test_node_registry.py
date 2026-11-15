@@ -29,6 +29,7 @@ def make_node(node_id="{0,1} get_key", timeout=120, goal_spec="carrying:key"):
         env_ids=["MiniGrid-Unlock-v0"],
     )
     n.policy = TinyPolicy()
+    n.status = NodeStatus.STABLE
     return n
 
 
@@ -106,6 +107,7 @@ def test_composite_hash_covers_its_children(tmp_path):
 
     parent = SkillNode("{1,1} p", children=[a], goal=NEVER, timeout=300)
     parent.policy = TinyPolicy()
+    parent.status = NodeStatus.STABLE
     parent.freeze()
     reg.save(parent)
 
@@ -123,3 +125,17 @@ def test_list_nodes(tmp_path):
         n.freeze()
         reg.save(n)
     assert reg.list_nodes() == ["0-1_get_key", "0-2_open_door"]
+
+
+def test_missing_weights_file_is_an_error(tmp_path):
+    """A checkpoint whose weights are gone must not load as a 'frozen' random network."""
+    reg = NodeRegistry(tmp_path)
+    src = make_node()
+    src.freeze()
+    d = reg.save(src)
+    (d / "policy_state_dict.pt").unlink()
+
+    dst = make_node()
+    with pytest.raises(FileNotFoundError, match="policy_state_dict"):
+        reg.load_into(dst)
+    assert dst.status is not NodeStatus.FROZEN

@@ -81,6 +81,8 @@ def main() -> int:
           f"\n  seed={args.seed} budget={args.budget:,} eval_every={args.eval_every:,}"
           f"  freeze={not args.no_freeze and not args.smoke}\n{'=' * 72}")
 
+    if not args.no_freeze and not args.smoke:
+        NodeRegistry(RUNS).ensure_can_save(node)     # fail now, not after training
     report, _model = train_primitive(
         node, spec["env_ids"], spec["hook"],
         total_timesteps=args.budget, eval_every=args.eval_every, n_eval=args.n_eval,
