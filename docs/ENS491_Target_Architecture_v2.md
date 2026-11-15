@@ -907,3 +907,17 @@ seed. Rationale in `plans/2026-10-02_H7_amendment_1.md`; the stop report is in
 | §5.2 sketch: the child's `Executor` gets no `initiation_masking` | it receives the composite's setting | The strict mask applied only at the trained composite; evaluation applies it at every depth |
 | §4.4 sketch: one `decisions` counter against the root's `max_decisions` | `max_decisions` counted per composite frame | Evaluation charged every depth's selections to the root's cap; `OptionEnv` counts each composite's own |
 | §4.4 sketch: `act()` is bounded by a fixed `MAX_ITERS = 256` | the bound is `max(256, 2 × pushes + 2)`, with `pushes` computed from the per-frame caps | With per-frame caps a strict-mask dead end (root → inner → blocked → a primitive that is never applicable) re-selects with no env step in between and needs more than 256 passes; it ended in `ExecutorError` where training ends in `TIMEOUT` |
+
+### Run persistence and lifecycle amendment (2026-11-05)
+
+Every call to the v2 primitive/composite trainer gets a unique directory under
+`runs/training/` (or an explicitly configured run root). The trainer saves the last
+policy and SB3 model for stable, budget-exhausted and interrupted/failed runs.
+A run manifest records configuration, code identity, child policy hashes, counters
+and termination reason. `complete.json` is written last only after the artifacts
+and final manifest are durable; a missing marker means an incomplete run.
+These experimental runs never replace the canonical frozen registry implicitly.
+`SkillNode.freeze()` requires STABLE (or is idempotent for FROZEN). Test fixtures
+that construct policies without training must explicitly mark them STABLE.
+The saved SB3 model includes optimizer state, but is not a claim of exact training
+resume: live environment and RNG states are not restored by this protocol.

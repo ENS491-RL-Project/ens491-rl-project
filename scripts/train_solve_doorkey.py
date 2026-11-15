@@ -147,6 +147,8 @@ def main() -> int:
 
     out: dict = {"seed": args.seed, "node_id": node.id, "env_id": DOORKEY}
 
+    if not args.no_freeze:
+        registry.ensure_can_save(node)     # fail now, not after training
     report, model = train_composite(
         node, [DOORKEY], NO_HOOK,
         total_timesteps=args.budget, eval_every=args.eval_every,

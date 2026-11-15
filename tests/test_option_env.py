@@ -374,6 +374,27 @@ def test_only_frozen_children_may_be_trained_over():
         train_composite(node, [UNLOCK], total_timesteps=16, n_envs=1)
 
 
+@pytest.mark.parametrize("min_sr, budget, expected", [
+    (0.0, 256, 0),    # STABLE at the first evaluation: the rollout in flight is never trained on
+    (1.1, 128, 2),    # never STABLE: the budget ends on a rollout boundary, both are trained on
+])
+def test_policy_updates_counts_real_train_calls(min_sr, budget, expected):
+    from src.training.evaluation import StabilityCriterion
+    from src.training.node_trainer import train_composite
+
+    report, model = train_composite(
+        unlock_door_node(), [UNLOCK], total_timesteps=budget, n_envs=1,
+        eval_every=64, n_eval=5, criterion=StabilityCriterion(min_sr, min_sr, 1),
+    )
+    assert report["policy_updates"] == expected
+    assert report["policy_updates_semantics"] == "completed_train_calls"
+    from pathlib import Path
+    import torch
+    saved = torch.load(Path(report["run_dir"]) / "policy_state_dict.pt", weights_only=True)
+    assert all(torch.equal(saved[k], v.cpu()) for k, v in model.policy.state_dict().items())
+    assert (Path(report["run_dir"]) / "model.zip").is_file()
+
+
 # ---------------------------------------------------------------------------
 # Vectorization -- [A: F15]
 # ---------------------------------------------------------------------------
