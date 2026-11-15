@@ -437,9 +437,10 @@ def run_sequence(variant, nodes_modes_det, nodes_modes_sto, seeds, goal) -> dict
 
 def flat_saved_models() -> dict:
     """
-    (task, seed) -> (run_dir or git blob source). The baseline registry keeps one
-    directory per node id, so later seeds overwrote earlier ones; git history
-    keeps the overwritten DoorKey model of seed 44 (commit ecc9188).
+    (task, seed) -> (run_dir or git blob source). Until 2026-11-15 the baseline
+    registry kept one directory per node id, so later seeds overwrote earlier
+    ones; git history keeps the overwritten DoorKey model of seed 44 (commit
+    ecc9188). Newer runs save to `<node dir>_s<seed>/`.
     """
     found = {}
     for task in FLAT_TASKS:
@@ -452,6 +453,11 @@ def flat_saved_models() -> dict:
         if (node_dir / "meta.json").exists():
             on_disk = json.loads((node_dir / "meta.json").read_text(encoding="utf-8"))["seed"]
             found[(task, on_disk)] = {"source": f"{rel}/ (working tree)", "dir": node_dir}
+        for d in sorted(BASELINE_RUNS.glob(f"{node_dir.name}_s*")):
+            if (d / "meta.json").exists():
+                seed = int(json.loads((d / "meta.json").read_text(encoding="utf-8"))["seed"])
+                found[(task, seed)] = {"source": f"{d.relative_to(REPO).as_posix()}/ (working tree)",
+                                       "dir": d}
         for c in commits:
             meta = json.loads(subprocess.run(
                 ["git", "show", f"{c}:{rel}/meta.json"], cwd=REPO, capture_output=True,

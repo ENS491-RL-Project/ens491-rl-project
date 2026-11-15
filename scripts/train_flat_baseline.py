@@ -80,6 +80,12 @@ from train_solve_doorkey import load_children  # noqa: E402
 RUNS = REPO / "runs" / "v2"
 BASELINE_RUNS = RUNS / "baselines"
 
+
+def seed_dir(registry: NodeRegistry, node_id: str, seed: int):
+    """One checkpoint directory per training seed, so seeds never share one."""
+    d = registry.node_dir(node_id)
+    return d.with_name(f"{d.name}_s{seed}")
+
 # Identical to {2,1} solve_doorkey: same goal, same ceiling (DoorKey-6x6's own
 # max_steps is 360), so neither side gets more of the episode than the other.
 TIMEOUT = 360
@@ -265,7 +271,8 @@ def main() -> int:
               f"\n  env={env_id} timeout={node.timeout} goal={node.goal.spec}"
               f"\n  seed={args.seed} budget={args.budget:,} env steps "
               f"eval_every={args.eval_every:,}\n{'=' * 72}")
-        baseline_registry.ensure_can_save(node)     # fail now, not after training
+        run_dir = baseline_registry.ensure_can_save(   # fail now, not after training
+            node, run_dir=seed_dir(baseline_registry, node.id, args.seed))
         report, _model = train_primitive(
             node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
@@ -289,7 +296,8 @@ def main() -> int:
               f"\n  env={env_id} timeout={node.timeout} "
               f"max_decisions={node.max_decisions}"
               f"\n  seed={args.seed} budget={args.budget:,} decisions\n{'=' * 72}")
-        baseline_registry.ensure_can_save(node)     # fail now, not after training
+        run_dir = baseline_registry.ensure_can_save(   # fail now, not after training
+            node, run_dir=seed_dir(baseline_registry, node.id, args.seed))
         report, _model = train_composite(
             node, [env_id], NO_HOOK,
             total_timesteps=args.budget, eval_every=args.eval_every,
@@ -322,8 +330,8 @@ def main() -> int:
 
     if report["stable"]:
         node.freeze()
-        baseline_registry.save(node, extra_meta=report)
-        print(f"  saved to runs/v2/baselines/{baseline_registry.node_dir(node.id).name}/ "
+        baseline_registry.save(node, extra_meta=report, run_dir=run_dir)
+        print(f"  saved to runs/v2/baselines/{run_dir.name}/ "
               "(baseline, never a child)")
     result["report"] = report
 

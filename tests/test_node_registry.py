@@ -139,3 +139,17 @@ def test_missing_weights_file_is_an_error(tmp_path):
     with pytest.raises(FileNotFoundError, match="policy_state_dict"):
         reg.load_into(dst)
     assert dst.status is not NodeStatus.FROZEN
+
+
+def test_flat_baseline_seeds_get_separate_directories(tmp_path):
+    from scripts.train_flat_baseline import seed_dir
+
+    reg = NodeRegistry(tmp_path)
+    dirs = []
+    for seed in (42, 43):
+        node = make_node()
+        node.freeze()
+        dirs.append(reg.save(node, run_dir=seed_dir(reg, node.id, seed)))
+    assert dirs[0] != dirs[1] and all((d / "meta.json").exists() for d in dirs)
+    with pytest.raises(FileExistsError):
+        reg.ensure_can_save(make_node(), run_dir=seed_dir(reg, make_node().id, 43))
