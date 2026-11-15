@@ -90,7 +90,7 @@ SkillNode {n,m}
 - Level `n` is derived from children, never assigned by hand.
 - Validate at creation: `timeout ≥ max(child.timeout)`, root `timeout ≤ env.max_steps`.
 - `spec_hash` covers env, predicates, timeout, obs pipeline and children's hashes. A hash mismatch on load is an error, never a warning.
-- `freeze()` requires STABLE, and a FROZEN node is never retrained (`record_training` refuses it).
+- `freeze()` requires STABLE, and a FROZEN node is never retrained (`record_training` refuses it). One exception, by rule not by code: decision 0014 lets a budget-exhausted primitive be frozen on a pre-fixed test plus an argmax handoff row for one named parent (v2 §5.4); the script sets STABLE itself and cites 0014.
 - `NodeRegistry.save` never overwrites a checkpoint unless called with `overwrite=True`. A script that saves to the registry calls `registry.ensure_can_save(node)` before training, so an existing checkpoint stops the run at once.
 - `train_primitive` / `train_composite` archive every attempt (stable, budget exhausted or failed) under `runs/training/<run_id>/`; tests redirect it through `ENS491_RUNS_ROOT` (`tests/conftest.py`).
 

@@ -76,7 +76,7 @@ from src.training.run_store import policy_hash  # noqa: E402
 from src.types import NodeStatus  # noqa: E402
 from diagnose_pickup_box import _full_state  # noqa: E402   H-7a.5's state, reused
 from eval_h7_preflight import chain  # noqa: E402
-from h7_nodes import RUNS, UNLOCKPICKUP, h7_primitive_specs, load_h7_primitive, load_unlock_graph  # noqa: E402
+from h7_nodes import RUNS, SPEC2_S42_DIR, UNLOCKPICKUP, h7_primitive_specs, load_h7_primitive, load_unlock_graph  # noqa: E402
 from train_primitives import build_node  # noqa: E402
 
 OUT = RUNS / "w1a_pickup_box_sampled.json"
@@ -219,13 +219,14 @@ def load_run_store_model(seed: int):
 def load_seed42(registry):
     """The spec-2 seed-42 registry checkpoint, TRAINING (as H-7a.5 loads it). Exploratory."""
     node, spec = _fresh_pickup_box()
-    registry.load_into(node, require_frozen=False)
+    registry.load_into(node, run_dir=SPEC2_S42_DIR, require_frozen=False)
     if node.status is not NodeStatus.TRAINING:
         raise RuntimeError(f"{node.id}: expected TRAINING, found {node.status.value}")
-    meta = registry.read_meta(node.id)
+    meta = registry.read_meta(node.id, run_dir=SPEC2_S42_DIR)
     if int(meta["seed"]) != 42:
         raise RuntimeError(f"registry pickup_box is seed {meta['seed']}, not 42")
     held = meta["heldout"]
+    # Was runs/v2/0-4_pickup_box/ until spec 3 was registered (2026-11-15); same files, moved.
     return node, spec, {"source": "runs/v2/0-4_pickup_box/ (registry, TRAINING)", "run_id": None,
                         "policy_sha256": policy_hash(node.policy),
                         "recorded_heldout": (held["successes"], held["mean_length"])}

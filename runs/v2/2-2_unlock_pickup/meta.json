@@ -1,0 +1,145 @@
+{
+  "budget_decisions": 40960,
+  "children": [
+    "{1,1} unlock_door",
+    "{0,9} drop_held",
+    "{0,4} pickup_box"
+  ],
+  "criterion": {
+    "history": [
+      {
+        "mean_length": 165.62,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.56,
+        "successes": 28,
+        "timeouts": 22,
+        "wilson_lower": 0.4231,
+        "wilson_upper": 0.6884
+      },
+      {
+        "mean_length": 34.96,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.96,
+        "successes": 48,
+        "timeouts": 2,
+        "wilson_lower": 0.8654,
+        "wilson_upper": 0.989
+      },
+      {
+        "mean_length": 34.96,
+        "n_episodes": 50,
+        "reselections": 0,
+        "seed_base": 10000,
+        "success_rate": 0.96,
+        "successes": 48,
+        "timeouts": 2,
+        "wilson_lower": 0.8654,
+        "wilson_upper": 0.989
+      }
+    ],
+    "is_stable": true,
+    "min_success_rate": 0.9,
+    "min_wilson_lower": 0.8,
+    "n_consecutive": 2,
+    "streak": 2
+  },
+  "decisions_per_second": 33.1,
+  "decisions_per_update": 512,
+  "decisions_to_stable": 1536,
+  "decisions_trained": 1536,
+  "device": "cpu",
+  "env_ids": [
+    "MiniGrid-UnlockPickup-v0"
+  ],
+  "env_steps_children": 1443289,
+  "env_steps_own": 60205,
+  "env_steps_per_decision": 39.2,
+  "env_steps_total": 1503494,
+  "eval_every": 512,
+  "eval_extra": [],
+  "fresh_54000_54499": {
+    "mean_length": 31.05,
+    "n_episodes": 500,
+    "reselections": 0,
+    "seed_base": 54000,
+    "success_rate": 0.972,
+    "successes": 486,
+    "timeouts": 14,
+    "wilson_lower": 0.9536,
+    "wilson_upper": 0.9832
+  },
+  "heldout": {
+    "mean_length": 29.02,
+    "n_episodes": 50,
+    "reselections": 0,
+    "seed_base": 20000,
+    "success_rate": 0.98,
+    "successes": 49,
+    "timeouts": 1,
+    "wilson_lower": 0.895,
+    "wilson_upper": 0.9965
+  },
+  "id": "{2,2} unlock_pickup",
+  "initiation_masking": false,
+  "kind": "composite",
+  "lateral_sources": [],
+  "level_n": 2,
+  "m": 2,
+  "max_decisions": 8,
+  "n": 2,
+  "n_envs": 8,
+  "node_id": "{2,2} unlock_pickup",
+  "normalize_obs": true,
+  "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+  "policy_updates": 2,
+  "policy_updates_semantics": "completed_train_calls",
+  "ppo": {
+    "batch_size": 64,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "gae_lambda": 0.95,
+    "gamma": 0.99,
+    "learning_rate": 0.0003,
+    "n_epochs": 4,
+    "n_steps": 64
+  },
+  "registration": {
+    "date": "2026-11-15",
+    "from": "run store 20261115T164215-53bd94e3bf704accaef8282bd4ed8a41",
+    "record": "runs/v2/w1b_unlock_pickup_s43.json",
+    "seed": 43,
+    "why_this_seed": "smallest passing training seed (plan); seeds 43-45 act identically"
+  },
+  "reset_hook": "none",
+  "run_id": "20261115T164215-53bd94e3bf704accaef8282bd4ed8a41",
+  "seed": 43,
+  "spec": {
+    "children": [
+      "5e4108da044c9f99",
+      "ed693928545d8edc",
+      "6c6428043d97ac75"
+    ],
+    "env_ids": [
+      "MiniGrid-UnlockPickup-v0"
+    ],
+    "goal": "carrying:box",
+    "id": "{2,2} unlock_pickup",
+    "initiation": "door:locked",
+    "lateral_sources": [],
+    "max_decisions": 8,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "timeout": 288,
+    "train_hook": "none"
+  },
+  "spec_hash": "3012137ea5300693",
+  "stable": true,
+  "status": "frozen",
+  "timeout": 288,
+  "wall_seconds": 46.4,
+  "weak_heldout": false
+}
