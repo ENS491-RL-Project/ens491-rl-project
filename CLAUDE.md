@@ -27,7 +27,7 @@ Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a fr
 
 ## Docs
 - Start at `docs/kb/README.md`. Where the project stands: `docs/kb/status.md`; measurements: `docs/kb/results.md`.
-  `docs/ENS491_Project_State.md` stays authoritative until it is migrated (KB sync PR #22).
+  `docs/ENS491_Project_State.md` is a pointer since 2026-11-15; do not update it.
 - `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
 - Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
 - `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
@@ -118,8 +118,7 @@ SkillNode {n,m}
 - Every experiment is recorded in `docs/kb/results.md` with links to its plan and result files,
   and every decision it informs links back to it.
 - Every PR that changes results or roadmap state updates `docs/kb/status.md`
-  (and `results.md` when a measurement changed) in the same PR. Until Project_State is migrated,
-  update `docs/ENS491_Project_State.md` too, so the two do not drift.
+  (and `results.md` when a measurement changed) in the same PR.
 
 ## graphify
 
