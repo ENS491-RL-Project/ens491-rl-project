@@ -111,10 +111,10 @@ TASKS = {
 }
 
 
-def build_flat_ppo(task="doorkey"):
+def build_flat_ppo(task="doorkey", kind="ppo"):
     t = TASKS[task]
     return SkillNode(
-        "{0,B} flat_" + t["name"] + "_ppo",
+        "{0,B} flat_" + t["name"] + "_" + kind,
         goal=t["goal"](),
         initiation=ALWAYS,          # the real task starts wherever the env starts
         timeout=t["timeout"],
