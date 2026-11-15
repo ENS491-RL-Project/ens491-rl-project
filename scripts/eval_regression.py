@@ -44,6 +44,7 @@ from train_choice_task import (  # noqa: E402
     open_door_tk_spec,
 )
 from h7_nodes import UNLOCKPICKUP, build_unlock_pickup, h7_primitive_specs  # noqa: E402
+from pickup_box_spec3 import spec3  # noqa: E402
 from train_primitives import DOORKEY, UNLOCK, build_node, specs  # noqa: E402
 from train_solve_doorkey import build_t5  # noqa: E402
 from train_unlock_door import build_t3  # noqa: E402
@@ -74,7 +75,9 @@ def main() -> int:
     # so it is not listed (a SKIP line would only be noise).
     h7 = h7_primitive_specs()
     all_specs["drop_held"] = h7["drop_held"]
-    all_specs["pickup_box"] = h7["pickup_box"]
+    # The registered pickup_box is spec 3 (decision 0011); h7["pickup_box"] is spec 2 and
+    # was skipped with SpecMismatch, which also dropped {2,2} unlock_pickup from the sweep.
+    all_specs["pickup_box"] = spec3(registry)[0]
     for name, spec in all_specs.items():
         try:
             node, env_ids, hook = primitive(registry, name, spec)

@@ -128,6 +128,24 @@
       "reselections": 0
     },
     {
+      "node": "{0,4} pickup_box",
+      "n": 0,
+      "status": "frozen",
+      "spec_hash": "6c6428043d97ac75",
+      "recorded": null,
+      "now": 0.82,
+      "delta": null,
+      "n_episodes": 50,
+      "successes": 41,
+      "success_rate": 0.82,
+      "wilson_lower": 0.692,
+      "wilson_upper": 0.9023,
+      "mean_length": 27.18,
+      "seed_base": 20000,
+      "timeouts": 9,
+      "reselections": 0
+    },
+    {
       "node": "{1,1} unlock_door",
       "n": 1,
       "status": "frozen",
@@ -161,6 +179,24 @@
       "mean_length": 14.24,
       "seed_base": 20000,
       "timeouts": 0,
+      "reselections": 0
+    },
+    {
+      "node": "{2,2} unlock_pickup",
+      "n": 2,
+      "status": "frozen",
+      "spec_hash": "3012137ea5300693",
+      "recorded": 0.98,
+      "now": 0.98,
+      "delta": 0.0,
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "wilson_upper": 0.9965,
+      "mean_length": 29.02,
+      "seed_base": 20000,
+      "timeouts": 1,
       "reselections": 0
     }
   ]
