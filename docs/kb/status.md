@@ -22,9 +22,14 @@ Migrated from `ENS491_Project_State.md` on 2026-11-15; its last full text is in
 |---|---|---|---|---|
 | #5 refactor src/ structure | TulayEce | v1-era `src/` restructure, open since 2026-05-11 | Not reviewed | Decide: close or rebase onto v2 |
 
+## Course reports
+
+| Report | Submitted | Numbers from | Source | Next |
+|---|---|---|---|---|
+| ENS 492 Progress Report II | 2026-11-15 | `main` at `d7be0a2` | [`reports/progress2/`](../../reports/progress2/) (text, builder, figures, [claims table](../../reports/progress2/claims.md)) | Draft Final Report, week 12 (Sunday 2026-12-20); Final Report, week 14 (Sunday 2027-01-03) |
+
 ## Waiting on a decision
 
-- Emir sets [0009](decisions/0009-max-decisions-per-frame.md)'s status (PR #15 merged with the per-frame design).
 - Owner of the strict-mask dead-end row in [open-questions](open-questions.md).
 
 ## Roadmap

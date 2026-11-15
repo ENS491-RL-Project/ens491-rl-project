@@ -24,7 +24,7 @@
   "chain_env_steps_in_training_resets": 372063,
   "children": [],
   "execution_mode": "argmax",
-  "frozen_under": "0014 (Proposed)",
+  "frozen_under": "0014 (Accepted 2026-11-15)",
   "id": "{0,4} pickup_box",
   "lateral_sources": [],
   "m": 4,
