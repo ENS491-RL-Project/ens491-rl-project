@@ -1,68 +1,62 @@
+"""Open a locked composite candidate once; never select candidates using final scores.
+
+Reserve and lock first with scripts/final_test_protocol.py. Supported task builders:
+unlock_door, solve_doorkey, unlock_matching and flat_doorkey_options.
 """
-The final test (v2 §5.3): 200 seeds from FINAL_SEED_BASE, opened once.
-
-    python scripts/eval_final.py --freeze-manifest   # record every node's hashes; commit the file
-    python scripts/eval_final.py --open              # evaluate once, against that manifest
-
-`--open` refuses if a hash differs from the manifest and refuses a second time. Run it only
-after every training run and every hyperparameter choice of the claim being tested is done.
-"""
-
 from __future__ import annotations
 
 import argparse
 import json
-import subprocess
-import sys
 from pathlib import Path
+import sys
 
-REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO))
-sys.path.insert(0, str(REPO / "scripts"))
-
-from eval_regression import RUNS, load_library  # noqa: E402
-from src.skills.registry import NodeRegistry  # noqa: E402
-from src.training.evaluation import DEFAULT_N_FINAL, final_seeds  # noqa: E402
-from src.training.final_protocol import (  # noqa: E402
-    claim_final_set, manifest_entry, verify_manifest, write_manifest,
-)
-from src.training.node_trainer import execution_env_factory, pooled_eval_fn  # noqa: E402
-from src.training.run_store import policy_hash  # noqa: E402
-
-MANIFEST = RUNS / "final_manifest.json"
-RESULTS = RUNS / "final_results.json"
+REPO = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(REPO), str(REPO / 'scripts')]
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    mode = ap.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--freeze-manifest", action="store_true")
-    mode.add_argument("--open", action="store_true")
-    args = ap.parse_args()
-
-    library = load_library(NodeRegistry(RUNS))
-    entries = [manifest_entry(n, policy_hash(n.policy)) for n, *_ in library]
-    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
-
-    if args.freeze_manifest:
-        write_manifest(MANIFEST, entries, DEFAULT_N_FINAL, commit)
-        print(f"wrote {MANIFEST.relative_to(REPO)} ({len(entries)} nodes, {DEFAULT_N_FINAL} episodes)")
-        return 0
-
-    verify_manifest(MANIFEST, entries)
-    claim_final_set(RESULTS)
-    rows = []
-    for node, env_ids, hook, composite in library:
-        res = pooled_eval_fn(node, env_ids, hook, n_episodes=DEFAULT_N_FINAL,
-                             seed_base=final_seeds(1)[0],
-                             **({"env_factory_fn": execution_env_factory} if composite else {}))()
-        rows.append({"node": node.id, "spec_hash": node.spec_hash(), **res.as_dict()})
-        print(f"{node.id:<24}{res.success_rate:>7.3f}  wilson_lb {res.wilson_lower:.3f}")
-    RESULTS.write_text(json.dumps({"state": "complete", "code_commit": commit,
-                                   "n_episodes": DEFAULT_N_FINAL, "rows": rows}, indent=2),
-                       encoding="utf-8")
-    return 0
+def build_candidate(node_id, registry):
+    from src.envs.subgoal_env import NO_HOOK, two_keys
+    node_id = node_id.rsplit(' ', 1)[-1]
+    if node_id == 'unlock_matching':
+        import train_choice_task as task
+        return task.build_t11(task.load_choice_children(registry, third='open_door_tk')), task.DOORKEY, two_keys(task.COLORS)
+    if node_id == 'flat_doorkey_options':
+        import train_flat_baseline as task
+        return task.build_flat_options(task.load_option_children('doorkey', registry)), task.DOORKEY, NO_HOOK
+    if node_id == 'unlock_door':
+        import train_unlock_door as task
+        return task.build_t3(task.load_children(registry)), task.UNLOCK, NO_HOOK
+    if node_id == 'solve_doorkey':
+        import train_solve_doorkey as task
+        return task.build_t5(*task.load_children(registry)), task.DOORKEY, NO_HOOK
+    raise ValueError(f'No final-evaluation builder for {node_id}; add and validate it before locking candidates')
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--open', action='store_true', required=True)
+    parser.add_argument('--manifest', type=Path, required=True)
+    parser.add_argument('--lock', type=Path, required=True)
+    parser.add_argument('--candidate', required=True, help='run_id from the candidate lock')
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--registry', type=Path, default=REPO / 'runs/v2')
+    args = parser.parse_args()
+    from sb3_contrib import MaskablePPO
+    from src.skills.registry import NodeRegistry
+    from src.training.final_protocol import evaluate_locked, sha256
+    from src.training.node_trainer import CompositePolicyAdapter, set_torch_threads
+    set_torch_threads(2)
+    candidate = json.loads(args.lock.read_text())['candidates'][args.candidate]
+    model_path = Path(candidate['run_dir']) / 'model.zip'
+    if sha256(model_path) != candidate['model_sha256']:
+        raise ValueError('Archived model changed after selection')
+    node, env_id, hook = build_candidate(candidate['node_spec']['id'], NodeRegistry(args.registry))
+    model = MaskablePPO.load(model_path, device='cpu')
+    node.policy = CompositePolicyAdapter(model.policy)
+    result = evaluate_locked(args.manifest, args.lock, args.candidate, node,
+                             env_id=env_id, reset_hook=hook, output=args.output)
+    print(f"{args.candidate}: success_rate={result['success_rate']:.3f}; saved {args.output}")
+
+
+if __name__ == '__main__':
+    main()

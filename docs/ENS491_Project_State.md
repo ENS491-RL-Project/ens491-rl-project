@@ -3,7 +3,7 @@
 > Technical memory of the project: current status, open empirical questions, and where each roadmap task stands.
 > **Design decisions live in `ENS491_Target_Architecture_v2.md`**, not here. This file only tracks state.
 >
-> Last updated: 2026-10-02 (H-7 amendment 1: H-7a ran and stopped at H-7a.2 on assumption A2b; H-6.9's arms run as an exploratory step).
+> Last updated: 2026-11-12 (final test reservation and paired runtime sensitivity experiments; H-7 roadmap state unchanged).
 
 ---
 
@@ -72,6 +72,10 @@ No predetermined correct answer. Implement each alternative and compare. Section
 > **Runtime parity (2026-11-05).** Parent timeout, nested strict masks and per-frame decision caps now agree between OptionEnv and Executor, including the cap-derived iteration bound. Previous frozen-checkpoint evaluation found identical traces on 9 nodes × 50 seeds. The measured training mechanism and corrected update counts follow.
 
 > **Training parity audit (2026-11-05).** Eighteen paired old/new training runs (seeds 42–44: unlock_door goal-only; solve_doorkey goal-only and strict) reproduce identical PPO buffers and weights at every completed update. Unlock removes 3/5/5 stationary 48-step tails: only duration counters change; PPO does not consume `k`. Solve strict changes nested masks in 512 decisions per seed but leaves parent transitions unchanged. Actual train calls are 2 for unlock/solve goal and 1 for solve strict, not the legacy reports’ 3/2. See `plans/2026-11-05_training_parity_audit.md` and its JSON summary.
+
+> **Extended parity experiments (2026-11-12).** Completed 24 old/fixed training runs: choice goal-only/strict, flat DoorKey options and a synthetic depth-3 control, seeds 42–44. All choice and depth pairs have different PPO buffers/weights; all baseline pairs remain identical. Choice goal-only development SR is .18/.44/.78 → .50/.24/.68; strict scores stay .46/.46/.50 despite changed weights. Common fixed-runtime evaluation separates depth execution effects from learning: old-trained .02/1/1 versus fixed-trained 1/1/1. These are 10-update-budget pilot runs, not the original 100-update convergence experiment. See `plans/2026-11-12_parity_experiments.md` and JSON.
+
+> **Final test (2026-11-12).** Reserved 200 audited seed IDs; consolidated concurrent protocols into one manifest/selection/one-use evaluator. No final models selected or final episodes run. Development seeds remain 20000–20049. See `protocols/2026-11-12_final_and_parity_experiments.md`. Suite: 281 passed; frozen-checkpoint regression: 9/9, zero difference.
 
 > **Run persistence (2026-11-05).** Both v2 trainers now archive each attempt under a unique `runs/training/<run_id>` (including budget exhaustion and exceptions), with last model, policy weights, source snapshot, configuration and child policy hashes. Existing canonical registry files are protected from implicit overwrite. `freeze()` requires STABLE; frozen nodes cannot be retrained. The completion marker describes archive completeness, not task success. Exact environment/RNG resume remains outside this contract.
 

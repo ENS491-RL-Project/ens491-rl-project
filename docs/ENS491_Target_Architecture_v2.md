@@ -409,16 +409,18 @@ episodes still prove noisy: N = 100 with LB ≥ 0.85 (binds at 92/100, LB 0.850)
 is optimistically biased. At freeze time the node is evaluated once more on a seed set never used for
 stopping, and both numbers go in `meta.json`. Only the second is quoted as the node's success rate.
 
-**A third seed set, the final test (amended 2026-11-12).** The held-out set (20,000+) has been read many
-times: preflights, audits, diagnoses and every node's freeze score. It is development data. Numbers
-presented as *untouched* come from a separate **final set**: 200 seeds from `FINAL_SEED_BASE = 50,000`,
-disjoint from the stopping and held-out ranges and referenced by one script, `scripts/eval_final.py`.
-The protocol is: (1) `--freeze-manifest` records every evaluated node's `spec_hash`, weights hash and
-the code commit, and the manifest is committed; (2) `--open` refuses unless every hash matches the
-manifest, and refuses a second time because it claims `runs/v2/final_results.json` exclusively; (3) the
-results are reported per training seed with Wilson intervals. If anything is retrained or re-tuned
-after the set was opened, that set is no longer final and a new base must be chosen. The 200-episode
-size narrows the interval: 195/200 gives a Wilson lower bound of about 0.94, against 0.81 at 46/50.
+**A third seed set, the final test (amended 2026-11-12).** The repeatedly read
+20,000+ held-out set is development data. Reserve 200 final seeds in the audited,
+immutable `docs/protocols/final_test_v1.json`; the initially proposed 50,000+ range
+is superseded. Seed separation does not guarantee distinct MiniGrid layouts.
+Before opening, lock one configuration per task/arm with all training seeds
+42–44 and the last completed checkpoint per run. The lock pins training settings,
+node and child weights, environment, reset hook, mask and evaluator source.
+`scripts/final_test_protocol.py` reserves/locks without evaluation;
+`scripts/eval_final.py --open` evaluates locked candidates with an exclusive claim.
+Report per-training-seed Wilson intervals and across-seed mean/range. If final
+results inform tuning, retire the manifest and reserve a new version. See
+[the complete protocol](protocols/2026-11-12_final_and_parity_experiments.md).
 
 Why the old rule had to go: MiniGrid's reward depends on path length. In environments with random start and goal positions (FourRooms), a policy that succeeds 100 % of the time typically still has reward std above 0.05, because path lengths differ from episode to episode, so the old rule can be impossible to satisfy regardless of learning quality. The PN-4 FourRooms run also used a relaxed 0.75 threshold in `train_pn4.py` while docs said 0.85; v2 retires both numbers.
 
@@ -937,7 +939,7 @@ resume: live environment and RNG states are not restored by this protocol.
 
 | v2 as it stood | v2 as amended | Reason |
 |---|---|---|
-| §5.3: a second seed set (20,000+), used once at freeze | plus a third **final** set (50,000+, 200 episodes), opened once through a hash-checked manifest | The held-out set was read repeatedly during development, so it cannot carry an "untouched" claim |
+| §5.3: a second seed set (20,000+), used once at freeze | plus a third **final** set (200 audited seed IDs), opened once through a hash-checked manifest | The held-out set was read repeatedly during development, so it cannot carry an "untouched" claim |
 
 ### Final evaluation reservation (2026-11-12)
 

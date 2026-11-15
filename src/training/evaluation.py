@@ -52,10 +52,6 @@ DEFAULT_N_CONSECUTIVE = 2
 # Disjoint by construction: the stopping set must never overlap the held-out set.
 STOPPING_SEED_BASE = 10_000
 HELDOUT_SEED_BASE = 20_000
-# The final test (v2 §5.3). Only scripts/eval_final.py may read it; tests/test_final_protocol.py
-# fails if any other file does.
-FINAL_SEED_BASE = 50_000
-DEFAULT_N_FINAL = 200
 
 
 def fixed_seeds(n: int = DEFAULT_N_EVAL, base: int = STOPPING_SEED_BASE) -> list[int]:
@@ -69,10 +65,6 @@ def stopping_seeds(n: int = DEFAULT_N_EVAL) -> list[int]:
 
 def heldout_seeds(n: int = DEFAULT_N_EVAL) -> list[int]:
     return fixed_seeds(n, HELDOUT_SEED_BASE)
-
-
-def final_seeds(n: int = DEFAULT_N_FINAL) -> list[int]:
-    return fixed_seeds(n, FINAL_SEED_BASE)
 
 
 def _wilson(successes: int, n: int, z: float) -> tuple[float, float]:
