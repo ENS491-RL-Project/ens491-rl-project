@@ -1,34 +1,105 @@
 # Status
 
-Where each track stands and what the open PRs close. Last updated: 2026-11-12.
+Where each track stands and what the open PRs close. Last updated: 2026-11-15.
 
-Until PRs #15–#17 merge and the next KB PR migrates it, [`ENS491_Project_State.md`](../ENS491_Project_State.md)
-stays authoritative; where the two disagree, Project_State wins. Measurements are in [`results.md`](results.md).
+Task-level status is under [Roadmap](#roadmap); measurements are in [`results.md`](results.md).
+Migrated from `ENS491_Project_State.md` on 2026-11-15; its last full text is in
+[`archive/ENS491_Project_State_2026-11-15.md`](../archive/ENS491_Project_State_2026-11-15.md).
 
 ## Tracks
 
 | Track | Done | Stopped / open | Next | Source |
 |---|---|---|---|---|
-| H Hierarchy (critical path) | H-0…H-6, H-6.8, H-6.9. 9 frozen nodes; `{2,1} solve_doorkey` depth 3, held-out 1.00 | H-7 and H-7a stopped: `{0,4} pickup_box` not STABLE under two specifications. `unlock_pickup` and H-7b (BlockedUnlockPickup) not run | Execution-mode decision, then UnlockPickup ([open-questions](open-questions.md)) | Project_State Track H; [`plans/2026-10-02_H7_summary.md`](../plans/2026-10-02_H7_summary.md) |
-| C Continual learning / PN | — | C-1, C-2, C-3 not started | C-2 on primitives first ([0003](decisions/0003-progressive-networks-off-critical-path.md)) | Project_State Track C |
-| R Recognition | — | R-1, R-3 not started. R-2: GRU work in open PRs #14, #18 | Review #14/#18; root selection after R-1 ([open-questions](open-questions.md)) | Project_State Track R; PRs #14, #18 |
-| G Growth | — | G-1…G-3 not started | Required this semester ([0007](decisions/0007-automatic-growth-in-scope.md)) | Project_State Track G |
-| UI | — | UI-1, UI-2 not started | — | Project_State Track UI |
+| H Hierarchy (critical path) | H-0…H-6, H-6.8, H-6.9. 9 frozen nodes; `{2,1} solve_doorkey` depth 3, held-out 1.00. Training/evaluation parity (PR #15, 2026-11-12); training parity audit and correct update counter (PR #16, 2026-11-15); every training run archived under `runs/training/`, freeze needs STABLE, no registry overwrite (PR #17, 2026-11-15) | H-7 and H-7a stopped: `{0,4} pickup_box` not STABLE under two specifications. `unlock_pickup` and H-7b (BlockedUnlockPickup) not run | Execution-mode decision, then UnlockPickup ([open-questions](open-questions.md)) | [Roadmap](#roadmap) Track H; [`plans/2026-10-02_H7_summary.md`](../plans/2026-10-02_H7_summary.md) |
+| C Continual learning / PN | — | C-1, C-2, C-3 not started | C-2 on primitives first ([0003](decisions/0003-progressive-networks-off-critical-path.md)) | [Roadmap](#roadmap) Track C |
+| R Recognition | R-2 in part: GRU task identification on 9 known tasks, 85 % task-episode macro accuracy at N ≥ 10 (PR #18, 2026-11-15) | R-1, R-3 not started. R-2: old-task accuracy and switching latency not measured | Task registry (R-3) and root selection ([open-questions](open-questions.md)) | [Roadmap](#roadmap) Track R; [`results.md`](results.md) |
+| G Growth | — | G-1…G-3 not started | Required this semester ([0007](decisions/0007-automatic-growth-in-scope.md)) | [Roadmap](#roadmap) Track G |
+| UI | — | UI-1, UI-2 not started | — | [Roadmap](#roadmap) Track UI |
 
 ## Open PRs
 
-| PR | Author | What it closes | KB follow-up when merged |
+| PR | Author | What it closes | Review | KB follow-up when merged |
+|---|---|---|---|---|
+| #5 refactor src/ structure | TulayEce | v1-era `src/` restructure, open since 2026-05-11 | Not reviewed | Decide: close or rebase onto v2 |
+
+## Waiting on a decision
+
+- Emir sets [0009](decisions/0009-max-decisions-per-frame.md)'s status (PR #15 merged with the per-frame design).
+- Owner of the strict-mask dead-end row in [open-questions](open-questions.md).
+
+## Roadmap
+
+Task definitions are in v2 §12. ⬜ not started · 🔄 in progress · ✅ done
+
+### Track H — Hierarchy (critical path)
+
+| # | Task | SP | Status |
 |---|---|---|---|
-| #15 Fix/train eval parity | mehmetpekpak | `OptionEnv` and `Executor` apply the same rules (parent timeout, strict mask at every depth, `max_decisions` per frame); amends v2 §4.4, §5.2, §13 | Confirm [0009](decisions/0009-max-decisions-per-frame.md); add its parity measurements to `results.md` |
-| #16 Fix/checkpoint and update count | mehmetpekpak | `load_into` fails on a missing weights file; `policy_updates` counts real `train()` calls; adds a training-parity audit plan | Note that `policy_updates` in older JSON reports is one too high; add the audit to `results.md` |
-| #17 Feat/training run provenance | mehmetpekpak | Run provenance store (`run_store.py`); also carries the #15 and #16 changes | Review after #15 and #16; check whether its v2 change touches a 🔒 rule (needs a decision file) |
-| #18 GRU policy identification | elifsu42 | GRU pipeline over 11 PPO policies; reported test window accuracy 73.38%, macro 77.33% (identifies policies, not task ids) | Add to `results.md`; update the GRU row in [open-questions](open-questions.md) |
-| #14 GRU pilot training | elifsu42 | Pilot GRU training and PPO rollout tests | Same as #18 |
-| #5 refactor src/ structure | TulayEce | v1-era `src/` restructure, open since 2026-05-11 | Decide: close or rebase onto v2 |
+| H-0 | Fix deterministic flag; document 0.75 / 0.85 mismatch | 1 | ✅ 2026-10-01 — 59/59 tests pass |
+| H-0.5 | Apply Part A amendments to v2 / CLAUDE.md / supervisor questions; pin deps, add sb3-contrib | 2 | ✅ 2026-10-01 — reqs resolve, MaskablePPO imports, 59/59 |
+| H-1 | `SkillNode`, `Frame`, `Executor` + unit tests (depth-5 synthetic graph) | 8 | ✅ 2026-10-01 — 108/108 tests (49 new) |
+| H-2 | Predicates + `SubgoalEnv` for T1, T2, T4; verify env IDs | 5 | ✅ 2026-10-01 — 150/150 tests; env IDs + budgets verified |
+| H-3 | `EvaluationMonitor`; re-evaluate legacy `col01` | 3 | ✅ 2026-10-01 — 171/171; col01 50/50 (but Empty-8x8 is layout-deterministic) |
+| H-4 | Train and freeze T1 `get_key`, T2 `open_door`, T4 `go_to_goal` | 5 | ✅ 2026-10-01 — all three FROZEN; held-out 1.00 / 1.00 / 0.92; F29 gate passed after retraining go_to_goal |
+| H-5 | `OptionEnv` + MaskablePPO; T3 `unlock_door` | 8 | ✅ 2026-10-01 — `{1,1} unlock_door` FROZEN, held-out 0.98 in 6k decisions; both C1 controls run |
+| H-6 | T5 `solve_doorkey` + C1 baselines (first hierarchical result) | 8 | ✅ 2026-10-02 — `{2,1} solve_doorkey` FROZEN, held-out **1.00** on 3 seeds, depth-3 stack confirmed. Flat PPO 300–450k env steps vs the composite's **~53k own / ~664k with children** (H-6.8 figures). The genuine-choice task gives a **negative** result after 100 policy updates (§4 of the summary) |
+| H-7a | Amendment 1: UnlockPickup only, `pickup_box` split into `drop_held` + `pickup_box` | — | ⛔ **Stopped at H-7a.2 on A2b** (2026-10-02). `{0,9} drop_held` FROZEN (30,000 steps on all 3 seeds; 1.00 at the handoff). `{0,4} pickup_box` (spec 2) **not stable in 1,000,000 on any seed** (held-out 0.70 / 0.66 / 0.64): 0.96 from the box's room, 0.58–0.60 from the left room / real handoff — the failures are in left-room starts, measured twice; why is not established (close-out §2, K.4). **H-7a.5 (evaluation only, one checkpoint):** at the real handoff all 20 deterministic failures are state repeats (16 left/right, 3 pickup/drop, 1 forward into a blocked cell), so the pre-set reading is **loop**; the same 50 seeds under sampling give 140/150 (not a gate, nothing frozen). H-7a summary §10. **Execution-mode audit (evaluation only, seeds 40000–40049):** under `STOCHASTIC` every selector and every primitive samples; 5 of 28 rows are mode-sensitive (≥ 0.10, deterministic lower in all five); 39 of 39 deterministic failures of frozen nodes are state repeats; the scripted UnlockPickup sequence scores 32/50 deterministic and 147/150 all-sampled (TRAINING `pickup_box`; not a gate); flat PPO on UnlockPickup is not available in either mode (no model saved). H-7a summary §12. `unlock_door` re-measured at `n_steps` 64: 32,869–34,877 own. `unlock_pickup` and the option-set baseline not run. No third specification (amendment rule); the decision is the advisor's. H-7b (BlockedUnlockPickup) not planned yet. See `plans/2026-10-02_H7_summary.md` |
+| H-7 | T6–T9b reuse and depth experiment | 8 | ⛔ **Stopped at H-7.3** (2026-10-02); superseded by H-7a above. H-7.0–H-7.2 done: v2 amended (Part A), pre-flight passed (V1–V7 reproduce; 0/500 unsolvable layouts; A1 `unlock_door` transfers to UnlockPickup at **0.98**), nine flat baselines launched. `{0,4} pickup_box` **not stable in 600,000 env steps on any seed** (held-out 0.28 / 0.40 / 0.24, still rising) — plan A2 is a stop. Flat PPO: Unlock STABLE at 350–450k; UnlockPickup and BlockedUnlockPickup **> 3,000,000, best SR 0.00** on all 3 seeds (censored). See `plans/2026-10-02_H7_summary.md` |
+| H-6.9 | Why the choice selector did not learn | 1 | ✅ 2026-10-02 — task built as designed (400/400); the selector's network reads the door colour supervised at 0.940 from 1,000 examples and 0.997 from 4,000; between the pre-set thresholds, so no verdict. H-6 summary §10 |
+| H-6.8 | Advisor corrections to H-6: fair choice run, distinct-policy evaluations, stale numbers | 3 | ✅ 2026-10-02 — v2 §5.3 gets an `eval_every` floor; composites move to `n_steps = 64`; choice task rerun at 100 updates (A5 fails, reported); `{0,2} open_door` re-measured at 0.83; regression 8 of 8. H-6 summary §9 |
 
-## Next KB PR (after #15–#17 merge)
+### Track C — Continual learning / PN
 
-- Move Project_State's remaining content into `status.md` and `results.md`; turn Project_State into a pointer or archive it.
-- Remove the "Project_State stays authoritative" line here and in `CLAUDE.md` (Docs and Decisions sections).
-- After #15: `CLAUDE.md`'s `max_decisions` rule says it is counted per composite frame; Emir sets [0009](decisions/0009-max-decisions-per-frame.md)'s status.
-- After #17: if it adds a hard rule (run provenance), add it to `CLAUDE.md`.
+| # | Task | SP | Status |
+|---|---|---|---|
+| C-1 | FourRooms diagnosis with plain PPO | 2 | ⬜ |
+| C-2 | Forward transfer: laterals vs none | 5 | ⬜ |
+| C-3 | Retention check after each new task | 2 | ⬜ |
+
+### Track R — Recognition
+
+| # | Task | SP | Status |
+|---|---|---|---|
+| R-1 | AE normalization, calibration, ROC-AUC; single vs per-task AE | 5 | ⬜ |
+| R-2 | GRU dataset, accuracy vs N, old-task accuracy | 5 | 🔄 2026-11-15 (PR #18) — dataset and accuracy vs N done: 9 tasks, task-episode macro 63 / 83 / 85 / 85 / 85 % at N = 1 / 5 / 10 / 20 / 50 (3 seeds); old-task accuracy not measured |
+| R-3 | Task registry: GRU task id → root node | 3 | ⬜ |
+
+### Track G — Growth (after H-6)
+
+| # | Task | SP | Status |
+|---|---|---|---|
+| G-1 | Lifecycle API: declare → train → stabilize → freeze → register | 5 | ⬜ |
+| G-2 | Composite-first heuristic + ablation | 8 | ⬜ |
+| G-3 | AE-triggered task declaration | 5 | ⬜ |
+
+### Track UI
+
+| # | Task | SP | Status |
+|---|---|---|---|
+| UI-1 | GUI on real runs: DAG, live stack, traces, node stats | 8 | ⬜ |
+| UI-2 | Import external policy as a frozen primitive | 3 | ⬜ |
+
+### Stretch
+
+| # | Task | SP | Status |
+|---|---|---|---|
+| P-1 | Planning over initiation / goal predicates | 13 | ⬜ |
+
+### Critical path
+
+```
+H-0 → H-1 → H-2 → H-3 → H-4 → H-5 → H-6 → H-7
+```
+
+In parallel, never blocking the critical path: `C-1, C-2, C-3`, `R-1, R-2, R-3`, `UI-1` (after H-1). Growth (`G-*`) starts after H-6.
+
+### Story points
+
+| SP | Meaning |
+|----|---------|
+| 1 | Trivial. Already know exactly how to do it. |
+| 2 | Straightforward. Minor unknowns. |
+| 3 | Moderate. A few unknowns. |
+| 5 | Significant. Design decision + implementation together. |
+| 8 | Complex. Multiple unknowns, requires iteration. |
+| 13 | Very complex. Should probably be broken into subtasks. |
