@@ -1,0 +1,88 @@
+{
+  "node_id": "{1,4} unlock_matching_2d",
+  "n": 50,
+  "controls": {
+    "oracle_matching_key": {
+      "n_episodes": 50,
+      "successes": 45,
+      "success_rate": 0.9,
+      "wilson_lower": 0.7864,
+      "wilson_upper": 0.9565,
+      "mean_length": 24.22,
+      "seed_base": 20000,
+      "timeouts": 5,
+      "reselections": 0
+    },
+    "forced_wrong_key": {
+      "n_episodes": 50,
+      "successes": 0,
+      "success_rate": 0.0,
+      "wilson_lower": 0.0,
+      "wilson_upper": 0.0713,
+      "mean_length": 78.76,
+      "seed_base": 20000,
+      "timeouts": 50,
+      "reselections": 0
+    },
+    "always_yellow": {
+      "n_episodes": 50,
+      "successes": 22,
+      "success_rate": 0.44,
+      "wilson_lower": 0.3116,
+      "wilson_upper": 0.5769,
+      "mean_length": 46.06,
+      "seed_base": 20000,
+      "timeouts": 28,
+      "reselections": 0
+    },
+    "always_blue": {
+      "n_episodes": 50,
+      "successes": 23,
+      "success_rate": 0.46,
+      "wilson_lower": 0.3297,
+      "wilson_upper": 0.596,
+      "mean_length": 56.92,
+      "seed_base": 20000,
+      "timeouts": 27,
+      "reselections": 0
+    },
+    "random_over_available": {
+      "n_episodes": 50,
+      "successes": 11,
+      "success_rate": 0.22,
+      "wilson_lower": 0.1275,
+      "wilson_upper": 0.3524,
+      "mean_length": 54.98,
+      "seed_base": 20000,
+      "timeouts": 39,
+      "reselections": 6
+    },
+    "door_colours": {
+      "blue": 27,
+      "yellow": 23
+    }
+  },
+  "decision1_masks": {
+    "blue": [
+      [
+        true,
+        true,
+        true
+      ]
+    ],
+    "yellow": [
+      [
+        true,
+        true,
+        true
+      ]
+    ]
+  },
+  "gates": {
+    "wrong_key_is_final": true,
+    "ceiling_at_least_0.80": true,
+    "mask_same_for_both_colours": true,
+    "colours_balanced": true
+  },
+  "passed": true
+}

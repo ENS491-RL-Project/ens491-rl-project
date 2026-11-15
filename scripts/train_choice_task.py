@@ -76,6 +76,7 @@ from src.training.evaluation import (  # noqa: E402
 )
 from src.training.node_trainer import (  # noqa: E402
     COMPOSITE_N_STEPS,
+    RandomOverAvailable,
     execution_env_factory,
     freeze_and_save,
     load_frozen_primitive,
@@ -179,18 +180,20 @@ def open_door_tk_spec():
     )
 
 
-def build_t11(children):
+def build_t11(children, max_decisions=T11_MAX_DECISIONS):
+    # [W3] 2 decisions make a wrong key or a wasted pick final: a new node, not a new env.
+    two = max_decisions == 2
     return SkillNode(
-        "{1,2} unlock_matching",
+        "{1,4} unlock_matching_2d" if two else "{1,2} unlock_matching",
         children=children,
         goal=door_open(),
         # [H-6 A.3] Nothing to unlock unless the door is locked, and the choice
         # this node exists to make is only available with an empty hand.
         initiation=all_of(door_locked(), carrying_nothing()),
         timeout=T11_TIMEOUT,
-        max_decisions=T11_MAX_DECISIONS,
+        max_decisions=max_decisions,
         env_ids=[DOORKEY],
-        m=2,
+        m=4 if two else 2,
     )
 
 
@@ -403,7 +406,7 @@ def train_one(args, children, hook, *, initiation_masking: bool):
     separately, and each is scored under the mask it was trained with.
     """
     label = "strict" if initiation_masking else "goal_only"
-    node = build_t11(children)
+    node = build_t11(children, args.max_decisions)
     probe_seeds = stopping_seeds(args.probe_n)
 
     # Logged at EVERY evaluation, not only at the end: a policy converging to
@@ -455,7 +458,7 @@ def stage_composite(args, registry) -> dict:
     hook = two_keys(COLORS)
     seeds = heldout_seeds(args.n_eval)
     out: dict = {
-        "seed": args.seed, "node_id": "{1,2} unlock_matching", "env_id": DOORKEY,
+        "seed": args.seed, "node_id": build_t11(children, args.max_decisions).id, "env_id": DOORKEY,
         "hook": hook.spec,
         "children": [{"id": c.id, "spec_hash": c.spec_hash()} for c in children],
         "conditions": {},
@@ -466,7 +469,7 @@ def stage_composite(args, registry) -> dict:
         else [(args.mask, args.mask == "strict")]
     )
     if not args.no_freeze:
-        registry.ensure_can_save(build_t11(children))     # fail now, not after training
+        registry.ensure_can_save(build_t11(children, args.max_decisions))     # fail now, not after training
     nodes = {}
     for label, masking in conditions:
         node, report = train_one(args, children, hook, initiation_masking=masking)
@@ -490,6 +493,34 @@ def stage_composite(args, registry) -> dict:
                   f"  {'> chance' if d['above_chance'] else 'NOT above chance'}")
         print(f"    first child selected: {fd['first_child_selected']}")
 
+    # ---- [W3] the pre-set endpoint: first key on fresh seeds ----------------
+    if args.max_decisions == 2:
+        fresh = FRESH_SEEDS[:10] if args.smoke else FRESH_SEEDS
+        out["fresh"] = {
+            "seeds": [fresh[0], fresh[-1]],
+            "controls": scripted_controls(children, hook, fresh),
+            "first_decision": {label: first_decision_accuracy(nodes[label], hook, fresh,
+                                                              initiation_masking=masking)
+                               for label, masking in conditions},
+            "learned_success": {label: evaluate_node(nodes[label], execution_env_factory(DOORKEY, hook),
+                                                     seeds=fresh, initiation_masking=masking).as_dict()
+                                for label, masking in conditions},
+        }
+        if "goal_only" in nodes:
+            fd = out["fresh"]["first_decision"]["goal_only"]
+            out["w3"] = {
+                "first_key_accuracy": fd["accuracy"],
+                "by_colour": {c: d["accuracy"] for c, d in fd["by_colour"].items()},
+                "no_key_share": round(fd["episodes_with_no_key_pick"] / len(fresh), 4),
+            }
+            w = out["w3"]
+            w["meets_criterion"] = bool(w["first_key_accuracy"] >= 0.90 and w["no_key_share"] <= 0.05
+                                        and len(w["by_colour"]) == 2
+                                        and all(a >= 0.80 for a in w["by_colour"].values()))
+            print(f"\nW3, goal-only, {len(fresh)} fresh seeds: first key {w['first_key_accuracy']:.3f} "
+                  f"{w['by_colour']}  no key {w['no_key_share']:.3f}  "
+                  f"-> {'MEETS' if w['meets_criterion'] else 'does NOT meet'} the criterion")
+
     # ---- the control arms, each scored under its own mask ------------------
     #
     # An arm's NAME has to match the mask it is scored under. The first H-6.8 run
@@ -504,7 +535,7 @@ def stage_composite(args, registry) -> dict:
         wanted = ("random_over_available", "random_strict_mask",
                   "learned_strict_mask" if masking else "learned")
         got = run_arms(
-            lambda: build_t11(children), DOORKEY, hook, seeds,
+            lambda: build_t11(children, args.max_decisions), DOORKEY, hook, seeds,
             learned_policy=None if masking else nodes[label].policy,
             learned_strict_policy=nodes[label].policy if masking else None,
             rng_seed=args.seed, arms=wanted,
@@ -560,6 +591,86 @@ def stage_composite(args, registry) -> dict:
         print(f"\n  saved the {best} condition ({node.status.value}) to "
               f"{registry.node_dir(node.id).name}/")
     return out
+
+
+FRESH_SEEDS = list(range(80000, 80500))      # [W3] used by nothing else in the repo
+
+
+class Plan:
+    """A selector that follows child indices fixed at reset. Controls only: it is told the door's colour."""
+
+    def __init__(self) -> None:
+        self.plan, self.i = [], 0
+
+    def select(self, obs, mask, deterministic: bool = True) -> int:
+        idx = self.plan[min(self.i, len(self.plan) - 1)]
+        self.i += 1
+        return idx
+
+
+def scripted_controls(children, hook, seeds) -> dict:
+    """[W3] Success of fixed selections under 2 decisions: ceiling, forced wrong key, constants, random."""
+    key, other = {"yellow": 0, "blue": 1}, {"yellow": 1, "blue": 0}   # children: yellow, blue, opener
+    plans = {
+        "oracle_matching_key": lambda c: [key[c], 2],
+        "forced_wrong_key": lambda c: [other[c], 2],
+        "always_yellow": lambda c: [0, 2],
+        "always_blue": lambda c: [1, 2],
+    }
+    out, colours = {}, {}
+    for name, choose in plans.items():
+        node = build_t11(children, 2)
+        node.policy = policy = Plan()
+
+        def prep(env, obs):
+            colour = build_state_view(env, 0).door().color
+            if name == "oracle_matching_key":
+                colours[colour] = colours.get(colour, 0) + 1
+            policy.plan, policy.i = choose(colour), 0
+            return obs
+
+        out[name] = evaluate_node(node, execution_env_factory(DOORKEY, hook),
+                                  seeds=list(seeds), prepare=prep).as_dict()
+    node = build_t11(children, 2)
+    node.policy = RandomOverAvailable(0)
+    out["random_over_available"] = evaluate_node(node, execution_env_factory(DOORKEY, hook),
+                                                 seeds=list(seeds)).as_dict()
+    out["door_colours"] = colours
+    return out
+
+
+def stage_gate2d(args, registry) -> dict:
+    """[W3] The four gates of the plan, before any training."""
+    children = load_choice_children(registry, device=args.device, third=args.third_child)
+    hook = two_keys(COLORS)
+    seeds = heldout_seeds(args.n_eval)
+    res = scripted_controls(children, hook, seeds)
+    masks: dict[str, set] = {}
+    env = execution_env_factory(DOORKEY, hook)()
+    try:
+        for seed in seeds:
+            env.reset(seed=seed)
+            sv = build_state_view(env, 0)
+            masks.setdefault(sv.door().color, set()).add(tuple(c.available(sv) for c in children))
+    finally:
+        env.close()
+    gates = {
+        "wrong_key_is_final": res["forced_wrong_key"]["successes"] <= 1,
+        "ceiling_at_least_0.80": res["oracle_matching_key"]["success_rate"] >= 0.80,
+        "mask_same_for_both_colours": len(masks) == 2 and len({frozenset(m) for m in masks.values()}) == 1,
+        "colours_balanced": len(res["door_colours"]) == 2
+                            and min(res["door_colours"].values()) >= 0.30 * len(seeds),
+    }
+    for k in ("oracle_matching_key", "forced_wrong_key", "always_yellow", "always_blue",
+              "random_over_available"):
+        print(f"  {k:<24} {res[k]['successes']}/{res[k]['n_episodes']}  mean env steps {res[k]['mean_length']:.1f}")
+    print(f"  door colours {res['door_colours']}  decision-1 masks "
+          f"{ {c: sorted(m) for c, m in masks.items()} }")
+    for k, v in gates.items():
+        print(f"  gate {k}: {'pass' if v else 'FAIL'}")
+    return {"node_id": build_t11(children, 2).id, "n": len(seeds), "controls": res,
+            "decision1_masks": {c: sorted(map(list, m)) for c, m in masks.items()},
+            "gates": gates, "passed": all(gates.values())}
 
 
 def first_decision_accuracy(node, hook, seeds, *, initiation_masking=False) -> dict:
@@ -662,7 +773,9 @@ def first_decision_accuracy(node, hook, seeds, *, initiation_masking=False) -> d
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=["primitives", "f29", "composite"],
+    ap.add_argument("--max-decisions", type=int, choices=[2, T11_MAX_DECISIONS], default=T11_MAX_DECISIONS,
+                    help="2 = W3's {1,4} unlock_matching_2d, where a wrong pick is final")
+    ap.add_argument("--stage", choices=["primitives", "f29", "composite", "gate2d"],
                     required=True)
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--only", nargs="*", default=None)
@@ -709,9 +822,12 @@ def main() -> int:
     elif args.stage == "f29":
         result = stage_f29(args, registry)
         default = f"choice_f29_{args.third_child}"
+    elif args.stage == "gate2d":
+        result = stage_gate2d(args, registry)
+        default = "unlock_matching_2d_gate"
     else:
         result = stage_composite(args, registry)
-        default = f"unlock_matching_s{args.seed}"
+        default = f"unlock_matching{'_2d' if args.max_decisions == 2 else ''}_s{args.seed}"
 
     suffix = "_smoke" if args.smoke else ""
     path = RUNS / (args.out_name or f"{default}{suffix}.json")
