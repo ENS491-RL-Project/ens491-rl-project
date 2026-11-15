@@ -1,8 +1,8 @@
 # 0013 — C-2 uses a frozen v2 primitive as the lateral source, with an untrained-source control
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-15   Source: [`plans/2026-11-15_W7_pn_lateral_plan.md`](../../plans/2026-11-15_W7_pn_lateral_plan.md) (revision 7)
-Reviewed by Emir: no
+Reviewed by Emir: yes — 2026-11-15 (line set at his instruction in chat)
 
 ## Decision
 - C-2's lateral source is the frozen `{0,2} open_door`, not the legacy `runs/pn4/col01` (v2 §10,
