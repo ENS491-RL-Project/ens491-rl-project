@@ -478,8 +478,11 @@ Skill nodes cannot forget: they are frozen. The **recognition layer can**: a GRU
   ancestors: O(chain length) forward passes per env step, per env. The chain length is capped by config
   (default 1) and the cost is reported in C-2's wall-clock numbers.
 - **C-2's source must match the pipeline [A: F23].** The legacy `runs/pn4/col01` was trained on Empty-8x8
-  with raw-integer observations and is incompatible with the normalization of §5.1. C-2 retrains its own
-  lateral source under the current pipeline rather than reusing it. Not on the critical path.
+  with raw-integer observations and is incompatible with the normalization of §5.1. C-2 neither reuses
+  it nor retrains it: its lateral source is the frozen `{0,2} open_door`, already trained under the
+  current pipeline (decision 0013). C-2 alone also has a control arm whose lateral source is an
+  untrained network that is not a node; it is never registered, and no library node may be built
+  this way (an experiment-only exception to the FROZEN-source rule above). Not on the critical path.
 - Laterals between **composite** nodes are out of scope for v2.
 - PN is **not** on the critical path. The hierarchy works with plain PPO primitives.
 
@@ -537,7 +540,7 @@ DECLARED ──train──▶ TRAINING ──eval: SR ≥ 0.90 twice──▶ ST
 | `GRUTaskIdentifier` | + task registry wiring | Extend |
 | `scripts/demo_run.py` (mock policies, `randn` obs) | real experiment scripts | Retire once H-6 produces real runs |
 | GUI (reads `demo_state.pkl`) | reads real run directories: graph, active stack, traces | Rewrite panels (UI-1) |
-| `runs/pn4/col01` (Empty-8x8, stable) | legacy primitive; lateral source for `go_to_goal` in C-2 | Keep |
+| `runs/pn4/col01` (Empty-8x8, stable) | legacy primitive; raw-integer, so not a lateral source for a normalized node without retraining; C-2 does not use it (decision 0013) | Keep |
 
 Tests: existing v1 tests stay green until the module they cover is replaced; each replacement lands with its own tests.
 
@@ -757,7 +760,7 @@ Story points as in `ENS491_Project_State.md`. Status lives there; this table def
 | # | Task | SP |
 |---|---|---|
 | C-1 | FourRooms diagnosis: plain PPO, no laterals, same budget. Classifies the PN-4 failure for the report | 2 |
-| C-2 | Forward transfer: `go_to_goal` with vs without lateral from legacy `col01`; repeat on T1/T2 | 5 |
+| C-2 | Forward transfer: `go_to_goal` with vs without lateral from the frozen `{0,2} open_door`, plus an untrained-source control (decision 0013); repeat on T1/T2 | 5 |
 | C-3 | Retention check: re-evaluate all FROZEN nodes after each new task | 2 |
 
 **Track R: Recognition (parallel)**
@@ -921,3 +924,10 @@ These experimental runs never replace the canonical frozen registry implicitly.
 that construct policies without training must explicitly mark them STABLE.
 The saved SB3 model includes optimizer state, but is not a claim of exact training
 resume: live environment and RNG states are not restored by this protocol.
+
+### C-2 lateral source (2026-11-15, decision 0013)
+
+C-2's lateral source is the frozen `{0,2} open_door` instead of the legacy `col01` or a retrained source,
+and C-2 alone has a control arm whose lateral source is an untrained network that is not a node, so v2
+itself carries this exception to §7's FROZEN-source rule (§7 [F23], §10, §12; plan
+`plans/2026-11-15_W7_pn_lateral_plan.md`).
