@@ -380,8 +380,8 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
    two different runs; the report gives both with what each counts.
 5. Not a disagreement (per Emir): status.md "Nothing frozen" vs the W1b branch is a branch difference.
 6. Resolved by the `d7be0a2` update: W1b-1 is merged and reported as completed (§2.3.7).
-7. **`runs/v2/0-4_pickup_box/meta.json` → `frozen_under: "0014 (Proposed)"`**, while decision 0014 is `Accepted` (2026-11-15) and `w1b_register.json` says "0014 (Accepted 2026-11-15)". The meta was written at freezing time and not updated at registration. The report follows the decision file.
-8. The W1b-1 summary still says 0014 is `Proposed` (written before acceptance); `status.md`, `open-questions.md` and the decision file say Accepted. Not a numeric disagreement.
+7. **`runs/v2/0-4_pickup_box/meta.json` → `frozen_under: "0014 (Proposed)"`**, while decision 0014 is `Accepted` (2026-11-15) and `w1b_register.json` says "0014 (Accepted 2026-11-15)". The meta was written at freezing time and not updated at registration. The report follows the decision file. **Resolved in PR 34:** the field now reads "0014 (Accepted 2026-11-15)"; `w1b_pickup_box_freeze.json` keeps the value written at freeze time.
+8. The W1b-1 summary still says 0014 is `Proposed` (written before acceptance); `status.md`, `open-questions.md` and the decision file say Accepted. Not a numeric disagreement. **Resolved in PR 34:** an update note at the top of the summary.
 
 ## Brief items the repo contradicts or qualifies
 
