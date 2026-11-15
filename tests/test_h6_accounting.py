@@ -242,7 +242,7 @@ def test_load_frozen_composite_round_trips(tmp_path):
     registry = NodeRegistry(tmp_path)
     registry.save(node, extra_meta={"env_steps_own": 1234})
 
-    fresh = _real_composite(_real_children())
+    fresh = _real_composite(children)   # the same children: 0016 pins their weights
     load_frozen_composite(fresh, registry, UNLOCK, NO_HOOK)
     assert fresh.status is NodeStatus.FROZEN
     assert fresh.spec_hash() == node.spec_hash()

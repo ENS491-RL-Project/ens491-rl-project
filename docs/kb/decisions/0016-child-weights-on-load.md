@@ -1,8 +1,8 @@
 # 0016 — A parent's checkpoint records its children's weight hashes; `spec_hash` stays as it is
 
-Status: Proposed
-Date: 2026-11-15   Approved by: —   Source: code audit, 2026-11 (finding "`spec_hash` does not verify behaviour")
-Reviewed by Emir: no
+Status: Accepted 2026-11-15
+Date: 2026-11-15   Approved by: Emir (2026-11-15, relayed by Mehmet P.)   Source: code audit, 2026-11 (finding "`spec_hash` does not verify behaviour")
+Reviewed by Emir: yes — 2026-11-15
 
 ## Decision
 - `spec_hash` is unchanged: it covers what a node was asked to do (env, predicate names, timeout,
@@ -25,14 +25,19 @@ Reviewed by Emir: no
 - Hashing predicate source code: changes with formatting and Python version; machines differ.
 
 ## Evidence
-Not run. The experiment that settles it: with the check implemented, (a) every frozen node in
-`runs/v2/` loads and `scripts/eval_regression.py` gives the recorded numbers, and (b) a parent
-loaded on a child whose weights were swapped for another seed's is refused. To be recorded in
-[`results.md`](../results.md).
+Run 2026-11-15, after acceptance ([`results.md`](../results.md)):
+- `scripts/eval_regression.py`: the 9 frozen nodes it loads reproduce their recorded held-out
+  scores exactly. Their `meta.json` files predate this decision and carry no child hashes, so this
+  shows only that old checkpoints still load; no existing parent is pinned until it is saved again.
+- `tests/test_node_registry.py::test_parent_refuses_a_child_with_other_weights`: a parent loads on
+  the children it was saved with, is refused on a same-spec child with other weights, and a
+  checkpoint without the field loads.
+- The check found one such load in the tests (`test_load_frozen_composite_round_trips` rebuilt the
+  children with new random weights); the test now reuses the saved children.
 
 ## Affects
 [`src/skills/registry.py`](../../../src/skills/registry.py), `tests/test_node_registry.py`; v2 §2
-(`spec_hash` 🔒, wording only). No code is changed until this is Accepted.
+(`spec_hash` 🔒, one sentence added).
 
 ## Open point
 A renamed-but-identical predicate still changes `spec_hash`, and a changed predicate body under the

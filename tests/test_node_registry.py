@@ -153,3 +153,30 @@ def test_flat_baseline_seeds_get_separate_directories(tmp_path):
     assert dirs[0] != dirs[1] and all((d / "meta.json").exists() for d in dirs)
     with pytest.raises(FileExistsError):
         reg.ensure_can_save(make_node(), run_dir=seed_dir(reg, make_node().id, 43))
+
+
+def test_parent_refuses_a_child_with_other_weights(tmp_path):
+    """Decision 0016: same spec, other weights (another seed) is not the same child."""
+    reg = NodeRegistry(tmp_path)
+
+    def parent_over(child):
+        p = SkillNode("{1,1} p", children=[child], goal=NEVER, timeout=300)
+        p.policy = TinyPolicy()
+        p.status = NodeStatus.STABLE
+        return p
+
+    child = make_node("{0,1} a")
+    parent = parent_over(child)
+    parent.freeze()
+    reg.save(parent)
+
+    reg.load_into(parent_over(child))                      # same weights: loads
+    with pytest.raises(SpecMismatch, match="other weights"):
+        reg.load_into(parent_over(make_node("{0,1} a")))   # fresh init, same spec
+
+    # A checkpoint saved before 0016 has no hashes and still loads.
+    meta_path = reg.node_dir(parent.id) / "meta.json"
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    del meta["children_policy_sha256"]
+    meta_path.write_text(json.dumps(meta), encoding="utf-8")
+    reg.load_into(parent_over(make_node("{0,1} a")))

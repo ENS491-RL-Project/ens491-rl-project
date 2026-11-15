@@ -61,7 +61,9 @@ class SkillNode:
 spec it was trained under. `spec_hash` is a hash over: env id(s), the source of the `goal` and
 `initiation` predicates, `timeout`, the observation pipeline (including the normalization flag of
 §5.1), and the `spec_hash` of every child. The node registry refuses to load a node whose stored hash
-does not match the spec being requested. Without this, changing a predicate silently invalidates every
+does not match the spec being requested. The hash does not cover weights: a composite's checkpoint
+also records each child's weight hash, and the registry refuses a child with other weights
+(decision 0016, 2026-11-15). Without this, changing a predicate silently invalidates every
 frozen node built on it — the v1 checkpoints in `runs/pn4/` already show the failure mode: their
 `meta.json` records neither seed nor env id.
 

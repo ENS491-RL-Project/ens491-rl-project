@@ -29,6 +29,12 @@ from src.skills.node import SkillNode
 
 META_NAME = "meta.json"
 STATE_DICT_NAME = "policy_state_dict.pt"
+CHILD_HASHES = "children_policy_sha256"
+
+
+def _child_hashes(node: SkillNode) -> list[Optional[str]]:
+    from src.training.run_store import policy_hash   # here: src.training imports src.skills
+    return [policy_hash(c.policy) for c in node.children]
 
 
 class SpecMismatch(RuntimeError):
@@ -92,6 +98,8 @@ class NodeRegistry:
         meta.update(node.meta)
         if extra_meta:
             meta.update(extra_meta)
+        if node.children:
+            meta[CHILD_HASHES] = _child_hashes(node)   # decision 0016; set last, never stale
 
         (d / META_NAME).write_text(json.dumps(meta, indent=2, sort_keys=True), encoding="utf-8")
         return d
@@ -129,6 +137,16 @@ class NodeRegistry:
                 f"but this node is {wanted}.\n"
                 f"  stored spec: {json.dumps(meta.get('spec', {}), sort_keys=True)}\n"
                 f"  wanted spec: {json.dumps(node.spec(), sort_keys=True)}"
+            )
+
+        # Decision 0016: spec_hash does not cover weights, so a parent also pins its
+        # children's. A checkpoint saved before 0016 has no such field and loads as before.
+        pinned = meta.get(CHILD_HASHES)
+        if pinned is not None and pinned != _child_hashes(node):
+            raise SpecMismatch(
+                f"{node.id}: checkpoint in {d} was trained on children with other weights.\n"
+                f"  stored: {dict(zip(meta.get('children', []), pinned))}\n"
+                f"  given:  {dict(zip((c.id for c in node.children), _child_hashes(node)))}"
             )
 
         if require_frozen and meta.get("status") != NodeStatus.FROZEN.value:
