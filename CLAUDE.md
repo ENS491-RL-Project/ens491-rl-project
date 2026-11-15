@@ -26,15 +26,16 @@ Revisit committing it only if the LLM semantic pass over docs/ is adopted (that 
 Hierarchical continual RL agent on **MiniGrid**. Every learned task becomes a frozen, reusable **skill node**; composite nodes select among earlier frozen nodes as options, to any depth. Freezing prevents forgetting; an autoencoder (novelty) and a GRU (task id) decide when a task is new and which known task is running. Curriculum: Unlock, DoorKey, UnlockPickup, BlockedUnlockPickup (v2 §11).
 
 ## Docs
-
-- `docs/ENS491_Target_Architecture_v2.md` is **the reference design** and overrides every other doc. Change it first before changing the design in code.
-- `docs/ENS491_Project_State.md`: status of every roadmap task (H-*, C-*, R-*, G-*) and the open empirical questions. Check it before starting roadmap work; update it when a task finishes.
-- `docs/plans/`: per-task plans and summaries. The newest `*_session_handoff.md` says where work stopped.
-- `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections still apply. `docs/ENS491_Recursive_Hierarchy_Design.md` is the superseded v1 design (history only).
+- Start at `docs/kb/README.md`. Where the project stands: `docs/kb/status.md`; measurements: `docs/kb/results.md`.
+  `docs/ENS491_Project_State.md` is a pointer since 2026-11-15; do not update it.
+- `docs/ENS491_Target_Architecture_v2.md` is the reference design and overrides every other doc.
+- Why a design choice was made: `docs/kb/decisions/`. Open decisions: `docs/kb/open-questions.md`.
+- `docs/ENS491_Module_Interfaces.md`: only its AE and GRU sections apply; v2 §6 overrides where they differ.
+- `docs/plans/` holds raw plans and summaries; `docs/archive/` is history only.
 
 ## Code layout
 
-- v2 (extend this): `src/skills/` (`SkillNode`, `Executor`, `NodeRegistry`, predicates, `StateView`), `src/envs/` (`apply_obs_pipeline`, `SubgoalEnv`, `OptionEnv`), `src/training/` (`node_trainer`, `evaluation` = stabilization via `StabilityCriterion` / `EvaluationCallback`, `device`). Experiments are `scripts/train_*.py`, `scripts/eval_*.py`; runs go to `runs/v2/`.
+- v2 (extend this): `src/skills/` (`SkillNode`, `Executor`, `NodeRegistry`, predicates, `StateView`), `src/envs/` (`apply_obs_pipeline`, `SubgoalEnv`, `OptionEnv`), `src/training/` (`node_trainer`, `evaluation` = stabilization via `StabilityCriterion` / `EvaluationCallback`, `device`). Experiments are `scripts/train_*.py`, `scripts/eval_*.py`; frozen checkpoints and result JSONs go to `runs/v2/` (tracked), every training attempt is archived under `runs/training/` by `src/training/run_store.py` (ignored).
 - Reused from v1: `ColumnPolicy` / `LateralMlpExtractor` (primitive network), `AutoencoderModule`, `GRUTaskIdentifier`, seeding/checkpoint code in `pn_trainer.py`.
 - v1-only, do not extend: `src/options/` (`meta_controller.py`, `option.py`, `task_lifecycle.py`) and `src/continual_learning/stabilization.py`. Replace per v2 §10. Do not delete `stabilization.py` while `ColumnTrainer` imports it. Keep their tests green until the module is replaced; every replacement lands with its own tests.
 
@@ -48,7 +49,7 @@ pytest tests/test_skill_node.py -v   # one file
 streamlit run src/gui/app.py         # GUI
 ```
 
-Code graph (`graphify-out/`, gitignored, built locally): set up once per clone with `uv tool install graphifyy`, `graphify hook install` and `graphify update .`; graphify's git hooks then rebuild it after commits, pulls and branch switches. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
+Code graph (`graphify-out/`, gitignored, built locally): set up once per clone with `python scripts/setup_dev.py` inside the `ens491` env (installs `requirements-dev.txt`, which pins graphify, then runs `graphify hook install` and `graphify update .`); graphify's git hooks then rebuild it after commits, pulls and branch switches. If the `graphify` command is not installed, skip the `## graphify` rules below and search the code normally.
 
 ## Stack
 
@@ -73,7 +74,7 @@ SkillNode {n,m}
 - **Reward:** from the node's **own `goal` predicate**, never the env reward, at every level: `1 − 0.9·steps/timeout` on success, else 0.
 - **Masking is goal-only:** `available(s) = not goal(s) and (primitive or any child available)`. `initiation` is task metadata for reset hooks and does **not** mask.
 - **Roots:** the GRU's task id selects the root node through a task registry.
-- **Stabilization:** STABLE = success rate ≥ 0.90 *and* Wilson 95% lower bound ≥ 0.80 in two consecutive deterministic 50-episode evaluations on fixed seeds; the quoted success rate comes from a second, held-out seed set. Same rule for primitives and composites. (The v1 reward mean/std rule is retired.)
+- **Stabilization:** STABLE = success rate ≥ 0.90 *and* Wilson 95% lower bound ≥ 0.80 in two consecutive deterministic 50-episode evaluations on fixed seeds, at least one policy update apart; the quoted success rate comes from a second, held-out seed set. Same rule for primitives and composites. (The v1 reward mean/std rule is retired.)
 
 ## Hard rules
 
@@ -89,12 +90,15 @@ SkillNode {n,m}
 - Level `n` is derived from children, never assigned by hand.
 - Validate at creation: `timeout ≥ max(child.timeout)`, root `timeout ≤ env.max_steps`.
 - `spec_hash` covers env, predicates, timeout, obs pipeline and children's hashes. A hash mismatch on load is an error, never a warning.
+- `freeze()` requires STABLE, and a FROZEN node is never retrained (`record_training` refuses it). One exception, by rule not by code: decision 0014 lets a budget-exhausted primitive be frozen on a pre-fixed test plus an argmax handoff row for one named parent (v2 §5.4); the script sets STABLE itself and cites 0014.
+- `NodeRegistry.save` never overwrites a checkpoint unless called with `overwrite=True`. A script that saves to the registry calls `registry.ensure_can_save(node)` before training, so an existing checkpoint stops the run at once.
+- `train_primitive` / `train_composite` archive every attempt (stable, budget exhausted or failed) under `runs/training/<run_id>/`; tests redirect it through `ENS491_RUNS_ROOT` (`tests/conftest.py`).
 
 **Hierarchy**
 - Unbounded depth: never hardcode the number of levels or nodes, never branch on `n` (`if level == 1:`). Executor and trainers must work at any depth.
 - No per-layer MetaController: a composite's policy is its meta-controller.
 - Availability is evaluated recursively and **memoized per env step** (exponential on a DAG otherwise). A mask handed to a policy always has at least one True; when nothing is available the episode ends (MaskablePPO cannot take an empty mask).
-- `max_decisions` is mandatory on every composite: under goal-only masking a parent could otherwise re-select a timed-out child forever.
+- `max_decisions` is mandatory on every composite: under goal-only masking a parent could otherwise re-select a timed-out child forever. It is counted per composite frame: each composite counts only its own selections against its own cap, in `OptionEnv` and `Executor` alike (v2 §4.4, decision 0009).
 - `OptionEnv` uses `DummyVecEnv` only, never `SubprocVecEnv`.
 
 **Signals**
@@ -104,6 +108,17 @@ SkillNode {n,m}
 **Scope**
 - Do not put FourRooms (or any single benchmark) on the hierarchy's critical path.
 - Do not reference or use the sandbox repo; build baselines from scratch here.
+
+**Decisions**
+- A change that touches a 🔒 rule in v2, or an item in `docs/kb/open-questions.md`: stop.
+  Write `docs/kb/decisions/NNNN-*.md` with `Status: Proposed` and do not implement it
+  until a human sets it to `Accepted`.
+- A Proposed decision names the experiment that settles it, under **Evidence**
+  (`docs/kb/decisions/0010-decide-empirically.md`). Do not settle a design question by argument alone.
+- Every experiment is recorded in `docs/kb/results.md` with links to its plan and result files,
+  and every decision it informs links back to it.
+- Every PR that changes results or roadmap state updates `docs/kb/status.md`
+  (and `results.md` when a measurement changed) in the same PR.
 
 ## graphify
 

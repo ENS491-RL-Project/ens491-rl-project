@@ -1,10 +1,10 @@
-# Eğitim eşitliği incelemesi — 2026-11-05
+# Training parity audit — 2026-11-05
 
-## Sonuç
+## Result
 
-18 eğitim koşusu yeniden çalıştırıldı: unlock_door goal-only ve solve_doorkey goal-only/strict, her biri seed 42–44, eski/yeni eşleştirilmiş. Bütün çiftlerde son ağırlıkların, her gerçek PPO güncellemesinin giriş buffer'larının ve güncelleme öncesi/sonrası ağırlıklarının SHA-256 değerleri eşit. Bu sonuç yalnızca bu checkpoint'ler, ayarlar ve seed'ler için geçerli.
+18 training runs were re-run: unlock_door goal-only and solve_doorkey goal-only/strict, each on seeds 42–44, paired old/new. In every pair the SHA-256 values of the final weights, of the input buffers of every actual PPO update, and of the weights before and after each update are equal. This result holds only for these checkpoints, settings and seeds.
 
-| Görev/kol | Seed | Eski env adımı | Yeni env adımı | Süresi değişen karar | Gerçek PPO train çağrısı | Rapordaki update |
+| Task/arm | Seed | Old env steps | New env steps | Decisions with changed duration | Actual PPO train calls | Reported updates |
 |---|---:|---:|---:|---:|---:|---:|
 | unlock_door goal | 42 | 34,877 | 34,733 | 3 | 2 | 3 |
 | unlock_door goal | 43 | 32,869 | 32,629 | 5 | 2 | 3 |
@@ -16,31 +16,31 @@
 | solve_doorkey strict | 43 | 7,253 | 7,253 | 0 | 1 | 2 |
 | solve_doorkey strict | 44 | 7,240 | 7,240 | 0 | 1 | 2 |
 
-### unlock_door: neden aynı?
+### unlock_door: why identical?
 
-Eski kodda 3/5/5 karar, ebeveynin 240 adımlık timeout'unu aşıp 288'e ulaşıyor. Yeni kod her birini 48 adım önce kesiyor. Bu kuyrukların tamamında action=2 (ileri), gözlem hash'i her adımda aynı. PPO'ya verilen başlangıç/bitiş gözlemleri, action, mask, reward ve terminated/truncated bayrakları bütün kararlarda aynı. Yalnızca k ve option_steps değişiyor.
+Under the old code, 3/5/5 decisions run past the parent's 240-step timeout and reach 288. The new code cuts each of them 48 steps earlier. In all of these tails action=2 (forward) and the observation hash is the same at every step. The start/end observations, action, mask, reward and terminated/truncated flags handed to PPO are the same in every decision. Only k and option_steps change.
 
-Mevcut MaskablePPO, karar başına sabit gamma=0.99 kullanıyor; info içindeki k öğrenme buffer'ına girmiyor. Timeout bootstrap'ında kullanılan terminal gözlemi de aynı. Dolayısıyla gerçek eğitim girdilerinin aynı olması, ağırlıkların eşit kalmasını açıklıyor. Bunu yalnızca son checkpoint'e bakarak değil, observations/actions/rewards/episode_starts/values/log_probs/advantages/returns/action_masks buffer hash'lerini her train çağrısı öncesinde karşılaştırarak doğruladık.
+The current MaskablePPO uses a fixed per-decision gamma=0.99; the k in info does not enter the learning buffer. The terminal observation used for the timeout bootstrap is also the same. So identical actual training inputs explain why the weights stay equal. We verified this not only on the final checkpoint but by comparing the hashes of the observations/actions/rewards/episode_starts/values/log_probs/advantages/returns/action_masks buffers before every train call.
 
-### solve_doorkey: neden aynı?
+### solve_doorkey: why identical?
 
-Goal-only kolunda kayıtlı geçişler, süreler ve nested mask çağrıları tamamen aynı. Strict kolunda ise her seed'de 512 üst-seviye kararın nested mask kayıtları değişiyor; üst policy'nin geçişleri ve bütün PPO buffer'ları değişmiyor. Maskenin aktarılması etkisiz/çalışmıyor denemez: maske değişiyor ama bu çocuk checkpoint'leri ve ulaşılan durumlarla üst policy'nin eğitim verisine yansımıyor. İç seçimin ve primitive eylemlerin tamamı bu probe tarafından kaydedilmiyor; ölçüm üst-seviye geçişler ve mask çağrıları düzeyinde.
+In the goal-only arm the recorded transitions, durations and nested mask calls are fully identical. In the strict arm the nested mask records of 512 top-level decisions change on every seed; the top-level policy's transitions and all PPO buffers do not. This does not mean passing the mask down has no effect or does not work: the mask changes, but with these child checkpoints and the states reached it does not show up in the top-level policy's training data. The probe does not record every inner selection and primitive action; the measurement is at the level of top-level transitions and mask calls.
 
-### Ek bulgu: update sayısı fazla raporlanıyor
+### Additional finding: the update count is over-reported
 
-src/training/node_trainer.py, policy_updates değerini decisions // (n_steps * n_envs) ile hesaplıyor. Ancak EvaluationCallback._on_step() stabilite sağlanınca False döndürüyor. Kurulu sb3_contrib collect_rollouts, bu sinyal üzerine rollout'u tamamlayıp train() çağırmadan çıkıyor. Son toplanan rollout ağırlıklara uygulanmıyor.
+src/training/node_trainer.py computes policy_updates as decisions // (n_steps * n_envs). But EvaluationCallback._on_step() returns False once stability is reached. On that signal the installed sb3_contrib collect_rollouts finishes the rollout and returns without calling train(). The last collected rollout is never applied to the weights.
 
-Ölçülen gerçek train() çağrıları unlock/solve goal için 2 (rapor 3), solve strict için 1 (rapor 2). Her train çağrısı burada 4 optimizer epoch içeriyor; _n_updates ile train çağrısı farklı birimler. Sayaçta completed_rollouts, train_calls, optimizer_epochs ve collected_decisions ayrı tutulmalı. Bu raporlama düzeltmesi geçmiş ağırlıkları değiştirmez.
+The measured actual train() calls are 2 for unlock/solve goal (report: 3) and 1 for solve strict (report: 2). Each train call here contains 4 optimizer epochs; _n_updates and train calls are different units. The counter should keep completed_rollouts, train_calls, optimizer_epochs and collected_decisions separately. This reporting fix does not change any past weights.
 
-## Yöntem ve yeniden çalıştırma
+## Method and re-running
 
-- Yeni kod: 584b4be (tam SHA provenance.json içinde).
-- Eski kod: 917665e commit'indeki src/skills/executor.py ve src/envs/option_env.py modülleri, ayrı bir süreçte yükleniyor; trainer, çocuk checkpoint'leri ve diğer ayarlar aynı tutuluyor.
-- CPU, torch threads=2, 8 env, n_steps=64, batch_size=64, eval_every=512, n_eval=50, bütçe 51,200 karar; mevcut stabilite kriteriyle erken durdurma.
-- Probe hiçbir checkpoint kaydetmez/freeze etmez. Registry yalnızca okunur. Stopping seed'leri kullanılır; yeni bir final test seti açılmaz.
-- Provenance: paket sürümleri ve checkpoint/metadata SHA-256 değerleri provenance.json içinde. JSON koşu kayıtlarında geçişler, buffer hash'leri, gerçek güncellemeler ve rapor bulunur.
+- New code: 584b4be (full SHA in provenance.json).
+- Old code: the src/skills/executor.py and src/envs/option_env.py modules at commit 917665e, loaded in a separate process; the trainer, child checkpoints and all other settings are kept the same.
+- CPU, torch threads=2, 8 envs, n_steps=64, batch_size=64, eval_every=512, n_eval=50, budget 51,200 decisions; early stopping with the current stability criterion.
+- The probe saves and freezes no checkpoint. The registry is only read. The stopping seeds are used; no new final test set is opened.
+- Provenance: package versions and checkpoint/metadata SHA-256 values are in provenance.json. The per-run JSON records contain the transitions, buffer hashes, actual updates and the report.
 
-Repo kökünden, ens491 ortamındaki Python ile:
+From the repo root, with the Python of the ens491 environment (output goes to `runs/training_parity_audit/`, which is gitignored; the summary is committed as `2026-11-05_training_parity_summary.json`):
 
 ```sh
 python scripts/audit_training_parity.py --variant old --task unlock --seed 42
@@ -49,13 +49,13 @@ python scripts/audit_training_parity.py --variant old --task solve --strict --se
 python scripts/audit_training_parity.py --variant new --task solve --strict --seed 42
 ```
 
-Seed 43/44 ve solve goal-only için de çalıştırıldı. Bütün dosyalar hazırken:
+Also run for seeds 43/44 and for solve goal-only. Once all files are present:
 
 ```sh
 python scripts/compare_training_parity.py
 ```
 
-Güncel test paketi: 267 passed. Yeni MAX_ITERS regresyon testleri dahil.
+Test suite at the time: 267 passed, including the new MAX_ITERS regression tests.
 
 
 ## Integration

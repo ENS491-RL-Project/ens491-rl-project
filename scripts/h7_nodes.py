@@ -66,6 +66,9 @@ UNLOCKPICKUP = "MiniGrid-UnlockPickup-v0"
 BLOCKED = "MiniGrid-BlockedUnlockPickup-v0"
 RUNS = REPO / "runs" / "v2"
 ATTEMPT1_DIR = RUNS / "attempts" / "0-4_pickup_box_attempt1"
+# Spec 2's seed-42 checkpoint (TRAINING, never frozen). It was the canonical registry entry until
+# spec 3 was registered under decisions 0011 and 0014 (2026-11-15); loaded only for diagnostics.
+SPEC2_S42_DIR = RUNS / "attempts" / "0-4_pickup_box_spec2_s42"
 
 PRIMITIVE_TIMEOUT = 120
 DROP_HELD_TIMEOUT = 30
@@ -218,11 +221,29 @@ def load_h7_primitive(name, registry, device="cpu", spec=None, verbose=True):
     return node
 
 
+def load_pickup_box(registry, device="cpu", verbose=True):
+    """
+    The registered `{0,4} pickup_box`: specification 3 (decision 0011), frozen under decision
+    0014 (training seed 45). `load_h7_primitive("pickup_box")` builds spec 2 and now fails with
+    SpecMismatch against the registry, as it should.
+    """
+    from pickup_box_spec3 import spec3      # imports this module; deferred to avoid a cycle
+
+    spec, _stats, _, _ = spec3(registry)
+    node = build_node(spec)
+    load_frozen_primitive(node, registry, spec["env_ids"][0], spec["hook"], device=device)
+    if node.status is not NodeStatus.FROZEN:
+        raise RuntimeError(f"{node.id} did not load as FROZEN")
+    if verbose:
+        print(f"  loaded {node}  spec_hash={node.spec_hash()}")
+    return node
+
+
 def load_unlock_pickup(registry, device="cpu", verbose=True):
     """The frozen T7 and everything below it: (prims, unlock_door, drop_held, pickup_box, t7)."""
     prims, t3 = load_unlock_graph(registry, device=device, verbose=verbose)
     dh = load_h7_primitive("drop_held", registry, device=device, verbose=verbose)
-    pb = load_h7_primitive("pickup_box", registry, device=device, verbose=verbose)
+    pb = load_pickup_box(registry, device=device, verbose=verbose)
     t7 = build_unlock_pickup(t3, dh, pb)
     load_frozen_composite(t7, registry, UNLOCKPICKUP, NO_HOOK, device=device)
     if t7.status is not NodeStatus.FROZEN:

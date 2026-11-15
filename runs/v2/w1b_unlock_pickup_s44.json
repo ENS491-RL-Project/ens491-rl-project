@@ -1,0 +1,310 @@
+{
+  "seed": 44,
+  "node_id": "{2,2} unlock_pickup",
+  "env_id": "MiniGrid-UnlockPickup-v0",
+  "spec_hash": "3012137ea5300693",
+  "chain_ceiling": {
+    "path": [
+      "{1,1} unlock_door",
+      "{0,9} drop_held",
+      "{0,4} pickup_box (spec 3, seed 45)"
+    ],
+    "rows": {
+      "chain leaves the handoff state (53000-53499)": "488/500",
+      "pickup_box argmax from the handoff (53000-53499)": "485/488"
+    },
+    "value": 0.97,
+    "source": "recorded rows (runs/v2/w1a_spec3_sampled.json, seed 45), not f29()"
+  },
+  "composite": {
+    "node_id": "{2,2} unlock_pickup",
+    "kind": "composite",
+    "children": [
+      "{1,1} unlock_door",
+      "{0,9} drop_held",
+      "{0,4} pickup_box"
+    ],
+    "level_n": 2,
+    "env_ids": [
+      "MiniGrid-UnlockPickup-v0"
+    ],
+    "reset_hook": "none",
+    "timeout": 288,
+    "max_decisions": 8,
+    "initiation_masking": false,
+    "normalize_obs": true,
+    "obs_pipeline": "ImgObs+Flatten+ChannelNormalize",
+    "seed": 44,
+    "device": "cpu",
+    "n_envs": 8,
+    "eval_every": 512,
+    "ppo": {
+      "n_steps": 64,
+      "batch_size": 64,
+      "n_epochs": 4,
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.01
+    },
+    "budget_decisions": 40960,
+    "decisions_trained": 1536,
+    "env_steps_own": 55412,
+    "env_steps_per_decision": 36.08,
+    "decisions_per_update": 512,
+    "policy_updates": 2,
+    "policy_updates_semantics": "completed_train_calls",
+    "env_steps_children": 1443289,
+    "env_steps_total": 1498701,
+    "wall_seconds": 42.9,
+    "decisions_per_second": 35.8,
+    "stable": true,
+    "decisions_to_stable": 1536,
+    "criterion": {
+      "min_success_rate": 0.9,
+      "min_wilson_lower": 0.8,
+      "n_consecutive": 2,
+      "streak": 2,
+      "is_stable": true,
+      "history": [
+        {
+          "n_episodes": 50,
+          "successes": 31,
+          "success_rate": 0.62,
+          "wilson_lower": 0.4815,
+          "wilson_upper": 0.7414,
+          "mean_length": 145.98,
+          "seed_base": 10000,
+          "timeouts": 19,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 48,
+          "success_rate": 0.96,
+          "wilson_lower": 0.8654,
+          "wilson_upper": 0.989,
+          "mean_length": 34.96,
+          "seed_base": 10000,
+          "timeouts": 2,
+          "reselections": 0
+        },
+        {
+          "n_episodes": 50,
+          "successes": 48,
+          "success_rate": 0.96,
+          "wilson_lower": 0.8654,
+          "wilson_upper": 0.989,
+          "mean_length": 34.96,
+          "seed_base": 10000,
+          "timeouts": 2,
+          "reselections": 0
+        }
+      ]
+    },
+    "eval_extra": [],
+    "run_id": "20261115T164216-de2170f704d04e25abaa17933901b9dd",
+    "run_dir": "C:\\Users\\memir\\Desktop\\Desktop\\ACADEMY\\ens491\\ens491-rl-project\\runs\\training\\20261115T164216-de2170f704d04e25abaa17933901b9dd",
+    "heldout": {
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "wilson_upper": 0.9965,
+      "mean_length": 29.02,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 0
+    },
+    "weak_heldout": false
+  },
+  "arms": {
+    "random_over_all": {
+      "label": "random over all children (mask clipped)",
+      "n_episodes": 50,
+      "successes": 44,
+      "success_rate": 0.88,
+      "wilson_lower": 0.762,
+      "wilson_upper": 0.9438,
+      "mean_length": 86.58,
+      "seed_base": 20000,
+      "timeouts": 6,
+      "reselections": 10
+    },
+    "random_over_available": {
+      "label": "random over available children",
+      "n_episodes": 50,
+      "successes": 39,
+      "success_rate": 0.78,
+      "wilson_lower": 0.6476,
+      "wilson_upper": 0.8725,
+      "mean_length": 150.08,
+      "seed_base": 20000,
+      "timeouts": 11,
+      "reselections": 26
+    },
+    "random_strict_mask": {
+      "label": "random, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "wilson_upper": 0.9965,
+      "mean_length": 29.02,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 2
+    },
+    "learned": {
+      "label": "learned composite",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "wilson_upper": 0.9965,
+      "mean_length": 29.02,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 2
+    },
+    "learned_strict_mask": {
+      "label": "learned composite, initiation masking ON",
+      "n_episodes": 50,
+      "successes": 49,
+      "success_rate": 0.98,
+      "wilson_lower": 0.895,
+      "wilson_upper": 0.9965,
+      "mean_length": 29.02,
+      "seed_base": 20000,
+      "timeouts": 1,
+      "reselections": 2
+    }
+  },
+  "arms_note": "learned_strict_mask is the goal-only policy scored under the strict mask",
+  "mask_divergence": {
+    "episodes": 20,
+    "decisions": 60,
+    "masks_differ": 40,
+    "would_have_blocked_learned_choice": 0
+  },
+  "selection_sequences": {
+    "learned": {
+      "episodes": 50,
+      "initiation_masking": false,
+      "sequences": [
+        {
+          "sequence": "{1,1} unlock_door -> {0,9} drop_held -> {0,4} pickup_box",
+          "count": 49,
+          "successes": 49
+        },
+        {
+          "sequence": "{1,1} unlock_door -> {1,1} unlock_door",
+          "count": 1,
+          "successes": 0
+        }
+      ]
+    }
+  },
+  "trace": {
+    "seed": 20000,
+    "env_id": "MiniGrid-UnlockPickup-v0",
+    "success": true,
+    "env_steps": 19,
+    "max_stack_depth": 3,
+    "levels_selected": [
+      0,
+      1
+    ],
+    "selected_children": [
+      "{1,1} unlock_door",
+      "{0,1} get_key",
+      "{0,2} open_door",
+      "{0,9} drop_held",
+      "{0,4} pickup_box"
+    ],
+    "trace": [
+      {
+        "depth": 2,
+        "node_id": "{1,1} unlock_door",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,1} get_key",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 0
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,1} get_key",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 3,
+        "version": 3
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,2} open_door",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 3
+      },
+      {
+        "depth": 3,
+        "node_id": "{0,2} open_door",
+        "event": "CLOSE",
+        "outcome": "interrupted",
+        "steps": 8,
+        "version": 11
+      },
+      {
+        "depth": 2,
+        "node_id": "{1,1} unlock_door",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 11,
+        "version": 11
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,9} drop_held",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 11
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,9} drop_held",
+        "event": "CLOSE",
+        "outcome": "success",
+        "steps": 2,
+        "version": 13
+      },
+      {
+        "depth": 2,
+        "node_id": "{0,4} pickup_box",
+        "event": "SELECT",
+        "outcome": null,
+        "steps": 0,
+        "version": 13
+      }
+    ]
+  },
+  "depth_check": {
+    "expected": 3,
+    "reached": 3,
+    "passed": true,
+    "levels_selected": [
+      0,
+      1
+    ]
+  }
+}

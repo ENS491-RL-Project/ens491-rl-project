@@ -1,0 +1,10 @@
+validation gate: seed 42 on the trace's condition H, 50 seeds x (argmax + 3 sampled)
+  200 episodes compared, 0 differ; successes {'deterministic': {'trace': 30, 'now': 30}, 'sampled_0': {'trace': 45, 'now': 45}, 'sampled_1': {'trace': 48, 'now': 48}, 'sampled_2': {'trace': 47, 'now': 47}}  -> PASSED
+  seed 42: own_hook: valid 500/500 argmax 375 sampled 487 (0.974, LB 0.956) pass=True | handoff: valid 491/500 argmax 343 sampled 480 (0.9776, LB 0.9603) pass=True  -> seed pass=True
+  seed 43: own_hook: valid 500/500 argmax 353 sampled 497 (0.994, LB 0.9825) pass=True | handoff: valid 491/500 argmax 350 sampled 482 (0.9817, LB 0.9655) pass=True  -> seed pass=True
+  seed 44: own_hook: valid 500/500 argmax 383 sampled 490 (0.98, LB 0.9636) pass=True | handoff: valid 491/500 argmax 275 sampled 451 (0.9185, LB 0.891) pass=True  -> seed pass=True
+  seed 45: own_hook: valid 500/500 argmax 377 sampled 486 (0.972, LB 0.9536) pass=True | handoff: valid 491/500 argmax 321 sampled 477 (0.9715, LB 0.9527) pass=True  -> seed pass=True
+  seed 46: own_hook: valid 500/500 argmax 352 sampled 459 (0.918, LB 0.8906) pass=True | handoff: valid 491/500 argmax 186 sampled 429 (0.8737, LB 0.8414) pass=False  -> seed pass=False
+  seed 47: own_hook: valid 500/500 argmax 371 sampled 482 (0.964, LB 0.9438) pass=True | handoff: valid 491/500 argmax 283 sampled 430 (0.8758, LB 0.8436) pass=False  -> seed pass=False
+verdict: undecided (exactly 3): the declared extension applies (seeds 48-52, >= 7 of 10) ({'43': True, '44': True, '45': True, '46': False, '47': False})
+wrote runs\v2\w1a_pickup_box_sampled.json (717.6s)

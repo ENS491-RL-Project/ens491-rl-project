@@ -1,0 +1,148 @@
+{
+  "sequence_length": 1,
+  "seed": 44,
+  "best_epoch": 18,
+  "test_episodes": 825,
+  "test_windows": 10801,
+  "window_accuracy": 0.5753171002684937,
+  "window_macro_accuracy": 0.6306215840349955,
+  "episode_balanced_accuracy": 0.6003155225702163,
+  "task_episode_macro_accuracy": 0.6323777700767783,
+  "per_task_episode_balanced_accuracy": {
+    "get_key": 0.670747668651412,
+    "open_door": 0.7364920711097181,
+    "go_to_goal": 0.6639761938398302,
+    "get_key_yellow": 0.5225276810731355,
+    "get_key_blue": 0.6719347047847396,
+    "open_door_tk": 0.746984126984127,
+    "drop_held": 0.7666666666666666,
+    "unlock": 0.25789511813462257,
+    "doorkey": 0.6541756994467522
+  },
+  "per_ppo_episode_balanced_accuracy": {
+    "get_key": 0.670747668651412,
+    "open_door": 0.7364920711097181,
+    "go_to_goal": 0.6639761938398302,
+    "get_key_yellow": 0.5225276810731355,
+    "get_key_blue": 0.6719347047847396,
+    "open_door_tk": 0.746984126984127,
+    "drop_held": 0.7666666666666666,
+    "flat_unlock_ppo": 0.4019347489762428,
+    "flat_doorkey_ppo": 0.656802105851951,
+    "unlock_door": 0.11385548729300242,
+    "solve_doorkey": 0.6515492930415531
+  },
+  "confusion_matrix_task_order": [
+    "get_key",
+    "open_door",
+    "go_to_goal",
+    "get_key_yellow",
+    "get_key_blue",
+    "open_door_tk",
+    "drop_held",
+    "unlock",
+    "doorkey"
+  ],
+  "confusion_matrix_window_counts": [
+    [
+      654,
+      16,
+      10,
+      2,
+      5,
+      0,
+      290,
+      74,
+      1
+    ],
+    [
+      15,
+      506,
+      0,
+      0,
+      0,
+      17,
+      49,
+      62,
+      19
+    ],
+    [
+      9,
+      9,
+      736,
+      7,
+      9,
+      1,
+      9,
+      0,
+      206
+    ],
+    [
+      6,
+      0,
+      12,
+      296,
+      216,
+      31,
+      1,
+      2,
+      22
+    ],
+    [
+      6,
+      0,
+      44,
+      288,
+      1050,
+      38,
+      4,
+      2,
+      29
+    ],
+    [
+      0,
+      8,
+      0,
+      22,
+      20,
+      291,
+      1,
+      0,
+      59
+    ],
+    [
+      17,
+      14,
+      4,
+      0,
+      0,
+      0,
+      128,
+      1,
+      32
+    ],
+    [
+      915,
+      695,
+      9,
+      5,
+      11,
+      22,
+      370,
+      709,
+      56
+    ],
+    [
+      77,
+      39,
+      243,
+      179,
+      126,
+      60,
+      39,
+      52,
+      1844
+    ]
+  ],
+  "note": "Episode-balanced accuracy averages window correctness within each episode, not episode-majority-vote accuracy."
+}

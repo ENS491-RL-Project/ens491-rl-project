@@ -1,0 +1,29 @@
+# 0009 — `max_decisions` is counted per composite frame, not per tree
+
+Status: Accepted 2026-11-12, provided the final PR #15 keeps this design
+Date: 2026-11-05   Approved by: Emir (2026-11-12)   Source: PR #15 (Pekpak, merged 2026-11-12); v2 §4.4 and §13 as amended in PR #15
+Reviewed by Emir: yes — 2026-11-12
+
+## Decision
+Each composite counts its own selections against its own `max_decisions`. When a frame hits its cap it closes with TIMEOUT and its parent selects again. Previously evaluation capped all decisions in the whole tree at the root's value.
+
+## Why
+- Training (`OptionEnv`) already counted per composite; evaluation (`Executor`) counted per tree. The two disagreed.
+- Measured: the 9 frozen nodes give identical results on their 50 held-out seeds before and after.
+
+## Rejected alternatives
+- Keep the global cap and change `OptionEnv` instead: not evaluated in the PR.
+
+## Evidence
+- PR #15: 9 frozen nodes × 50 held-out seeds identical before/after; `unlock_door` and `solve_doorkey` training measured (Project_State note in the PR).
+- Results in [`results.md`](../results.md): training/evaluation parity (PR #15); training parity audit (PR #16, PPO buffers and weights identical under old and new code); strict-mask dead-end cost (PR #15 review).
+- Rationale Emir must be able to give: training (`OptionEnv`) already counted per composite; evaluation must use the same rule.
+
+## Affects
+[`src/skills/executor.py`](../../../src/skills/executor.py), [`src/envs/option_env.py`](../../../src/envs/option_env.py). Deep trees now get more decisions in evaluation (caps multiply).
+
+## Open point
+PR #15 merged on 2026-11-12 with this design; Emir sets Status.
+Caps multiply down the stack. Under the strict mask a dead end re-selects with no env step, and its cost grows with depth: see [open-questions](../open-questions.md) (frame that re-selects without an env step).
+
+History: Decide in PR #15's discussion, then set Status here. The two other parity rules in PR #15 (parent timeout cuts the child; strict mask at every depth) do not change a locked rule.

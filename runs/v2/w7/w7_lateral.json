@@ -1,0 +1,210 @@
+{
+  "budget": 401408,
+  "arms": {
+    "A": {
+      "n_runs": 10,
+      "n_stable": 10,
+      "n_censored": 0,
+      "metric_steps": {
+        "1000": 180224,
+        "1100": 172032,
+        "1200": 221184,
+        "1300": 167936,
+        "1400": 143360,
+        "1500": 200704,
+        "1600": 200704,
+        "1700": 159744,
+        "1800": 204800,
+        "1900": 217088
+      },
+      "median_steps": 190464.0,
+      "min_steps": 143360,
+      "max_steps": 221184,
+      "sd_log_steps": 0.14259733371861366,
+      "median_wall_seconds": 285.85,
+      "median_steps_per_second": 661.4,
+      "threads": [
+        1
+      ],
+      "final_score": {
+        "env_seeds": "60000-60499",
+        "per_seed": {
+          "1000": 0.908,
+          "1100": 0.892,
+          "1200": 0.886,
+          "1300": 0.896,
+          "1400": 0.868,
+          "1500": 0.906,
+          "1600": 0.912,
+          "1700": 0.85,
+          "1800": 0.93,
+          "1900": 0.928
+        },
+        "median": 0.901,
+        "min": 0.85,
+        "max": 0.93
+      }
+    },
+    "B": {
+      "n_runs": 10,
+      "n_stable": 9,
+      "n_censored": 1,
+      "metric_steps": {
+        "1000": 172032,
+        "1100": 184320,
+        "1200": 401408,
+        "1300": 167936,
+        "1400": 184320,
+        "1500": 167936,
+        "1600": 155648,
+        "1700": 192512,
+        "1800": 155648,
+        "1900": 200704
+      },
+      "median_steps": 178176.0,
+      "min_steps": 155648,
+      "max_steps": 401408,
+      "sd_log_steps": 0.27574764980158256,
+      "median_wall_seconds": 295.5,
+      "median_steps_per_second": 621.45,
+      "threads": [
+        1
+      ],
+      "final_score": {
+        "env_seeds": "60000-60499",
+        "per_seed": {
+          "1000": 0.84,
+          "1100": 0.906,
+          "1200": 0.858,
+          "1300": 0.87,
+          "1400": 0.894,
+          "1500": 0.868,
+          "1600": 0.874,
+          "1700": 0.902,
+          "1800": 0.876,
+          "1900": 0.934
+        },
+        "median": 0.875,
+        "min": 0.84,
+        "max": 0.934
+      }
+    },
+    "C": {
+      "n_runs": 10,
+      "n_stable": 10,
+      "n_censored": 0,
+      "metric_steps": {
+        "1000": 196608,
+        "1100": 196608,
+        "1200": 167936,
+        "1300": 172032,
+        "1400": 196608,
+        "1500": 167936,
+        "1600": 176128,
+        "1700": 147456,
+        "1800": 192512,
+        "1900": 192512
+      },
+      "median_steps": 184320.0,
+      "min_steps": 147456,
+      "max_steps": 196608,
+      "sd_log_steps": 0.09679002985033379,
+      "median_wall_seconds": 288.75,
+      "median_steps_per_second": 638.0,
+      "threads": [
+        1
+      ],
+      "final_score": {
+        "env_seeds": "60000-60499",
+        "per_seed": {
+          "1000": 0.92,
+          "1100": 0.93,
+          "1200": 0.892,
+          "1300": 0.92,
+          "1400": 0.904,
+          "1500": 0.872,
+          "1600": 0.918,
+          "1700": 0.852,
+          "1800": 0.924,
+          "1900": 0.928
+        },
+        "median": 0.919,
+        "min": 0.852,
+        "max": 0.93
+      }
+    }
+  },
+  "gate_step2": {
+    "min_stable": 7,
+    "passes": true
+  },
+  "tests": {
+    "B_vs_A": {
+      "pairs": 10,
+      "m": 9,
+      "w_plus": 21.5,
+      "p": 0.46875,
+      "median_ratio": 0.9772727272727273,
+      "beats": false
+    },
+    "B_vs_C": {
+      "pairs": 10,
+      "m": 9,
+      "w_plus": 19.0,
+      "p": 0.353515625,
+      "median_ratio": 0.9568452380952381,
+      "beats": false
+    },
+    "A_vs_B": {
+      "pairs": 10,
+      "m": 9,
+      "w_plus": 23.5,
+      "p": 0.55859375,
+      "median_ratio": 1.0238095238095237,
+      "beats": false
+    },
+    "C_vs_A": {
+      "pairs": 10,
+      "m": 10,
+      "w_plus": 20.5,
+      "p": 0.2548828125,
+      "median_ratio": 0.9315384615384615,
+      "beats": false
+    },
+    "C_vs_B": {
+      "pairs": 10,
+      "m": 9,
+      "w_plus": 26.0,
+      "p": 0.66015625,
+      "median_ratio": 1.0455284552845527,
+      "beats": false
+    }
+  },
+  "outcome": {
+    "row": "No measurable benefit",
+    "B_beats_A": false,
+    "B_beats_C": false,
+    "A_beats_B": false
+  },
+  "power": {
+    "model": "log-normal, arm A's median and sd of log steps, arms independent, quantised to eval_every and censored at the budget, exact test + ratio rule",
+    "median": 190464.0,
+    "sd_log": 0.1426,
+    "n_pairs": 10,
+    "n_sims": 4000,
+    "pass_rate_by_reduction": {
+      "0.00": 0.001,
+      "0.10": 0.053,
+      "0.20": 0.47,
+      "0.25": 0.799,
+      "0.30": 0.955,
+      "0.40": 1.0,
+      "0.50": 1.0
+    }
+  },
+  "cost": {
+    "training_env_steps_30_runs": 5656576,
+    "evaluation_episodes_not_counted": true
+  },
+  "figure": "runs/v2/w7/w7_lateral_curves.png"
+}

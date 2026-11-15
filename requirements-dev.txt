@@ -1,0 +1,8 @@
+# Development tools on top of the runtime pins. Install with
+#   python scripts/setup_dev.py
+# which also installs graphify's git hooks and builds the code graph.
+# Pinned exactly, like requirements.txt.
+-r requirements.txt
+
+# graphify: local code graph in graphify-out/ (AST-only, no API cost).
+graphifyy==0.9.106

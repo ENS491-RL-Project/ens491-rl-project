@@ -119,7 +119,8 @@ class TrainingRun:
         # Written last: distinguishes a complete archive of a failed run from a partial save.
         for artifact in self.path.iterdir():
             if artifact.is_file():
-                with artifact.open('rb') as f:
+                # 'r+b', not 'rb': Windows refuses fsync on a read-only descriptor (EBADF).
+                with artifact.open('r+b') as f:
                     os.fsync(f.fileno())
         artifacts = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                      for p in self.path.iterdir() if p.is_file() and not p.name.endswith('.partial')}

@@ -1,0 +1,9 @@
+validation gate: seed 42 on the trace's condition H, 50 seeds x (argmax + 3 sampled)
+  200 episodes compared, 0 differ; successes {'deterministic': {'trace': 30, 'now': 30}, 'sampled_0': {'trace': 45, 'now': 45}, 'sampled_1': {'trace': 48, 'now': 48}, 'sampled_2': {'trace': 47, 'now': 47}}  -> PASSED
+  seed 48: own_hook: valid 500/500 argmax 374 sampled 485 (0.97, LB 0.9511) pass=True | handoff: valid 491/500 argmax 320 sampled 470 (0.9572, LB 0.9355) pass=True  -> seed pass=True
+  seed 49: own_hook: valid 500/500 argmax 374 sampled 484 (0.968, LB 0.9487) pass=True | handoff: valid 491/500 argmax 345 sampled 474 (0.9654, LB 0.9453) pass=True  -> seed pass=True
+  seed 50: own_hook: valid 500/500 argmax 376 sampled 478 (0.956, LB 0.9343) pass=True | handoff: valid 491/500 argmax 241 sampled 431 (0.8778, LB 0.8459) pass=False  -> seed pass=False
+  seed 51: own_hook: valid 500/500 argmax 342 sampled 473 (0.946, LB 0.9226) pass=True | handoff: valid 491/500 argmax 326 sampled 476 (0.9695, LB 0.9502) pass=True  -> seed pass=True
+  seed 52: own_hook: valid 500/500 argmax 352 sampled 474 (0.948, LB 0.9249) pass=True | handoff: valid 491/500 argmax 321 sampled 438 (0.8921, LB 0.8615) pass=False  -> seed pass=False
+verdict: W1a fails ({'43': True, '44': True, '45': True, '46': False, '47': False, '48': True, '49': True, '50': False, '51': True, '52': False})
+wrote runs\v2\w1a_pickup_box_sampled_ext.json (613.3s)

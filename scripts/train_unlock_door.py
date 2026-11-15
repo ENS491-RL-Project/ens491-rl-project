@@ -156,6 +156,8 @@ def main() -> int:
 
     overrides = ({} if args.n_steps is None else
                  {"n_steps": args.n_steps, "batch_size": args.n_steps})
+    if not (args.no_freeze or args.smoke):
+        registry.ensure_can_save(node)     # fail now, not after training
     report, _model = train_composite(
         node, [UNLOCK], NO_HOOK,
         total_timesteps=args.budget, eval_every=args.eval_every,

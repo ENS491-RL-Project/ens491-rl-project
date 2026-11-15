@@ -226,3 +226,12 @@ runs/v2/**/model.zip
 graphify-out/
 # Personal Claude Code instructions (per developer)
 CLAUDE.local.md
+# Obsidian vault settings (per developer)
+.obsidian/
+
+# macOS
+.DS_Store
+
+# GRU rollout datasets and model checkpoints (local; results go to runs/v2/gru/)
+data/
+models/

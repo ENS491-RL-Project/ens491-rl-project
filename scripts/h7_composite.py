@@ -100,6 +100,8 @@ def run(args, build, env_id, *, chain_ceiling: dict, default_name: str,
     out: dict = {"seed": args.seed, "node_id": node.id, "env_id": env_id,
                  "spec_hash": node.spec_hash(), "chain_ceiling": chain_ceiling}
 
+    if not args.no_freeze and not args.smoke:
+        registry.ensure_can_save(node)     # fail now, not after training
     report, _ = train_composite(
         node, [env_id], NO_HOOK, total_timesteps=args.budget, eval_every=args.eval_every,
         n_eval=args.n_eval, n_envs=args.n_envs, seed=args.seed, device=args.device,

@@ -76,3 +76,16 @@ def test_registry_does_not_replace_existing_checkpoint(tmp_path):
     with pytest.raises(FileExistsError):
         registry.save(node)
     assert (path / 'policy_state_dict.pt').read_bytes() == original
+
+
+def test_ensure_can_save_fails_before_anything_is_written(tmp_path):
+    node = SkillNode('x', goal=NEVER)
+    node.policy = torch.nn.Linear(2, 2)
+    node.status = NodeStatus.STABLE
+    registry = NodeRegistry(tmp_path)
+    assert registry.ensure_can_save(node) == registry.node_dir(node.id)   # nothing there yet
+    registry.save(node)
+    with pytest.raises(FileExistsError, match='already exists'):
+        registry.ensure_can_save(node)
+    other = tmp_path / 'elsewhere'
+    assert registry.ensure_can_save(node, run_dir=other) == other           # a new run_dir is fine
