@@ -1,10 +1,10 @@
 # 0011 — `pickup_box` specification 3: half of training starts at the real handoff
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-15   Source: [`plans/2026-11-15_W1a_spec3_plan.md`](../../plans/2026-11-15_W1a_spec3_plan.md) (revision 2); W1a and its handoff diagnostic
-Reviewed by Emir: not yet
+Reviewed by Emir: yes — 2026-11-15 (line set at his instruction in chat)
 
-## Decision (proposed)
+## Decision
 `{0,4} pickup_box` (T6) gets a third specification. Spec 3 = spec 2 with **half of the training
 episodes started at the real handoff**:
 
@@ -77,6 +77,11 @@ or stop the UnlockPickup line.
 - Result of this plan (2026-11-15): **spec 3 passes, 7 of 10 seeds** (the extension ran after
   exactly 3 of 5); the handoff row passes on all ten, the three failing seeds fail on the own-hook
   row. [Summary](../../plans/2026-11-15_W1a_spec3_summary.md), `results.md`.
+- Accepted on that result (2026-11-15), with two limits: the pass is **at the threshold** (7 of
+  10; the rule needs 7), and **generality is reduced** against spec 2: spec 2 passed the own-hook
+  row on all ten seeds, spec 3 fails it on three (44, 47, 50: 0.898 / 0.778 / 0.896).
+- Acceptance freezes nothing. No spec-3 model is frozen or registered, and v2 §11 is not edited,
+  until the freezing rule for a model that never met 0004 is decided in its own decision file.
 
 ## Affects
 - If accepted: T6's rows in v2 §11, the node table ("reset with the door open, the hand empty and no
