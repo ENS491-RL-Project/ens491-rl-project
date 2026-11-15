@@ -523,9 +523,10 @@ p("The project remains an academic research prototype. The proposal-stage freedo
   "found no directly applicable patents restricting the core techniques, which are grounded in the "
   "academic literature; the software stack (MiniGrid, PyTorch, Gymnasium, Stable-Baselines3 and its "
   "contributed algorithms, Streamlit) is under open-source licences that permit academic and "
-  "research use. No freedom-to-use blocker has been identified for the prototype; a broader patent "
-  "and licence review would be needed before any commercial use. [EMIR: any patent or market search "
-  "since May? If none, keep this paragraph as it is.]")
+  "research use. No freedom-to-use blocker has been identified for the prototype. Because the "
+  "project is scientific research and not a commercial product, no further patent or market search "
+  "has been carried out since the Proposal; a broader patent and licence review would be needed only "
+  "before any commercial use.")
 
 # =====================================================================================
 h1("ENCOUNTERED PROBLEMS")
@@ -590,7 +591,7 @@ tab("Table 12. What PR-I promised and where it stands.",
         ["Dashboard on real outputs", "Week 17", "Not started", "Behind schedule"],
         ["Phase 2 end-to-end integration", "Week 19", "Not started", "Needs task registry and growth"],
         ["No-AE / no-GRU ablations", "Week 21", "Not started", "Depends on integration"],
-        ["Phase 3 scope review", "Week 22", "[EMIR: was a scope review held? The October redesign may count as one]", "—"],
+        ["Phase 3 scope review", "Week 22", "Not held", "Scope changes were recorded as decisions instead (0001, 0006)"],
     ], [3.2, 1.2, 3.3, 3.0])
 p("**Behind schedule**, with the reason for each: BlockedUnlockPickup (it builds on UnlockPickup, "
   "which one primitive blocked from October until 15 November, Section 2.3.6); automatic growth (it "
@@ -666,7 +667,7 @@ h2("4.4 Initial Cost Components")
 b("**Software:** zero; all libraries are open source.")
 b("**Hardware and operation:** existing personal computers, CPU only; electricity as in Table 13.")
 b("**Development time:** the dominant cost; student time for design, implementation, experiments "
-  "and reports. [EMIR: estimate of person-hours, if wanted.]")
+  "and reports.")
 b("**Storage and maintenance:** minimal; checkpoints and result files are kept in the repository, "
   "and the modular design lets one skill be replaced without retraining others.")
 
@@ -716,21 +717,22 @@ tab("Table 15. Remaining work in priority order.",
         ["7", "GUI on recorded runs: skill graph, active stack, traces", "Construction", "If time"],
         ["8", "Choice task redesigned so that a wrong pick is unrecoverable", "Detailed design, testing", "If time"],
     ], [0.5, 6.0, 2.2, 1.5])
-p("Table 16 is a proposed week-by-week schedule. [EMIR: confirm the week numbers against the course "
-  "deadlines; the table assumes the Draft Final Report is due in week 12 and the Final Report in "
-  "week 14, and that this report falls in week 7.]")
-tab("Table 16. Proposed timetable to the Final Report [EMIR: confirm].",
-    ["Week", "Work"],
+p("Table 16 is the week-by-week schedule. It is deliberately tight: every experiment ends by week "
+  "10, so that week 11 is left for writing the draft and as a buffer for one repeated run. [EMIR: "
+  "confirm the week numbers against the course deadlines; the table assumes this report falls in "
+  "week 7, the Draft Final Report in week 12 and the Final Report in week 14.]")
+tab("Table 16. Timetable to the Final Report.",
+    ["Week", "Work", "Done when"],
     [
-        ["7", "W2 plan; `move_blocker` primitive; `pickup_box` handoff row under T9a"],
-        ["8", "W2: T9a and T9b trained and compared; W4 baselines started"],
-        ["9", "W1b-2 plan and stopping rule (0012); flat UnlockPickup with saved models"],
-        ["10", "Growth G-1 and G-2 (replay Unlock and DoorKey with automatic child selection); task registry R-3"],
-        ["11", "W8 system-level evaluation; W4 results; autoencoder R-1 if time"],
-        ["12", "Draft Final Report"],
-        ["13", "GUI on recorded runs if time; corrections from the draft review"],
-        ["14", "Final Report"],
-    ], [1.0, 9.0])
+        ["7", "W2 plan; `move_blocker` primitive trained; `pickup_box` handoff row under T9a; W4 baselines (recurrent and fine-tuned flat PPO) started", "`move_blocker` frozen; W2 criteria fixed"],
+        ["8", "W2: T9a and T9b trained and compared; W1b-2 plan and stopping rule (0012); flat UnlockPickup retrained with saved models", "W2 verdict recorded"],
+        ["9", "Growth G-1 and G-2 (replay Unlock and DoorKey with automatic child selection); task registry R-3; W4 results", "Growth replay verdict; registry selects roots"],
+        ["10", "W8 system-level evaluation with recognition in the loop; autoencoder R-1 and GUI on recorded runs if time", "All experiments closed"],
+        ["11", "Draft Final Report written; buffer for one repeated run", "Draft complete"],
+        ["12", "Draft Final Report submitted", "—"],
+        ["13", "Corrections from the draft review", "—"],
+        ["14", "Final Report", "—"],
+    ], [0.8, 6.4, 3.0])
 
 # =====================================================================================
 h1("REFERENCES")
