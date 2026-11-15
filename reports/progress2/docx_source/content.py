@@ -25,6 +25,28 @@ def fig(key, width, cap):
 
 
 # =====================================================================================
+B.append(("uh", "Terms and Abbreviations"))
+tab(None, ["Term", "Meaning in this report"], [
+    ["Curriculum", "The four MiniGrid tasks used, in increasing difficulty: Unlock (pick up a key, open a door), DoorKey (then reach a goal square), UnlockPickup (then pick up a box behind the door) and BlockedUnlockPickup (a ball blocks the door first)."],
+    ["Skill node; primitive; composite", "A learned behaviour with a start condition (initiation), a success condition (goal), a timeout and a policy. A primitive chooses MiniGrid actions; a composite chooses among earlier frozen skills, its children."],
+    ["{n,m}; level", "Identifier of a skill node: level n, index m. A primitive is level 0; a composite is one level above its highest child. Skill names such as `unlock_door` are written in a fixed-width font; Table 3 says what each one does."],
+    ["STABLE; FROZEN", "STABLE: the node met the stabilisation rule. FROZEN: its weights are fixed and it may be used as a child of later skills."],
+    ["Stabilisation rule", "Success rate ≥ 0.90 with a Wilson 95 % lower bound ≥ 0.80 in two consecutive 50-episode evaluations on the stopping seeds (decision 0004)."],
+    ["Wilson 95 % lower bound", "A conservative lower estimate of the true success rate from a finite number of episodes. With 50 episodes, a lower bound of 0.80 needs at least 46 successes."],
+    ["Stopping, held-out and fresh seeds", "Three separate sets of environment layouts. Stopping seeds (50) decide when training stops; held-out seeds (50) give the score quoted for a frozen node; fresh seeds (500 per test) are used once, for tests whose pass rule was fixed in advance."],
+    ["Argmax; sampled", "Argmax (deterministic, the project's default): the policy always takes its most likely action. Sampled: it draws its action from its probability distribution."],
+    ["State repeat", "A deterministic policy that sees the same partial view takes the same action again, so the episode loops until its timeout."],
+    ["Handoff", "The state in which a parent passes control to a child; for example, the state after `unlock_door` and `drop_held`, in which `pickup_box` takes over."],
+    ["Own hook", "The start states a skill was trained on, as opposed to the handoff states its parent actually produces."],
+    ["Goal-only mask; strict mask", "Goal-only (default): a child can be selected unless its goal already holds. Strict: only a child whose initiation condition holds can be selected; on this curriculum that fixes the order of the sub-goals."],
+    ["Ceiling gate", "A check before a composite is trained: its children are run in the intended order with no learning. If this scripted sequence cannot pass, no learned selector can."],
+    ["Recipe cost; research cost", "Recipe: the environment steps needed to build a task again, knowing its specification. Research: the steps it took to find that specification."],
+    ["Censored", "A run stopped at its step budget without meeting its criterion; its true cost is only known to be larger than the budget."],
+    ["Flat PPO", "The baseline: one PPO policy trained directly on the task's own reward, with the same observation and network size."],
+    ["Decision NNNN", "A numbered design-decision record; all thirteen are listed in Table 2."],
+    ["Abbreviations", "RL: reinforcement learning. PPO: proximal policy optimization [12]; masked PPO: PPO restricted to the selectable children. GRU: gated recurrent unit [10]. DAG: directed acyclic graph. PR-I: Progress Report I."],
+], [2.3, 7.9])
+B.append(("pb",))
 h1("PROJECT SUMMARY")
 h2("1.1 Description, Literature Gap and Motivation")
 p("This project develops a reinforcement learning (RL) agent that acquires tasks one after another, "
@@ -106,8 +128,8 @@ tab("Table 1. The claim in measurable form (decision 0006).",
     "Source: project roadmap of 15 November 2026, §1. Objectives 4 (planning) and 5 (GUI) are not part of the claim; their status is in Section 3.3.")
 
 h2("1.4 Realistic Constraints")
-p("**Compute:** every run reported here was trained on one CPU (the `device` field of every run "
-  "file is `cpu`); no GPU was used. **Environment:** MiniGrid, one task family (Unlock, DoorKey, "
+p("**Compute:** every run reported here was trained on one CPU (as recorded in every run's result "
+  "file); no GPU was used. **Environment:** MiniGrid, one task family (Unlock, DoorKey, "
   "UnlockPickup, BlockedUnlockPickup), decomposed into sub-goals by the authors. **Time:** one "
   "semester remains until the Final Report, shared by five members. **Evaluation standard:** a "
   "skill counts as learned only under a fixed, pre-declared rule (decision 0004): success rate at "
@@ -158,7 +180,8 @@ p("**Detailed design (v2).** Figure 1 summarises the implemented design. Primiti
   "is selectable unless its goal already holds (*goal-only masking*); the initiation condition is "
   "task metadata and does not mask. Every composite has a cap on its own selections, so a parent "
   "cannot re-select a failing child forever (decision 0009). A node becomes STABLE under decision "
-  "0004 (one accepted exception, decision 0014, Section 2.3.7) and is then frozen: no gradients, but its forward pass still runs when parents call it. "
+  "0004 and is then frozen: no gradients, but its forward pass still runs when parents call it; the "
+  "one accepted exception, decision 0014, is described in Section 2.3.7. "
   "Policies see only the 147-dimensional egocentric observation; goal and initiation conditions "
   "read the true environment state, which is how the training signal for each sub-goal is defined.")
 fig("arch", 6.3,
@@ -177,7 +200,7 @@ fig("graph", 6.3,
     "Figure 2. The skill graph as built. Solid boxes: the eleven FROZEN, registered nodes, with "
     "held-out success over 50 episodes; for `{0,4} pickup_box` (marked *), frozen under decision 0014, its "
     "deterministic success from the UnlockPickup handoff on 488 fresh episodes. Dashed: the "
-    "BlockedUnlockPickup nodes, planned (H-7b, not run). Dotted: the choice-task composite, trained "
+    "BlockedUnlockPickup nodes, planned and not yet run. Dotted: the choice-task composite, trained "
     "but not STABLE. `{n,m}` = level n, index m.")
 
 h2("2.2 Design Decisions")
@@ -220,21 +243,21 @@ p("Eleven skills are frozen (Table 3). Eight are primitives: three for the Unloc
   "(the seven original primitives and `unlock_door`) cost about 1.2 million environment steps "
   "together.")
 tab("Table 3. The frozen library (held-out 50 episodes, argmax; training seed 42 unless noted).",
-    ["Node", "Level", "Trained on", "Held-out", "Own cost (env steps)"],
+    ["Node", "Level", "What it does (task trained on)", "Held-out", "Own cost (env steps)"],
     [
-        ["`{0,1} get_key`", "0", "Unlock, DoorKey", "50/50", "180,000"],
-        ["`{0,2} open_door`", "0", "Unlock, DoorKey", "50/50", "100,000"],
-        ["`{0,3} go_to_goal`", "0", "DoorKey", "46/50", "200,000"],
-        ["`{0,6} get_key_yellow`", "0", "DoorKey (two keys)", "47/50", "220,000"],
-        ["`{0,7} get_key_blue`", "0", "DoorKey (two keys)", "43/50", "240,000"],
-        ["`{0,8} open_door_tk`", "0", "DoorKey (two keys)", "47/50", "100,000"],
-        ["`{0,9} drop_held`", "0", "UnlockPickup", "50/50", "30,000"],
-        ["`{1,1} unlock_door`", "1", "Unlock", "49/50", "131,817 (+ 280,000 children)"],
-        ["`{2,1} solve_doorkey`", "2", "DoorKey", "50/50", "162,138 (+ 611,817 children)"],
-        ["`{0,4} pickup_box` (spec 3, seed 45)", "0", "UnlockPickup", "485/488 from the handoff*", "1,001,472 (+ 372,063 handoff-chain steps)"],
-        ["`{2,2} unlock_pickup` (seed 43)", "2", "UnlockPickup", "49/50", "60,205 (+ 1,443,289 children)"],
-    ], [2.6, 0.8, 2.3, 1.2, 3.2],
-    "`drop_held` scored 1.00 / 1.00 / 0.98 on three training seeds. Composite costs are those of the frozen checkpoints; Section 2.3.2 gives the re-measured values for `solve_doorkey`. *`pickup_box` was frozen under decision 0014 and has no held-out row of the usual kind: the figure is its deterministic success from the UnlockPickup handoff on fresh env seeds 53000–53499; from its own training start states it scores 305/500 deterministically.")
+        ["`{0,1} get_key`", "0", "Picks up the key (Unlock, DoorKey)", "50/50", "180,000"],
+        ["`{0,2} open_door`", "0", "Opens the locked door with the key in hand (Unlock, DoorKey)", "50/50", "100,000"],
+        ["`{0,3} go_to_goal`", "0", "Walks to the goal square (DoorKey)", "46/50", "200,000"],
+        ["`{0,6} get_key_yellow`", "0", "Picks up the yellow key (two-key DoorKey, choice task)", "47/50", "220,000"],
+        ["`{0,7} get_key_blue`", "0", "Picks up the blue key (two-key DoorKey, choice task)", "43/50", "240,000"],
+        ["`{0,8} open_door_tk`", "0", "Opens the door in the two-key room (choice task)", "47/50", "100,000"],
+        ["`{0,9} drop_held`", "0", "Puts down what it carries (UnlockPickup)", "50/50", "30,000"],
+        ["`{0,4} pickup_box` (spec 3, seed 45)", "0", "Picks up the box behind the opened door (UnlockPickup)", "485/488 from the handoff*", "1,001,472 (+ 372,063 handoff-chain steps)"],
+        ["`{1,1} unlock_door`", "1", "Gets the key, then opens the door (Unlock)", "49/50", "131,817 (+ 280,000 children)"],
+        ["`{2,1} solve_doorkey`", "2", "Unlocks the door, then reaches the goal (DoorKey)", "50/50", "162,138 (+ 611,817 children)"],
+        ["`{2,2} unlock_pickup` (seed 43)", "2", "Unlocks the door, drops the key, picks up the box (UnlockPickup)", "49/50", "60,205 (+ 1,443,289 children)"],
+    ], [2.4, 0.95, 3.35, 1.3, 2.4],
+    "`drop_held` scored 1.00 / 1.00 / 0.98 on three training seeds. Composite costs are those of the frozen checkpoints; Section 2.3.2 gives the re-measured values for `solve_doorkey`. *`pickup_box` was frozen under decision 0014 and has no held-out row of the usual kind: the figure is its deterministic success from the UnlockPickup handoff on 488 fresh episodes; from its own training start states it scores 305/500 deterministically.")
 p("Two transfer results matter for reuse. `unlock_door`, trained on Unlock, runs untouched inside "
   "UnlockPickup at 49/50 (0.98). In the other direction, `open_door` scored only 0.83 in the "
   "two-key variant of DoorKey and had to be replaced by `open_door_tk` (0.98 there): a primitive "
@@ -244,7 +267,7 @@ p("Two transfer results matter for reuse. `unlock_door`, trained on Unlock, runs
 h3("2.3.2 DoorKey at Depth Three")
 p("`solve_doorkey` selects between the frozen `unlock_door` composite and the `go_to_goal` "
   "primitive, so executing it drives a three-frame stack. Re-trained on three seeds under the "
-  "corrected settings of October (smaller policy updates, `n_steps` 64), it reached STABLE on all "
+  "corrected settings of October (smaller policy updates), it reached STABLE on all "
   "three after 1,536 decisions and scored 50/50 held-out on each. Its cost depends on what is "
   "counted, and the project's records carry three figures that count different things (Table 4). "
   "They are given side by side; none of them supports the statement that the hierarchy learns "
@@ -252,15 +275,15 @@ p("`solve_doorkey` selects between the frozen `unlock_door` composite and the `g
 tab("Table 4. Cost of DoorKey-6x6 in environment steps: what each figure counts.",
     ["Figure", "What it counts", "Env steps"],
     [
-        ["Own cost, re-measured", "`solve_doorkey`'s own steps, 3 seeds, `n_steps` 64 (children frozen and given)", "48,887 – 55,659"],
+        ["Own cost, re-measured", "`solve_doorkey`'s own steps, 3 seeds, smaller policy updates (children frozen and given)", "48,887 – 55,659"],
         ["Own + children, re-measured", "the same plus the children as built (611,817)", "660,704 – 667,476"],
-        ["As built", "the frozen checkpoint (162,138 own, `n_steps` 256) plus its children", "773,955"],
-        ["Cumulative through DoorKey", "Unlock and DoorKey nodes, composites re-measured at `n_steps` 64", "561,756 – 570,536"],
+        ["As built", "the frozen checkpoint (162,138 own, larger policy updates) plus its children", "773,955"],
+        ["Cumulative through DoorKey", "Unlock and DoorKey nodes, composites re-measured with smaller policy updates", "561,756 – 570,536"],
         ["Flat PPO, DoorKey only", "steps to STABLE, 3 seeds", "300,000 – 450,000"],
         ["Flat PPO, Unlock + DoorKey", "flat Unlock (350,000–450,000) plus flat DoorKey", "650,000 – 900,000"],
         ["Flat option set", "same three skills at depth 1, own / with children", "64,000 – 80,951 / 544,000 – 560,951"],
     ], [2.7, 5.0, 2.6],
-    "Sources: run files `solve_doorkey_h68_s*`, `2-1_solve_doorkey/meta.json`, `h7_amortisation.json`, `flat_ppo_s*`, `flat_unlock_ppo_s*`, `flat_options_h68_s*`. Caveats recorded with the figures: the key and door primitives were trained on Unlock and DoorKey together; primitive costs are single-seed; evaluation episodes are counted on neither side; and the hierarchy was given hand-written sub-goals and start states that flat PPO must reach by itself.")
+    "Caveats recorded with the figures: the key and door primitives were trained on Unlock and DoorKey together; primitive costs are single-seed; evaluation episodes are counted on neither side; and the hierarchy was given hand-written sub-goals and start states that flat PPO must reach by itself.")
 p("The reading is therefore: given frozen children, a new composite is cheap (tens of thousands of "
   "steps); counting the children it is not cheaper than flat PPO on this task, as built or "
   "re-measured. Reuse pays only if the children are used again by later tasks: UnlockPickup now "
@@ -336,7 +359,7 @@ b("**Specification 2** (October): not STABLE in 1,001,472 steps on any of three 
   "0.70, 0.66, 0.64). Every deterministic failure inspected was a state repeat: the policy loops "
   "between the same states, because it sees only a partial, egocentric view and acts the same way "
   "each time it sees the same view. Sampled actions break such loops.")
-b("**W1a** (15 November): does specification 2 pass when scored as it would act, i.e. sampled? Ten "
+b("**Sampled-scoring test** (15 November; W1a in the project plan): does specification 2 pass when scored as it would act, i.e. sampled? Ten "
   "fresh training seeds, a fixed budget, two rows of 500 fresh episodes each: from the skill's own "
   "start states (own hook) and from the real handoff after the frozen `unlock_door` and `drop_held`. "
   "**It fails: 6 of 10 seeds pass, the rule needs 7.** The own-hook row passes on all ten (sampled "
@@ -347,18 +370,18 @@ b("**Handoff diagnostic** (evaluation only): on the failing seeds, removing the 
   "distracted by the key it has just dropped, a state it never saw in training. These are "
   "counterfactuals, not results for the skill.")
 b("**Specification 3** (decision 0011): half of the training episodes start at the real handoff; "
-  "W1a's test is unchanged and run on fresh seed ranges. **It passes at the threshold: 7 of 10.** "
+  "the test is unchanged and run on new fresh seeds. **It passes at the threshold: 7 of 10.** "
   "The handoff row passes on all ten (sampled 0.984–1.000); the three failing seeds fail on the "
   "own-hook row (0.898, 0.778, 0.896). The model scores higher where the parent needs it and lower "
   "from its old start states.")
 fig("pickup", 6.3,
     "Figure 3. `pickup_box`, specification 2 against specification 3, per training seed. Sampled success rate on the own-hook row (circles) "
-    "and the handoff row (squares), 500 fresh episodes each, specification 2 (W1a, env seeds "
-    "50000–51499) against specification 3 (env seeds 52000–53499). Dashed line: the 0.90 row "
+    "and the handoff row (squares), 500 fresh episodes each, specification 2 (sampled-scoring test) "
+    "against specification 3, each scored on its own set of fresh seeds. Dashed line: the 0.90 row "
     "threshold. Shaded: seeds that fail (a seed passes only if both rows pass). Sampled rates "
     "only; argmax rates are in Table 7.")
 tab("Table 7. The same models scored deterministically (argmax), separately from Figure 3.",
-    ["Row", "Specification 2 (W1a), 10 seeds", "Specification 3, 10 seeds"],
+    ["Row", "Specification 2, 10 seeds", "Specification 3, 10 seeds"],
     [
         ["Own hook", "0.684 – 0.766", "0.586 – 0.718"],
         ["Handoff", "0.379 – 0.713", "0.902 – 1.000"],
@@ -366,19 +389,19 @@ tab("Table 7. The same models scored deterministically (argmax), separately from
     ], [3.4, 3.4, 3.4],
     "No `pickup_box` model in any specification met decision 0004's deterministic rule during training.")
 p("What these results rule out: that specification 2 was only a scoring artefact of deterministic "
-  "execution (W1a fails even sampled); that its handoff failures were a matter of time (the timeout "
+  "execution (the test fails even when scored sampled); that its handoff failures were a matter of time (the timeout "
   "counterfactual does not reach the reading threshold). What they do not settle: whether the "
   "skill, frozen and run deterministically, is good enough inside its parent. That is the question "
-  "W1b-1 answered (Section 2.3.7). Specification 3 is not reported as a finished skill: it passed a "
+  "the UnlockPickup experiment answered (Section 2.3.7). Specification 3 is not reported as a finished skill: it passed a "
   "two-row test at its threshold, under sampling, its deterministic own-hook rate is 0.586–0.718, and "
   "the one model now frozen is accepted for one parent only.")
 
-h3("2.3.7 UnlockPickup by Reuse (W1b-1)")
-p("Experiment W1b-1 asked whether the UnlockPickup composite, with children `unlock_door`, "
+h3("2.3.7 UnlockPickup by Reuse")
+p("The UnlockPickup experiment (W1b-1 in the project plan) asked whether the UnlockPickup composite, with children `unlock_door`, "
   "`drop_held` and `pickup_box`, reaches STABLE under decision 0004 unchanged when every node acts "
   "deterministically. One specification-3 model (training seed 45) was frozen as the child under "
   "decision 0014, an accepted exception to the stabilisation rule: the model never met decision "
-  "0004 in training, and was frozen because it had passed W1a's test, fixed before training, and "
+  "0004 in training, and was frozen because it had passed the sampled-scoring test, fixed before training, and "
   "because the Wilson 95 % lower bound of its deterministic success from this parent's real handoff "
   "was 0.982 (485/488; the rule needs 0.95). The freezing rule was written with the ten seeds' "
   "handoff rates already known, so the rule and the seed it selected are not blind; every result of "
@@ -392,15 +415,15 @@ p("Experiment W1b-1 asked whether the UnlockPickup composite, with children `unl
 p("What the selector adds beyond the mask is steps, not success. Under the strict mask a random "
   "selector ties it (49/50 held-out), as on Unlock and DoorKey (Section 2.3.3). Against random "
   "choice among available children on the same fresh seeds, which succeeds in 359–375 of 500, the "
-  "learned selector needs 31 environment steps per episode against 139–148. What W1b-1 shows is "
+  "learned selector needs 31 environment steps per episode against 139–148. What the experiment shows is "
   "reuse: `unlock_door`, trained on Unlock, runs untouched as a child on a task flat PPO did not "
   "learn. The remaining 2.8 % fresh loss lies in the chain before the handoff: in the ceiling gate "
   "run before training, every episode that reached the handoff succeeded.")
-tab("Table 8. UnlockPickup composite (W1b-1) against flat PPO, argmax.",
+tab("Table 8. UnlockPickup composite against flat PPO, argmax.",
     ["Measure", "`{2,2} unlock_pickup`", "Flat PPO"],
     [
-        ["Held-out, env seeds 20000–20049", "49/50", "0/50 (each of 3 seeds)"],
-        ["Fresh, env seeds 54000–54499", "486/500 = 0.972 (Wilson 95 % 0.954–0.983)", "not available (no model saved)"],
+        ["Held-out (50 episodes)", "49/50", "0/50 (each of 3 seeds)"],
+        ["Fresh (500 episodes)", "486/500 = 0.972 (Wilson 95 % 0.954–0.983)", "not available (no model saved)"],
         ["Mean env steps per fresh episode", "31.1 (random over available: 139–148)", "—"],
         ["STABLE under 0004", "3 of 3 seeds, after 1,536 decisions (one result in effect)", "0 of 3 seeds"],
         ["Training cost per run, env steps", "2.37–2.38M recipe; about 2.79M with the reused library", "> 3,000,320 (censored)"],
@@ -422,7 +445,7 @@ p("PR-I §5.2 promised a lateral/no-lateral comparison. It was run on a pair the
   "25 % or more is unlikely. Forward transfer through laterals is therefore not claimed. The "
   "result is for one pair only. The learning curves are recorded with the run files; the table "
   "gives the per-arm summary.")
-tab("Table 9. Lateral ablation (W7): `go_to_goal`, ten seeds per arm.",
+tab("Table 9. Lateral ablation: `go_to_goal`, ten seeds per arm.",
     ["Arm", "STABLE", "Median steps to STABLE", "Range", "Final score, median (argmax, 500 episodes)"],
     [
         ["A: no lateral", "10 / 10", "190,464", "143,360 – 221,184", "0.901"],
@@ -462,9 +485,10 @@ p("Several pieces of work make the results above checkable. A **training/evaluat
 h2("2.4 Experiment Design")
 p("Experiments follow the six steps of the template: define the problem, determine objectives, "
   "design the experiment, conduct it and collect data, analyse and interpret, and verify predicted "
-  "results. Two completed experiments are given as worked examples: the chain W1a → handoff "
-  "diagnostic → specification 3 (Section 2.3.6), and W1b-1 (Section 2.3.7).")
-p("**First worked example: W1a → diagnostic → specification 3.**")
+  "results. Two completed experiments are given as worked examples: the chain from the "
+  "sampled-scoring test through the handoff diagnostic to specification 3 (Section 2.3.6), and the "
+  "UnlockPickup experiment (Section 2.3.7).")
+p("**First worked example: from the sampled-scoring test to specification 3.**")
 b("**1. Define the problem.** `pickup_box` was not STABLE under two specifications, and every "
   "deterministic failure was a state repeat. Question: does specification 2 pass when scored the "
   "way it would act, i.e. sampled?")
@@ -478,14 +502,14 @@ b("**3. Design the experiment.** Unchanged trainer and specification, a fixed bu
   "anything is scored.")
 b("**4. Conduct and collect.** Seeds 43–47 gave exactly 3 of 5, so the declared extension ran; "
   "the final count was 6 of 10.")
-b("**5. Analyse and interpret.** The rule was kept when it failed: W1a was reported as a fail, not "
+b("**5. Analyse and interpret.** The rule was kept when it failed: the test was reported as a fail, not "
   "re-scored at a lower threshold. The failures were all at the handoff, so a diagnostic with two "
   "counterfactuals and a pre-set reading rule was run, giving reading Key.")
 b("**6. Verify predicted results.** Specification 3 was derived from that reading and predicted to "
   "fix the handoff row. On fresh seed ranges with the test unchanged, the handoff row passed on all "
   "ten seeds as predicted, and the own-hook row weakened on three; the overall verdict was 7 of 10, "
   "a pass at the threshold.")
-p("**Second worked example: W1b-1.**")
+p("**Second worked example: the UnlockPickup experiment.**")
 b("**1. Define the problem.** UnlockPickup had no frozen composite. Specification 3 had passed its "
   "test under sampled scoring, but a parent runs its children deterministically, and no `pickup_box` "
   "had ever met decision 0004. Question: with one specification-3 model frozen as a child, does the "
@@ -508,15 +532,15 @@ b("**6. Verify predicted results.** The plan predicted a ceiling of about 0.97 f
   "(488/500 × 485/488); the fresh score was 0.972, and every gate episode that reached the handoff "
   "succeeded, so the remaining loss sits before the handoff as predicted. The team then accepted "
   "decision 0014, and the child and the seed-43 composite were registered.")
-tab("Table 11. Experiment W1b-1: the design fixed before the composite was trained.",
+tab("Table 11. The UnlockPickup experiment: the design fixed before the composite was trained.",
     ["Element", "Fixed before any composite was trained"],
     [
-        ["Child-selection rule", "Freeze the smallest-numbered spec-3 seed that (a) passed W1a's test and (b) has a Wilson 95 % lower bound ≥ 0.95 on its deterministic handoff rate. Six of ten seeds qualify; seed 45 is chosen (sampled own hook 459/500, handoff 488/488; deterministic handoff 485/488, lower bound 0.982; deterministic own hook 305/500, a known limit)"],
+        ["Child-selection rule", "Freeze the smallest-numbered spec-3 seed that (a) passed the sampled-scoring test and (b) has a Wilson 95 % lower bound ≥ 0.95 on its deterministic handoff rate. Six of ten seeds qualify; seed 45 is chosen (sampled own hook 459/500, handoff 488/488; deterministic handoff 485/488, lower bound 0.982; deterministic own hook 305/500, a known limit)"],
         ["Ceiling gate", "Before training, the scripted sequence `unlock_door` → `drop_held` → `pickup_box` must succeed in at least 46/50 stopping episodes; otherwise the experiment fails with reading \"chain\" and nothing is trained. Expected ceiling ≈ 0.97"],
         ["Training", "Seeds 43, 44, 45; budget 40,960 decisions; evaluation every 512; goal-only mask; all children deterministic"],
-        ["Pass rule", "A seed passes if STABLE under 0004 within budget and ≥ 450/500 on fresh seeds 54000–54499; W1b-1 passes if at least 2 of 3 seeds pass. No extension, no second child"],
+        ["Pass rule", "A seed passes if STABLE under 0004 within budget and ≥ 450/500 on 500 fresh seeds; the experiment passes if at least 2 of 3 seeds pass. No extension, no second child"],
         ["Control (added before training)", "Random selection over available children on the same fresh seeds, reported as step efficiency, not part of the verdict"],
-        ["What follows", "Pass: decision 0014 goes to the team, then the child and the composite are registered and BlockedUnlockPickup (W2) starts. Fail: the reading is set by a table fixed in the plan (chain / selector / undetermined), then sampled execution (W1b-2)"],
+        ["What follows", "Pass: decision 0014 goes to the team, then the child and the composite are registered and the BlockedUnlockPickup experiment starts. Fail: the reading is set by a table fixed in the plan (chain / selector / undetermined), then the sampled-execution study"],
     ], [2.4, 7.8])
 
 h2("2.5 Commercialization and Freedom-to-Use")
@@ -542,7 +566,7 @@ p("**The claim narrowed.** Measurements on DoorKey showed that the hierarchy, co
   "of its children, is not cheaper than flat PPO on a single task (Section 2.3.2), and frozen skills "
   "cannot forget by construction. The claim was therefore restated (decision 0006) as composition "
   "and reuse of compositions, with no-forgetting measured on the whole system and with its price. "
-  "Forward transfer through laterals is not claimed after the negative W7 result.")
+  "Forward transfer through laterals is not claimed after the negative lateral ablation (Section 2.3.8).")
 p("**Growth stays in scope.** Building the skill graph automatically (choosing the children of a new "
   "composite without a human) remains a goal (decision 0007). The present phase, in which tasks are "
   "declared by hand in a fixed order (decision 0005), is explicitly temporary.")
@@ -576,7 +600,7 @@ tab("Table 12. What PR-I promised and where it stands.",
     ["PR-I item", "Target", "State on 15 November", "Reason / correction"],
     [
         ["§5.1 FourRooms / PN training refinement", "—", "Taken off the critical path", "Stalled v1; decision 0003"],
-        ["§5.2 Lateral vs no-lateral ablation", "—", "Done (W7), negative", "Section 2.3.8"],
+        ["§5.2 Lateral vs no-lateral ablation", "—", "Done, negative", "Section 2.3.8"],
         ["§5.3 Autoencoder novelty validation", "—", "Not started", "Hierarchy first; no owner yet"],
         ["§5.4 GRU task identification", "—", "Done in part", "Old-task accuracy and latency not measured"],
         ["§5.5 MetaController with real trained policies", "—", "Replaced by composite nodes; done through UnlockPickup", "Decision 0001"],
@@ -584,19 +608,20 @@ tab("Table 12. What PR-I promised and where it stands.",
         ["§5.7 Evaluation package", "—", "Done as the project knowledge base", "Section 2.3.10"],
         ["FourRooms stabilisation study", "Week 14", "Dropped from the critical path", "Decision 0003"],
         ["Autoencoder calibration", "Week 14", "Not started", "Behind schedule"],
-        ["BWT / FWT / retention logging", "Week 15", "Not started; replaced by system-level evaluation (claim C1, C2)", "Frozen skills cannot forget; retention is measured on the system"],
+        ["Backward/forward-transfer and retention logging", "Week 15", "Not started; replaced by system-level evaluation (claim C1, C2)", "Frozen skills cannot forget; retention is measured on the system"],
         ["Lateral / no-lateral baseline", "Week 15", "Done on `go_to_goal` ← `open_door`, negative", "FourRooms no longer used"],
         ["MetaController upgrade, dynamic option selection", "Week 16", "Done in a different form: learned composite selectors", "Decision 0001"],
-        ["GRU baseline and AE–GRU handoff", "Week 16", "GRU baseline done; handoff not started", "Autoencoder not built"],
-        ["Dynamic options: runtime addition of new skills", "Week 17", "Frozen nodes are added as children by hand; automatic growth not started", "Behind schedule; scheduled after W2"],
+        ["GRU baseline and autoencoder–GRU handoff", "Week 16", "GRU baseline done; handoff not started", "Autoencoder not built"],
+        ["Dynamic options: runtime addition of new skills", "Week 17", "Frozen nodes are added as children by hand; automatic growth not started", "Behind schedule; scheduled after the BlockedUnlockPickup experiment"],
         ["Dashboard on real outputs", "Week 17", "Not started", "Behind schedule"],
         ["Phase 2 end-to-end integration", "Week 19", "Not started", "Needs task registry and growth"],
-        ["No-AE / no-GRU ablations", "Week 21", "Not started", "Depends on integration"],
+        ["Ablations without the autoencoder or the GRU", "Week 21", "Not started", "Depends on integration"],
         ["Phase 3 scope review", "Week 22", "Not held", "Scope changes were recorded as decisions instead (0001, 0006)"],
     ], [3.2, 1.2, 3.3, 3.0])
 p("**Behind schedule**, with the reason for each: BlockedUnlockPickup (it builds on UnlockPickup, "
   "which one primitive blocked from October until 15 November, Section 2.3.6); automatic growth (it "
-  "edits the same training code as the hierarchy work and is scheduled after W2); the autoencoder "
+  "edits the same training code as the hierarchy work and is scheduled after the BlockedUnlockPickup "
+  "experiment); the autoencoder "
   "(deprioritised behind the hierarchy, no owner); the GUI on real runs (no time allocated); "
   "end-to-end integration (needs the task registry and growth).")
 
@@ -652,10 +677,10 @@ tab("Table 13. Recorded training time since PR-I (sum of per-run wall-clock seco
     ["Group", "Runs", "Hours"],
     [
         ["Frozen library (six primitives, `unlock_door`)", "7", "0.34"],
-        ["`pickup_box`: specifications 1, 2, 3 and W1a", "26", "8.62"],
+        ["`pickup_box`: specifications 1, 2, 3 and the sampled-scoring test", "26", "8.62"],
         ["Flat PPO baselines (4 tasks × 3 seeds)", "12", "9.84"],
         ["   of which UnlockPickup and BlockedUnlockPickup", "6", "8.46"],
-        ["Lateral ablation W7", "30", "2.47"],
+        ["Lateral ablation", "30", "2.47"],
         ["`drop_held` and `unlock_pickup` (3 seeds each), other composite runs, choice task, option-set baseline", "25", "4.54"],
         ["**Total**", "", "**25.8**"],
     ], [6.2, 1.2, 1.6],
@@ -688,10 +713,10 @@ tab("Table 14. Cost of UnlockPickup in environment steps: hierarchy against flat
         ["Recipe, per run", "`drop_held` + `pickup_box` (with handoff-chain steps) × 10/6 + `unlock_pickup` own", "2,374,637 – 2,379,430"],
         ["Recipe without the selection factor", "the same, × 1 instead of × 10/6", "1,458,947 – 1,463,740"],
         ["Reused library", "`unlock_door` (131,817 own + 280,000 for its children)", "411,817"],
-        ["Research total on `pickup_box`", "six October runs, W1a, specification 3 and its handoff-chain steps", "28,549,749"],
+        ["Research total on `pickup_box`", "six October runs, the sampled-scoring test, specification 3 and its handoff-chain steps", "28,549,749"],
         ["Flat PPO, per run / three runs", "0/50 held-out, censored at the budget", "> 3,000,320 / 9,000,960"],
     ], [2.6, 5.2, 2.4],
-    "Evaluation episodes are counted on neither side. Source: W1b-1 summary (cost table) and its run files.")
+    "Evaluation episodes are counted on neither side.")
 
 h2("4.6 Preliminary Assessment")
 p("The project remains economically feasible and environmentally small: about 26 CPU process-hours "
@@ -703,18 +728,18 @@ p("The project remains economically feasible and environmentally small: about 26
 
 # =====================================================================================
 h1("TASKS TO BE COMPLETED UNTIL FINAL REPORT")
-p("W1b-1 is complete (Section 2.3.7). The remaining work is listed in priority order (Table 15). Items marked *must* are needed for "
+p("The UnlockPickup experiment is complete (Section 2.3.7). The remaining work is listed in priority order (Table 15). Items marked *must* are needed for "
   "the claim; *if time* items are dropped first. Each item names the capstone phase it belongs to. "
   "Criteria are fixed in each item's own plan before its first run.")
 tab("Table 15. Remaining work in priority order.",
     ["#", "Work", "Phase", "Priority"],
     [
-        ["1", "W2: BlockedUnlockPickup by reuse, T9a (level 2: `move_blocker`, `unlock_door`, `pickup_box`) against T9b (level 3: `move_blocker` and the frozen UnlockPickup composite); `pickup_box` needs its own handoff row under T9a first (decision 0014 is per parent)", "Construction, evaluation", "Must"],
-        ["2", "W1b-2: sampled execution of frozen skills with its own stopping rule (decision 0012); flat UnlockPickup retrained with saved models", "Detailed design, testing", "Must"],
-        ["3", "W4: fair baselines: recurrent flat PPO; one flat PPO fine-tuned through the curriculum", "Testing", "Must"],
-        ["4", "Growth G-1/G-2: one API from declaration to registration; choosing a new composite's children automatically, with random choice under the same mask as control", "Detailed design, construction", "Must"],
-        ["5", "Recognition: autoencoder novelty detection (R-1) and the task registry from GRU task id to root skill (R-3)", "Construction, testing", "R-3 must; R-1 if time"],
-        ["6", "W8: system-level continual evaluation: after each new task, all earlier tasks end to end with recognition in the loop; node count per task (claim C1, C2)", "Evaluation", "Must"],
+        ["1", "BlockedUnlockPickup experiment: a new primitive that moves the blocking ball (`move_blocker`), then two composites compared: variant A at level 2 (`move_blocker`, `unlock_door`, `pickup_box`) and variant B at level 3 (`move_blocker` and the frozen UnlockPickup composite). Variant A first needs a handoff test for `pickup_box`, because decision 0014 accepts it for one parent only", "Construction, evaluation", "Must"],
+        ["2", "Sampled-execution study: frozen skills acting by sampling, with its own stopping rule (decision 0012); flat PPO on UnlockPickup retrained with its models saved", "Detailed design, testing", "Must"],
+        ["3", "Fair flat baselines: flat PPO with memory (recurrent); one flat PPO fine-tuned through the whole curriculum", "Testing", "Must"],
+        ["4", "Automatic growth: one interface from declaring a task to registering its node; choosing a new composite's children automatically, with random choice under the same mask as the control", "Detailed design, construction", "Must"],
+        ["5", "Recognition: the task registry that maps the GRU's task prediction to a root skill; autoencoder novelty detection", "Construction, testing", "Registry must; autoencoder if time"],
+        ["6", "System-level continual evaluation: after each new task, all earlier tasks run end to end with recognition in the loop; node count per task (claim parts C1, C2)", "Evaluation", "Must"],
         ["7", "GUI on recorded runs: skill graph, active stack, traces", "Construction", "If time"],
         ["8", "Choice task redesigned so that a wrong pick is unrecoverable", "Detailed design, testing", "If time"],
     ], [0.5, 6.0, 2.2, 1.5])
@@ -724,10 +749,10 @@ p("Table 16 is the week-by-week schedule. It is deliberately tight: every experi
 tab("Table 16. Timetable to the Final Report.",
     ["Week", "Work", "Done when"],
     [
-        ["7", "W2 plan; `move_blocker` primitive trained; `pickup_box` handoff row under T9a; W4 baselines (recurrent and fine-tuned flat PPO) started", "`move_blocker` frozen; W2 criteria fixed"],
-        ["8", "W2: T9a and T9b trained and compared; W1b-2 plan and stopping rule (0012); flat UnlockPickup retrained with saved models", "W2 verdict recorded"],
-        ["9", "Growth G-1 and G-2 (replay Unlock and DoorKey with automatic child selection); task registry R-3; W4 results", "Growth replay verdict; registry selects roots"],
-        ["10", "W8 system-level evaluation with recognition in the loop; autoencoder R-1 and GUI on recorded runs if time", "All experiments closed"],
+        ["7", "BlockedUnlockPickup plan; `move_blocker` trained; `pickup_box` handoff test for variant A; fair flat baselines started", "`move_blocker` frozen; pass criteria fixed"],
+        ["8", "Variants A and B trained and compared; sampled-execution plan and stopping rule (decision 0012); flat PPO on UnlockPickup retrained with saved models", "BlockedUnlockPickup verdict recorded"],
+        ["9", "Automatic growth (replay Unlock and DoorKey with automatic child selection); task registry; fair-baseline results", "Growth verdict; registry selects roots"],
+        ["10", "System-level evaluation with recognition in the loop; autoencoder and GUI on recorded runs if time", "All experiments closed"],
         ["11", "Draft Final Report written; buffer for one repeated run", "Draft complete"],
         ["12", "Draft Final Report submitted", "—"],
         ["13", "Corrections from the draft review", "—"],
@@ -755,4 +780,38 @@ for r in [
 ]:
     B.append(("ref", r))
 
-BLOCKS = B
+DECISION_NAMES = {
+    "0001": "the v1-to-v2 redesign", "0002": "the skill graph is a DAG",
+    "0003": "Progressive Networks off the critical path", "0004": "the stabilisation rule",
+    "0005": "tasks declared by hand", "0006": "the claim", "0007": "automatic growth in scope",
+    "0009": "a selection cap per composite", "0010": "decide by experiment",
+    "0011": "pickup_box specification 3", "0012": "stopping rule under sampling, not yet written",
+    "0013": "the lateral source", "0014": "freezing without live stabilisation",
+}
+
+
+def _name_decisions(blocks):
+    import re as _re
+    out, seen = [], set()
+    for blk in blocks:
+        if blk[0] in ("h1", "h2"):
+            seen = set()
+        if blk[0] in ("p", "b"):
+            text = blk[1]
+
+            def sub(m):
+                num = m.group(1)
+                if num in seen or num not in DECISION_NAMES:
+                    return m.group(0)
+                seen.add(num)
+                after = text[m.end():m.end() + 1]
+                name = DECISION_NAMES[num]
+                return f"{m.group(0)}, {name}" if after == ")" else f"{m.group(0)} ({name})"
+
+            text = _re.sub(r"decision (00\d\d)(?! \()", sub, text)
+            blk = (blk[0], text)
+        out.append(blk)
+    return out
+
+
+BLOCKS = _name_decisions(B)

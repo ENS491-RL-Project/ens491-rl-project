@@ -74,6 +74,7 @@ def h3(text):
             f'{runs(text, base_rpr=H3RPR)}<w:bookmarkEnd w:id="{_bm[0]}"/></w:p>')
 
 
+UH_RPR = '<w:b/><w:bCs/><w:color w:val="000000"/><w:sz w:val="32"/><w:szCs w:val="32"/>'
 H3RPR = '<w:b/><w:bCs/><w:color w:val="000000"/><w:sz w:val="24"/><w:szCs w:val="24"/>'
 
 
@@ -256,8 +257,11 @@ def main(src, dst, figdir):
             body.append(caption(cap))
         elif kind == "tab":
             _, cap, header, rows, widths, note = blk
-            body.append(table_caption(cap))
+            if cap:
+                body.append(table_caption(cap))
             body.append(table(header, rows, widths, note=note))
+        elif kind == "uh":  # unnumbered heading (front matter), kept out of the TOC
+            body.append(f'<w:p><w:pPr><w:pStyle w:val="TOCHeading"/></w:pPr>{runs(blk[1], base_rpr=UH_RPR)}</w:p>')
         elif kind == "ref":
             body.append(refentry(blk[1]))
         elif kind == "pb":

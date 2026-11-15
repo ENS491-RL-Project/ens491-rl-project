@@ -194,8 +194,8 @@ def fig2_skill_graph(out: Path) -> None:
         "blocked_pickup_b": (3, 3.0),
     }
     planned = {"move_blocker": ("move_blocker", "{0,5}", "planned"),
-               "blocked_pickup_a": ("blocked_pickup_a", "{2,3}", "planned (T9a)"),
-               "blocked_pickup_b": ("blocked_pickup_b", "{3,1}", "planned (T9b)")}
+               "blocked_pickup_a": ("blocked_pickup_a", "{2,3}", "planned (variant A)"),
+               "blocked_pickup_b": ("blocked_pickup_b", "{3,1}", "planned (variant B)")}
     edges = [
         ("unlock_door", "get_key"), ("unlock_door", "open_door"),
         ("solve_doorkey", "unlock_door"), ("solve_doorkey", "go_to_goal"),
