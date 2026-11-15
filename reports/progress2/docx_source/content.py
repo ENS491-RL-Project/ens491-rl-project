@@ -130,8 +130,8 @@ tab("Table 1. The claim in measurable form (decision 0006).",
 h2("1.4 Realistic Constraints")
 p("**Compute:** every run reported here was trained on one CPU (as recorded in every run's result "
   "file); no GPU was used. **Environment:** MiniGrid, one task family (Unlock, DoorKey, "
-  "UnlockPickup, BlockedUnlockPickup), decomposed into sub-goals by the authors. **Time:** one "
-  "semester remains until the Final Report, shared by five members. **Evaluation standard:** a "
+  "UnlockPickup, BlockedUnlockPickup), decomposed into sub-goals by the authors. **Time:** seven "
+  "weeks remain until the Final Report (week 14), shared by five members. **Evaluation standard:** a "
   "skill counts as learned only under a fixed, pre-declared rule (decision 0004): success rate at "
   "least 0.90 with a Wilson 95 % lower bound of at least 0.80 in two consecutive 50-episode "
   "evaluations on fixed seeds, with the reported score taken on a separate held-out seed set. "
@@ -601,17 +601,17 @@ tab("Table 12. What PR-I promised and where it stands.",
     [
         ["§5.1 FourRooms / PN training refinement", "—", "Taken off the critical path", "Stalled v1; decision 0003"],
         ["§5.2 Lateral vs no-lateral ablation", "—", "Done, negative", "Section 2.3.8"],
-        ["§5.3 Autoencoder novelty validation", "—", "Not started", "Hierarchy first; no owner yet"],
+        ["§5.3 Autoencoder novelty validation", "—", "Not started: the v1 autoencoder module exists but is not connected to v2", "Hierarchy first; no owner yet"],
         ["§5.4 GRU task identification", "—", "Done in part", "Old-task accuracy and latency not measured"],
         ["§5.5 MetaController with real trained policies", "—", "Replaced by composite nodes; done through UnlockPickup", "Decision 0001"],
-        ["§5.6 GUI on real outputs", "—", "Not started", "Behind schedule"],
+        ["§5.6 GUI on real outputs", "—", "Not started: the v1 dashboard exists but does not read v2 runs", "Behind schedule"],
         ["§5.7 Evaluation package", "—", "Done as the project knowledge base", "Section 2.3.10"],
         ["FourRooms stabilisation study", "Week 14", "Dropped from the critical path", "Decision 0003"],
         ["Autoencoder calibration", "Week 14", "Not started", "Behind schedule"],
         ["Backward/forward-transfer and retention logging", "Week 15", "Not started; replaced by system-level evaluation (claim C1, C2)", "Frozen skills cannot forget; retention is measured on the system"],
         ["Lateral / no-lateral baseline", "Week 15", "Done on `go_to_goal` ← `open_door`, negative", "FourRooms no longer used"],
         ["MetaController upgrade, dynamic option selection", "Week 16", "Done in a different form: learned composite selectors", "Decision 0001"],
-        ["GRU baseline and autoencoder–GRU handoff", "Week 16", "GRU baseline done; handoff not started", "Autoencoder not built"],
+        ["GRU baseline and autoencoder–GRU handoff", "Week 16", "GRU baseline done; handoff not started", "The v1 autoencoder module exists; not connected to v2, not validated"],
         ["Dynamic options: runtime addition of new skills", "Week 17", "Frozen nodes are added as children by hand; automatic growth not started", "Behind schedule; scheduled after the BlockedUnlockPickup experiment"],
         ["Dashboard on real outputs", "Week 17", "Not started", "Behind schedule"],
         ["Phase 2 end-to-end integration", "Week 19", "Not started", "Needs task registry and growth"],
@@ -635,6 +635,11 @@ p("Yes. Continual acquisition, task recognition without labels, hierarchical reu
   "on BlockedUnlockPickup and fair baselines before new components.")
 
 h2("3.5 Effects of the Changes on the Final Report")
+p("Of the v1 modules reported in PR-I, three are reused by v2: the column network, which every v2 "
+  "primitive uses as its policy; its lateral connections, used in the lateral ablation (Section "
+  "2.3.8); and the GRU task identifier (Section 2.3.9). The autoencoder, the MetaController and the "
+  "Streamlit dashboard remain in the repository but are not connected to v2 and have not been "
+  "validated; the MetaController is replaced by composite skill nodes.")
 b("**Kept:** continual acquisition through frozen skills; hierarchical reuse, now evidenced by "
   "composites reused inside later tasks; GRU task identification; evaluation on the MiniGrid task "
   "sequence.")
