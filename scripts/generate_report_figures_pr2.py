@@ -317,7 +317,7 @@ def fig3_pickup_box(out: Path) -> None:
 
     fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 2.9), sharey=True)
     fig.subplots_adjust(left=0.1, right=0.995, top=0.8, bottom=0.15, wspace=0.08)
-    panels = [(axes[0], spec2, f"(a) Specification 2 (W1a): {n2} of 10 seeds pass"),
+    panels = [(axes[0], spec2, f"(a) Specification 2: {n2} of 10 seeds pass"),
               (axes[1], spec3, f"(b) Specification 3: {n3} of 10 seeds pass")]
     for ax, data, title in panels:
         seeds = list(data)

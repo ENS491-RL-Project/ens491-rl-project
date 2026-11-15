@@ -93,8 +93,9 @@ p("Two things changed, both recorded as design decisions (Section 2.2). First, t
   "Progressive Network columns and a separate MetaController on the critical path; it stalled "
   "because the second column never stabilised on FourRooms. In the new design (\"v2\") everything the "
   "agent knows is a **skill node**, and a composite node's policy is its own meta-controller "
-  "(Section 2.1). Second, the claim was narrowed (decision 0006). The agent **composes skills while "
-  "it learns, reuses the compositions as building blocks, and does this without forgetting**. "
+  "(Section 2.1). Second, the claim was narrowed (decision 0006). The claim is now that the agent "
+  "**composes skills while it learns, reuses the compositions as building blocks, and does this "
+  "without forgetting**; Table 1 shows which parts of it have evidence today. "
   "Forward transfer through Progressive Network laterals is claimed only if an experiment shows it; "
   "the one experiment run so far did not (Section 2.3.8). The claim that the hierarchy learns a "
   "single task faster than flat PPO is not made. Because frozen skills cannot forget by "
@@ -103,7 +104,8 @@ p("Two things changed, both recorded as design decisions (Section 2.2). First, t
 p("**State on 15 November.** Eleven skills are frozen, among them composites for three of the four "
   "curriculum tasks: Unlock, DoorKey and UnlockPickup. DoorKey and UnlockPickup both reuse the Unlock "
   "composite untouched; UnlockPickup, on which flat PPO scored 0 of 50, has a frozen composite since "
-  "15 November (Section 2.3.7). The fourth task, BlockedUnlockPickup, has not been run.")
+  "15 November (one result; its `pickup_box` child was frozen under the exception of decision 0014, "
+  "Section 2.3.7). The fourth task, BlockedUnlockPickup, has not been run.")
 p("Table 1 maps the Proposal's objectives to the claim in measurable form. Each row names what "
   "would refute it and what exists today.")
 tab("Table 1. The claim in measurable form (decision 0006).",
@@ -318,8 +320,10 @@ h3("2.3.4 The Choice Task: No Choice Learned")
 p("To escape the masking problem, a task was built in which two children are valid at the same "
   "decision and the right one depends on what the agent sees: a DoorKey variant with a yellow and a "
   "blue key, a door of one of the two colours each episode, and colour-specific key primitives. "
-  "Three seeds under each of two masks were trained for 100 policy updates. **No run learned the "
-  "choice**: none became STABLE (held-out 0.78–0.80), the best first-key accuracy over the seven "
+  "Three seeds under each of two masks were trained for 100 policy updates, and four more "
+  "exploratory strict-mask runs were added. **No run learned the choice**: none became STABLE "
+  "(held-out 0.78–0.80 under the goal-only mask, 0.48–0.66 under the strict mask), the best "
+  "first-key accuracy over the seven "
   "strict-mask runs was 0.72, and three of the seven showed only a weak dependence of the first key "
   "on the door colour (Fisher p 0.004, 0.021, 0.021, uncorrected). The selector's network can read "
   "the colour — trained with supervision it does so at 0.940 from 1,000 examples and 0.997 from "
@@ -440,8 +444,8 @@ p("PR-I §5.2 promised a lateral/no-lateral comparison. It was run on a pair the
   "seeds each, a fixed budget of 401,408 steps and an evaluation every 4,096 steps. **There is no "
   "measurable benefit** (Table 9): no arm beats another on steps to STABLE (B against A: p 0.469, "
   "median ratio 0.977; the pre-set rule needed p < 0.05 and a ratio of at most 0.80). The "
-  "experiment was sized so that a true 25 % reduction would have passed 0.80 of the time "
-  "(a 20 % reduction 0.47 of the time), so a small effect cannot be excluded, but an effect of "
+  "sensitivity was recomputed afterwards from arm A's measured spread: the design would have "
+  "detected a true 25 % reduction 0.80 of the time (a 20 % reduction 0.47 of the time), so a small effect cannot be excluded, but an effect of "
   "25 % or more is unlikely. Forward transfer through laterals is therefore not claimed. The "
   "result is for one pair only. The learning curves are recorded with the run files; the table "
   "gives the per-arm summary.")
@@ -507,7 +511,8 @@ b("**5. Analyse and interpret.** The rule was kept when it failed: the test was 
   "counterfactuals and a pre-set reading rule was run, giving reading Key.")
 b("**6. Verify predicted results.** Specification 3 was derived from that reading and predicted to "
   "fix the handoff row. On fresh seed ranges with the test unchanged, the handoff row passed on all "
-  "ten seeds as predicted, and the own-hook row weakened on three; the overall verdict was 7 of 10, "
+  "ten seeds as predicted, and the own-hook row was lower than under specification 2 on seven of "
+  "ten seeds and fell below 0.90 on three; the overall verdict was 7 of 10, "
   "a pass at the threshold.")
 p("**Second worked example: the UnlockPickup experiment.**")
 b("**1. Define the problem.** UnlockPickup had no frozen composite. Specification 3 had passed its "
@@ -579,10 +584,11 @@ b("**UnlockPickup was blocked from October until 15 November by one primitive.**
 b("**Deterministic execution loops under partial observability.** A policy that sees a 7 × 7 "
   "egocentric view and acts by argmax repeats the same action in the same view; in "
   "partially observed rooms this produces loops. Every deterministic failure of a frozen node "
-  "inspected in the execution-mode audit (39 of 39) was such a state repeat. A scripted UnlockPickup "
-  "sequence succeeded in 32/50 episodes deterministically and 147/150 with every node sampled. "
+  "inspected in the execution-mode audit (39 of 39) was such a state repeat. In October, with the "
+  "unfrozen specification-2 `pickup_box`, a scripted UnlockPickup sequence succeeded in 32/50 "
+  "episodes deterministically and 147/150 with every node sampled. "
   "Decision 0014 settled the case of one argmax child; whether frozen skills should act by sampling "
-  "in general is still open, and it needs its own stopping rule (decision 0012, reserved) because a "
+  "in general is still open, and it needs its own stopping rule (reserved as decision 0012) because a "
   "sampled evaluation is itself random.")
 b("**A start-state mismatch.** The handoff diagnostic showed that `pickup_box` failed in a state it "
   "had never trained on (the key just dropped in front of it). Specification 3 fixed the handoff and "
@@ -595,9 +601,10 @@ b("**Success rate cannot separate composition from masking** on this curriculum 
 
 h2("3.3 Progress Against the Timetable")
 p("Table 12 compares what PR-I promised (its §5.1–5.7 and the eleven rows of its §5.8 timetable) "
-  "with the state on 15 November. PR-I's week numbers follow the Proposal's project weeks.")
+  "with the state on 15 November. PR-I's target weeks follow the Proposal's project weeks; they "
+  "are not the semester weeks used in Section 5.")
 tab("Table 12. What PR-I promised and where it stands.",
-    ["PR-I item", "Target", "State on 15 November", "Reason / correction"],
+    ["PR-I item", "Target (Proposal week)", "State on 15 November", "Reason / correction"],
     [
         ["§5.1 FourRooms / PN training refinement", "—", "Taken off the critical path", "Stalled v1; decision 0003"],
         ["§5.2 Lateral vs no-lateral ablation", "—", "Done, negative", "Section 2.3.8"],
@@ -605,7 +612,7 @@ tab("Table 12. What PR-I promised and where it stands.",
         ["§5.4 GRU task identification", "—", "Done in part", "Old-task accuracy and latency not measured"],
         ["§5.5 MetaController with real trained policies", "—", "Replaced by composite nodes; done through UnlockPickup", "Decision 0001"],
         ["§5.6 GUI on real outputs", "—", "Not started: the v1 dashboard exists but does not read v2 runs", "Behind schedule"],
-        ["§5.7 Evaluation package", "—", "Done as the project knowledge base", "Section 2.3.10"],
+        ["§5.7 Evaluation package", "—", "Done in part: the knowledge base and result records; no task-detection plots (autoencoder not validated)", "Section 2.3.10"],
         ["FourRooms stabilisation study", "Week 14", "Dropped from the critical path", "Decision 0003"],
         ["Autoencoder calibration", "Week 14", "Not started", "Behind schedule"],
         ["Backward/forward-transfer and retention logging", "Week 15", "Not started; replaced by system-level evaluation (claim C1, C2)", "Frozen skills cannot forget; retention is measured on the system"],
@@ -641,13 +648,13 @@ p("Of the v1 modules reported in PR-I, three are reused by v2: the column networ
   "Streamlit dashboard remain in the repository but are not connected to v2 and have not been "
   "validated; the MetaController is replaced by composite skill nodes.")
 b("**Kept:** continual acquisition through frozen skills; hierarchical reuse, now evidenced by "
-  "composites reused inside later tasks; GRU task identification; evaluation on the MiniGrid task "
+  "one composite (`unlock_door`) reused untouched inside two later tasks; GRU task identification; evaluation on the MiniGrid task "
   "sequence.")
 b("**Reduced:** Progressive Networks become an ablation, not the mechanism of transfer; the GUI "
   "becomes a viewer of recorded runs (skill graph, active stack, traces) rather than a live "
   "dashboard of all signals; the autoencoder is evaluated if time permits.")
-b("**Dropped from this project:** the planning extension (Proposal objective 4, already a stretch "
-  "goal) and FourRooms as a benchmark.")
+b("**Deferred, with no work planned before the Final Report:** the planning extension (Proposal "
+  "objective 4, a stretch goal) and FourRooms, taken off the critical path in October.")
 
 # =====================================================================================
 h1("SUSTAINABILITY AND ECONOMIC ASSESSMENT")
@@ -739,7 +746,7 @@ p("The UnlockPickup experiment is complete (Section 2.3.7). The remaining work i
 tab("Table 15. Remaining work in priority order.",
     ["#", "Work", "Phase", "Priority"],
     [
-        ["1", "BlockedUnlockPickup experiment: a new primitive that moves the blocking ball (`move_blocker`), then two composites compared: variant A at level 2 (`move_blocker`, `unlock_door`, `pickup_box`) and variant B at level 3 (`move_blocker` and the frozen UnlockPickup composite). Variant A first needs a handoff test for `pickup_box`, because decision 0014 accepts it for one parent only", "Construction, evaluation", "Must"],
+        ["1", "BlockedUnlockPickup experiment: a new primitive that moves the blocking ball (`move_blocker`), then two composites compared: variant A at level 2 (`move_blocker`, `unlock_door`, `pickup_box`) and variant B at level 3 (`move_blocker` and the frozen UnlockPickup composite). Variant A first needs a handoff test for `pickup_box`, because decision 0014 accepts it for one parent only. Known risk: in the October pre-flight check the frozen `get_key` picked up the ball instead of the key in 29 of 50 BlockedUnlockPickup episodes, so a key primitive may have to be rebuilt", "Construction, evaluation", "Must"],
         ["2", "Sampled-execution study: frozen skills acting by sampling, with its own stopping rule (decision 0012); flat PPO on UnlockPickup retrained with its models saved", "Detailed design, testing", "Must"],
         ["3", "Fair flat baselines: flat PPO with memory (recurrent); one flat PPO fine-tuned through the whole curriculum", "Testing", "Must"],
         ["4", "Automatic growth: one interface from declaring a task to registering its node; choosing a new composite's children automatically, with random choice under the same mask as the control", "Detailed design, construction", "Must"],
@@ -754,9 +761,9 @@ p("Table 16 is the week-by-week schedule. It is deliberately tight: every experi
 tab("Table 16. Timetable to the Final Report.",
     ["Week", "Work", "Done when"],
     [
-        ["7", "BlockedUnlockPickup plan; `move_blocker` trained; `pickup_box` handoff test for variant A; fair flat baselines started", "`move_blocker` frozen; pass criteria fixed"],
-        ["8", "Variants A and B trained and compared; sampled-execution plan and stopping rule (decision 0012); flat PPO on UnlockPickup retrained with saved models", "BlockedUnlockPickup verdict recorded"],
-        ["9", "Automatic growth (replay Unlock and DoorKey with automatic child selection); task registry; fair-baseline results", "Growth verdict; registry selects roots"],
+        ["7", "Plans written with their pass criteria: BlockedUnlockPickup experiment, sampled-execution study (stopping rule, decision 0012), fair flat baselines", "Criteria fixed before any run"],
+        ["8", "`move_blocker` trained; `pickup_box` handoff test for variant A; variants A and B trained and compared; fair flat baselines started", "BlockedUnlockPickup verdict recorded"],
+        ["9", "Sampled-execution study run; flat PPO on UnlockPickup retrained with saved models; automatic growth (replay Unlock and DoorKey with automatic child selection); task registry; fair-baseline results", "Sampled-execution and growth verdicts; registry selects roots"],
         ["10", "System-level evaluation with recognition in the loop; autoencoder and GUI on recorded runs if time", "All experiments closed"],
         ["11", "Draft Final Report written; buffer for one repeated run", "Draft complete"],
         ["12", "Draft Final Report submitted", "—"],

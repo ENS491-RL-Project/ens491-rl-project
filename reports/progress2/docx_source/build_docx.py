@@ -239,9 +239,13 @@ def main(src, dst, figdir):
             f'<Relationship Id="{rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/pr2_{fname}"/></Relationships>')
 
     body = []
+    seen_h1 = False
     for blk in content.BLOCKS:
         kind = blk[0]
         if kind == "h1":
+            if seen_h1:  # every main section after the first starts on a new page (Emir's layout)
+                body.append(pagebreak())
+            seen_h1 = True
             body.append(h1(blk[1]))
         elif kind == "h2":
             body.append(h2(blk[1]))
