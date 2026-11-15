@@ -30,7 +30,6 @@ Migrated from `ENS491_Project_State.md` on 2026-11-15; its last full text is in
 
 ## Waiting on a decision
 
-- Emir sets [0009](decisions/0009-max-decisions-per-frame.md)'s status (PR #15 merged with the per-frame design).
 - Owner of the strict-mask dead-end row in [open-questions](open-questions.md).
 
 ## Roadmap

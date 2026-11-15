@@ -373,7 +373,7 @@ evaluation-only scripts (except where listed). A lower bound on compute since PR
 2. **Label of 4,804,608.** The spec-3 summary's cost table calls it "The six withdrawn runs
    (spec 1)"; the JSON total is spec 1 (3 × 600,064) + spec 2 October (3 × 1,001,472). The W1b-1
    plan (branch) relabels it correctly. The brief repeats "spec 1".
-3. **0009 status.** status.md "Waiting on a decision" says "Emir sets 0009's status"; the file
+3. **0009 status.** status.md "Waiting on a decision" says "Emir sets 0009's status"; the file **Resolved in PR 34:** Emir set Status to Accepted (2026-11-15) and the status.md line was removed.
    says "Accepted 2026-11-12, provided the final PR #15 keeps this design".
 4. **"~53k own / ~664k with children" (status.md H-6 row)** = the H-6.8 re-measurement
    (`n_steps` 64); the frozen checkpoint is 162,138 / 773,955 (`n_steps` 256). Not a contradiction,
