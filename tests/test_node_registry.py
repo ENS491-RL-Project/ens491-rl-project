@@ -123,3 +123,17 @@ def test_list_nodes(tmp_path):
         n.freeze()
         reg.save(n)
     assert reg.list_nodes() == ["0-1_get_key", "0-2_open_door"]
+
+
+def test_missing_weights_file_is_an_error(tmp_path):
+    """A checkpoint whose weights are gone must not load as a 'frozen' random network."""
+    reg = NodeRegistry(tmp_path)
+    src = make_node()
+    src.freeze()
+    d = reg.save(src)
+    (d / "policy_state_dict.pt").unlink()
+
+    dst = make_node()
+    with pytest.raises(FileNotFoundError, match="policy_state_dict"):
+        reg.load_into(dst)
+    assert dst.status is not NodeStatus.FROZEN
