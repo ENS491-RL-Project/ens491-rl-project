@@ -1,0 +1,23 @@
+gate: spec-2 models reproduce W1a on W1a's ranges (500 seeds per row)
+  spec 2 seed 43: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 44: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 45: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 46: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 47: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 48: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 49: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 50: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 51: own 0 differ, handoff 0 differ -> PASSED
+  spec 2 seed 52: own 0 differ, handoff 0 differ -> PASSED
+  spec 3 seed 48: TEST own_hook: valid 500/500 argmax 359 sampled 482 (0.964, LB 0.9438) pass=True | handoff: valid 488/500 argmax 478 sampled 488 (1.0, LB 0.9922) pass=True -> seed pass=True
+               old ranges (descriptive) own_hook: valid 500/500 argmax 361 sampled 488 (0.976, LB 0.9585) pass=True | handoff: valid 491/500 argmax 475 sampled 490 (0.998, LB 0.9886) pass=True
+  spec 3 seed 49: TEST own_hook: valid 500/500 argmax 339 sampled 475 (0.95, LB 0.9272) pass=True | handoff: valid 488/500 argmax 488 sampled 488 (1.0, LB 0.9922) pass=True -> seed pass=True
+               old ranges (descriptive) own_hook: valid 500/500 argmax 358 sampled 473 (0.946, LB 0.9226) pass=True | handoff: valid 491/500 argmax 491 sampled 490 (0.998, LB 0.9886) pass=True
+  spec 3 seed 50: TEST own_hook: valid 500/500 argmax 303 sampled 448 (0.896, LB 0.8662) pass=False | handoff: valid 488/500 argmax 469 sampled 487 (0.998, LB 0.9885) pass=True -> seed pass=False
+               old ranges (descriptive) own_hook: valid 500/500 argmax 320 sampled 453 (0.906, LB 0.8772) pass=True | handoff: valid 491/500 argmax 474 sampled 491 (1.0, LB 0.9922) pass=True
+  spec 3 seed 51: TEST own_hook: valid 500/500 argmax 329 sampled 484 (0.968, LB 0.9487) pass=True | handoff: valid 488/500 argmax 485 sampled 488 (1.0, LB 0.9922) pass=True -> seed pass=True
+               old ranges (descriptive) own_hook: valid 500/500 argmax 358 sampled 475 (0.95, LB 0.9272) pass=True | handoff: valid 491/500 argmax 486 sampled 491 (1.0, LB 0.9922) pass=True
+  spec 3 seed 52: TEST own_hook: valid 500/500 argmax 352 sampled 477 (0.954, LB 0.9319) pass=True | handoff: valid 488/500 argmax 487 sampled 488 (1.0, LB 0.9922) pass=True -> seed pass=True
+               old ranges (descriptive) own_hook: valid 500/500 argmax 355 sampled 473 (0.946, LB 0.9226) pass=True | handoff: valid 491/500 argmax 491 sampled 490 (0.998, LB 0.9886) pass=True
+verdict: spec 3 passes ({'43': True, '44': False, '45': True, '46': True, '47': False, '48': True, '49': True, '50': False, '51': True, '52': True})
+wrote C:/Users/memir/AppData/Local/Temp/claude/cf37883aed08250a/7f3e8871-9cb4-4b76-8aa1-82f55cf5617d/scratchpad/spec3_eval_ext.json (1420.4s)

@@ -102,6 +102,9 @@ the summary says so.
 - A sampled stopping rule changes decision 0004 and v2 §5.3, not only §5.4; 0011 must say so, and
   CLAUDE.md forbids implementing a `Proposed` decision, so Emir must first allow experimental code
   behind non-default flags.
+  *Note (2026-11-15, after this plan ran): decision number 0011 went to `pickup_box` specification 3
+  ([`decisions/0011`](../kb/decisions/0011-pickup-box-spec-3.md)); the W1b decision described here
+  becomes 0012. The text above is left as written.*
 - Confirmation must use fresh sampling seeds and distinct env seeds; equal stopping opportunities
   for flat and hierarchy.
 - Sampled parity between `OptionEnv` and `Executor` needs per-node generators and adapters that

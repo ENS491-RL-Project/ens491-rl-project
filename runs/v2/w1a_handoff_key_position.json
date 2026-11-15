@@ -1,0 +1,7079 @@
+{
+ "script": "scripts/measure_handoff_key_position.py",
+ "env": "MiniGrid-UnlockPickup-v0",
+ "seeds": "51000-51499",
+ "chain": [
+  "{1,1} unlock_door",
+  "{0,9} drop_held"
+ ],
+ "valid_states": 491,
+ "summary": {
+  "key_on_grid": {
+   "n": 491,
+   "share": 1.0
+  },
+  "key_adjacent_to_door": {
+   "n": 0,
+   "share": 0.0
+  },
+  "key_on_approach_cell": {
+   "n": 0,
+   "share": 0.0
+  },
+  "key_in_front_of_agent": {
+   "n": 491,
+   "share": 1.0
+  },
+  "agent_on_approach_cell": {
+   "n": 491,
+   "share": 1.0
+  },
+  "agent_facing": {
+   "north": 227,
+   "south": 264
+  },
+  "key_relative_to_door": {
+   "(-1, 1)": 264,
+   "(-1, -1)": 227
+  },
+  "steps_used_by_chain": {
+   "mean": 16.81,
+   "max": 32
+  }
+ },
+ "success_by_key_adjacency_unchanged_sampled": {
+  "failing, key adjacent to door = True": {
+   "episodes": 0,
+   "successes": 0,
+   "success_rate": null,
+   "wilson": null
+  },
+  "failing, key adjacent to door = False": {
+   "episodes": 1964,
+   "successes": 1728,
+   "success_rate": 0.8798,
+   "wilson": [
+    0.8647,
+    0.8935
+   ]
+  },
+  "passing, key adjacent to door = True": {
+   "episodes": 0,
+   "successes": 0,
+   "success_rate": null,
+   "wilson": null
+  },
+  "passing, key adjacent to door = False": {
+   "episodes": 2946,
+   "successes": 2830,
+   "success_rate": 0.9606,
+   "wilson": [
+    0.953,
+    0.9671
+   ]
+  }
+ },
+ "note": "evaluation only; describes the start states, tests nothing",
+ "states": {
+  "51000": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51001": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51002": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -3,
+    -1
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51003": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51004": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51005": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51006": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51007": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51008": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51009": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51010": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51011": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51012": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51013": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51014": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51015": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51016": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51017": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51018": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51019": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51020": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51021": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51022": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51023": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51024": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51025": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51026": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51027": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51028": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51029": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51030": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51031": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51032": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51033": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51034": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51035": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51036": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51037": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51038": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51039": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51040": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51041": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51042": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51043": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51044": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 30
+  },
+  "51045": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 28
+  },
+  "51046": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51047": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51048": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51049": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 30
+  },
+  "51050": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51051": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51052": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51053": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51054": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51055": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51056": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51057": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51058": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51059": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51060": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51061": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51062": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51063": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51064": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51065": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 28
+  },
+  "51066": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51067": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51068": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51069": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51070": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51071": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51072": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51073": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51074": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51075": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51076": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51077": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51078": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51079": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51080": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51081": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 30
+  },
+  "51082": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51083": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51084": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51085": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51086": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51087": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51088": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51089": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51090": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51091": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51092": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51093": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51094": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51095": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51096": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51097": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51098": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51099": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 31
+  },
+  "51100": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51101": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51102": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51103": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51104": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51105": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51106": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51107": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51108": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51109": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51110": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51111": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51112": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51113": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51114": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 6
+  },
+  "51115": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51116": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51117": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51118": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51119": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51120": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51121": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51122": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51123": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51124": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51125": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 32
+  },
+  "51126": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51127": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51128": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51129": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51130": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51131": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51132": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51133": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51134": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51135": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51136": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51137": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51138": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51139": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51140": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51141": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51142": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51143": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51144": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51145": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51146": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51147": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 28
+  },
+  "51148": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51149": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51150": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51151": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 28
+  },
+  "51152": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51153": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51154": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51155": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51156": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51157": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51158": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51159": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51160": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51161": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -3,
+    -1
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51162": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51163": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51164": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51165": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51166": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51167": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51168": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51169": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51170": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51171": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51172": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51173": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51174": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51175": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51176": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51177": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51178": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51179": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51180": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51181": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51182": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51183": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51184": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51185": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51186": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51187": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51188": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51189": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51190": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51191": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51192": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51193": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51194": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51195": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -3,
+    1
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51196": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51197": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51198": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51199": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51200": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 29
+  },
+  "51201": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51202": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51203": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51204": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51205": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51206": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51207": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51208": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51209": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51210": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51211": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51212": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51213": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51214": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51215": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51216": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51217": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51218": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51219": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51220": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51221": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 27
+  },
+  "51222": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51223": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51224": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51225": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51226": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51227": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51228": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51229": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51230": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51231": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51232": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51233": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51234": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 27
+  },
+  "51235": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51236": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51237": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51238": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51239": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51240": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51241": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51242": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51243": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51244": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51245": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51246": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51247": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51248": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51249": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51250": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51251": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51252": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51253": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51254": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51255": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51256": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51257": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51258": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51259": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51260": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51261": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51262": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51263": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51264": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51265": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51266": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51267": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51268": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51269": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51270": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51271": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51272": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51273": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51274": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51275": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51276": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51277": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51278": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51279": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51280": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51281": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51282": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51283": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51284": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51285": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51286": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51287": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51288": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51289": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51290": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51291": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51292": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51293": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51294": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51295": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51296": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51297": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51298": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51299": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51300": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51301": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -1,
+    3
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51302": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51303": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51304": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51305": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51306": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 27
+  },
+  "51307": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51308": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51309": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51310": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51311": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51312": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51313": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51314": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51315": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51316": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51317": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51318": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51319": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51320": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51321": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51322": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51323": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51324": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51325": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51326": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51327": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51328": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51329": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51330": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51331": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51332": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51333": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51334": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51335": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51336": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51337": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 29
+  },
+  "51338": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51339": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51340": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51341": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51342": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51343": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51344": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51345": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51346": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51347": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51348": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51349": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51350": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51351": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51352": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51353": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51354": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51355": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51356": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51357": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51358": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51359": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51360": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51361": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51362": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51363": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51364": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51365": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51366": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51367": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51368": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51369": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51370": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51371": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51372": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51373": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51374": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51375": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51376": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51377": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 26
+  },
+  "51378": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51379": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 8
+  },
+  "51380": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51381": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 29
+  },
+  "51382": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51383": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51384": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51385": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51386": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 28
+  },
+  "51387": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51388": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51389": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51390": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51391": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51392": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51393": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51394": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51395": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51396": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51397": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51398": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51399": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51400": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51401": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51402": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51403": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51404": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51405": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51406": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51407": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51408": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51409": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51410": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51411": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51412": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51413": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51414": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51415": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51416": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51417": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51418": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51419": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51420": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51421": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51422": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51423": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51424": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51425": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51426": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51427": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51428": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51429": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51430": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51431": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 24
+  },
+  "51432": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51433": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51434": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51435": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51436": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51437": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 30
+  },
+  "51438": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51439": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": true,
+   "key_on_approach_cell": true,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    0
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51440": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51441": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51442": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51443": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51444": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51445": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51446": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51447": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51448": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51449": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51450": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51451": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51452": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51453": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51454": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51455": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51456": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51457": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -3,
+    1
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51458": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51459": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51460": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": false,
+   "agent_on_approach_cell": false,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    2
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51461": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51462": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51463": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51464": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51465": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 16
+  },
+  "51466": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51467": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51468": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51469": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51470": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51471": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51472": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51473": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51474": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51475": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 15
+  },
+  "51476": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51477": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51478": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51479": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51480": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 10
+  },
+  "51481": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 11
+  },
+  "51482": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51483": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 23
+  },
+  "51484": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 25
+  },
+  "51485": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 19
+  },
+  "51486": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 17
+  },
+  "51487": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 18
+  },
+  "51488": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 21
+  },
+  "51489": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 20
+  },
+  "51490": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 13
+  },
+  "51491": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -3,
+    1
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51492": {
+   "valid": false,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": false,
+   "agent_on_approach_cell": false,
+   "agent_facing": "east",
+   "key_relative_to_door": [
+    -3,
+    -3
+   ],
+   "steps_used_by_chain": 240
+  },
+  "51493": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 7
+  },
+  "51494": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  },
+  "51495": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 22
+  },
+  "51496": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 32
+  },
+  "51497": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 14
+  },
+  "51498": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "south",
+   "key_relative_to_door": [
+    -1,
+    1
+   ],
+   "steps_used_by_chain": 12
+  },
+  "51499": {
+   "valid": true,
+   "key_on_grid": true,
+   "key_adjacent_to_door": false,
+   "key_on_approach_cell": false,
+   "key_in_front_of_agent": true,
+   "agent_on_approach_cell": true,
+   "agent_facing": "north",
+   "key_relative_to_door": [
+    -1,
+    -1
+   ],
+   "steps_used_by_chain": 9
+  }
+ }
+}
