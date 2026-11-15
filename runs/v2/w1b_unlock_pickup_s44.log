@@ -1,0 +1,43 @@
+loading the frozen children:
+  loaded SkillNode('{0,1} get_key', n=0, primitive, frozen)  spec_hash=b4915e667d7ae4b5
+  loaded SkillNode('{0,2} open_door', n=0, primitive, frozen)  spec_hash=93d523882d512ba6
+  loaded SkillNode('{1,1} unlock_door', n=1, composite[2], frozen)  spec_hash=5e4108da044c9f99
+  loaded SkillNode('{0,9} drop_held', n=0, primitive, frozen)  spec_hash=ed693928545d8edc
+  loaded SkillNode('{0,4} pickup_box', n=0, primitive, frozen)  spec_hash=6c6428043d97ac75  sha=b05ae151ac43c398 (0014 Proposed, from runs/w1b/0-4_pickup_box_spec3_s45)
+torch 2.14.1+cpu | accelerator: none | default device: cpu
+torch threads: 2
+
+========================================================================
+{2,2} unlock_pickup  n=2  children=['{1,1} unlock_door', '{0,9} drop_held', '{0,4} pickup_box'] (levels [1, 0, 0])
+  env=MiniGrid-UnlockPickup-v0 timeout=288 max_decisions=8
+  seed=44 budget=40,960 decisions eval_every=512
+========================================================================
+  [     512] {2,2} unlock_pickup: SR 0.620 (31/50), Wilson LB 0.482, mean length 146.0 | streak 0/2
+  [    1024] {2,2} unlock_pickup: SR 0.960 (48/50), Wilson LB 0.865, mean length 35.0 | streak 1/2
+  [    1536] {2,2} unlock_pickup: SR 0.960 (48/50), Wilson LB 0.865, mean length 35.0 | streak 2/2 -> STABLE
+  decisions=1,536 updates=2 env_steps_own=55,412 children=1,443,289 stable=True
+  held-out: SR 0.980 (49/50), Wilson LB 0.895, mean length 29.0
+
+--- C1 arms, 50 held-out episodes ---
+  random over all children (mask clipped)      SR  0.88  [0.76,0.94]  mean env steps   86.6
+  random over available children               SR  0.78  [0.65,0.87]  mean env steps  150.1
+  random, initiation masking ON                SR  0.98  [0.90,1.00]  mean env steps   29.0
+  learned composite                            SR  0.98  [0.90,1.00]  mean env steps   29.0
+  learned composite, initiation masking ON     SR  0.98  [0.90,1.00]  mean env steps   29.0
+
+mask divergence: 40/60 decisions differ, 0 would have blocked the learned choice
+
+selection sequences (learned):
+   49  (49 ok)  {1,1} unlock_door -> {0,9} drop_held -> {0,4} pickup_box
+    1  (0 ok)  {1,1} unlock_door -> {1,1} unlock_door
+
+depth check: max stack depth 3 (expected 3), levels [0, 1], seed 20000, success=True
+  selected: {1,1} unlock_door -> {0,1} get_key -> {0,2} open_door -> {0,9} drop_held -> {0,4} pickup_box
+chain ceiling: {'path': ['{1,1} unlock_door', '{0,9} drop_held', '{0,4} pickup_box (spec 3, seed 45)'], 'rows': {'chain leaves the handoff state (53000-53499)': '488/500', 'pickup_box argmax from the handoff (53000-53499)': '485/488'}, 'value': 0.97, 'source': 'recorded rows (runs/v2/w1a_spec3_sampled.json, seed 45), not f29()'}
+
+[19:43:10] wrote runs\v2\w1b_unlock_pickup_s44.json
+
+fresh row (54000-54499): SR 0.972 (486/500), Wilson LB 0.954, mean length 31.0  timeouts 14
+random over available (control, same seeds): SR 0.750 (375/500), Wilson LB 0.710, mean length 139.4  timeouts 125
+policy_sha256 d1594d6d9ca15ce6 equals run-store manifest: True
+wrote runs\v2\w1b_unlock_pickup_s44_fresh.json

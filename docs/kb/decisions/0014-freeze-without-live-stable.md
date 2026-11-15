@@ -81,6 +81,10 @@ and the seed it selects are not blind. Every `unlock_pickup` result is still uns
   fresh row ≥ 0.90 on env seeds 54000–54499? A ceiling gate below 46/50 reads "chain" and fails it.
   Only the "chain" reading counts against this rule; a "selector" reading (gate passed, parent
   not STABLE) says nothing about it either way.
+- Result of W1b-1 (2026-11-15): the ceiling gate passed (48/50 stopping, 49/50 held-out), so the
+  "chain" reading did not occur; `{2,2} unlock_pickup` is STABLE under 0004 on 3 of 3 seeds, fresh
+  486/500 on each. The three seeds act identically (one result).
+  [Summary](../../plans/2026-11-15_W1b-1_summary.md), [`results.md`](../results.md).
 - Behind the selection, in [`results.md`](../results.md): W1a spec 3 (7/10),
   `runs/v2/w1a_spec3_sampled.json` and `w1a_spec3_sampled_ext.json`.
 
