@@ -122,3 +122,15 @@ def test_beats_needs_both_p_and_ratio():
     r = an.beats(slightly, a)
     assert r["p"] < an.ALPHA and not r["beats"]
     assert not an.beats(a, fast)["beats"]
+
+
+def test_outcome_rows_are_exclusive_and_follow_the_plan():
+    def t(b_a, b_c, a_b, c_b=False):
+        return {"B_vs_A": {"beats": b_a}, "B_vs_C": {"beats": b_c},
+                "A_vs_B": {"beats": a_b}, "C_vs_B": {"beats": c_b}}
+    assert an.outcome(t(True, True, False))["row"] == "Forward transfer shown"
+    assert an.outcome(t(True, False, False))["row"] == "Faster, but not transfer"
+    assert an.outcome(t(True, False, False, c_b=True))["row"].startswith("Faster, but not transfer (")
+    assert an.outcome(t(False, False, False))["row"] == "No measurable benefit"
+    assert an.outcome(t(False, True, False))["row"] == "No measurable benefit"
+    assert an.outcome(t(False, False, True))["row"] == "Negative transfer"

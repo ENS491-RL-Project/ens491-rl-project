@@ -122,7 +122,7 @@ Fixed before step 2 *(all proposed)*:
   training seeds 1000…1900 (env seeds 1000–1007, …, 1900–1907) and 60000–60499 are unused in
   `scripts/`, `src/`, `tests/`, `runs/v2` and `runs/training/`; torch seeds 900000 + seed are
   unused; the run store writes lateral sources under `children`.
-- [ ] **0b. Decision PR (documents only, no code).** One PR containing: this plan; decision
+- [x] **0b. Decision PR (documents only, no code).** One PR containing: this plan; decision
   **0013** from the appendix, `Status: Proposed` (0011 is spec 3's and 0012 is reserved for W1b);
   the v2 wording it makes stale (§7 [F23] sentence "C-2 retrains its own lateral source", §10
   `col01` row, §12 C-2 row, and one line under §13 that states both changes: C-2's source is the
@@ -133,7 +133,7 @@ Fixed before step 2 *(all proposed)*:
   by 0013). Emir changes the status to `Accepted` in the PR and merges it.
   **Step 1 starts only after that merge** (CLAUDE.md: a `Proposed` decision is not implemented).
   If the spec-3 PR merges first, rebase.
-- [ ] **1. Script and checks, no long run.** New `scripts/train_w7_lateral.py`
+- [x] **1. Script and checks, no long run.** New `scripts/train_w7_lateral.py`
   (`--arm A|B|C --seed <s>`, `--smoke`). Outputs only under `runs/v2/w7/` and the run store.
   Before step 2, show:
   - a smoke run of each arm finishes, and `model.zip` saves and loads back (or the fallback above);
@@ -146,11 +146,11 @@ Fixed before step 2 *(all proposed)*:
     series for `go_to_goal` in `runs/v2/primitives.json`? A difference is a deviation to report,
     not a stop;
   - measured steps/s per arm and the estimated wall time for steps 2 and 3.
-- [ ] **2. Arm A, ten seeds.** Report steps to STABLE per seed, median, spread, number censored.
+- [x] **2. Arm A, ten seeds.** Report steps to STABLE per seed, median, spread, number censored.
   **Gate:** if fewer than 7 of 10 are STABLE within the budget, stop: this target cannot carry the
   metric, and Emir chooses what follows (see "After").
-- [ ] **3. Arms B and C, ten seeds each.** Not on the machine W1 runs are using at the same time.
-- [ ] **4. Score and write up, in one PR.** Final score of the 30 models, each scored only after
+- [x] **3. Arms B and C, ten seeds each.** Not on the machine W1 runs are using at the same time.
+- [x] **4. Score and write up, in one PR.** Final score of the 30 models, each scored only after
   its lateral source's hash is checked against the recorded one (arm C's source is re-drawn from
   its torch seed or taken from `model.zip`). The 30 `policy_state_dict.pt` files are copied to
   `runs/v2/w7/models/<arm>_s<seed>.pt`, because the run store is not tracked; no `meta.json` is

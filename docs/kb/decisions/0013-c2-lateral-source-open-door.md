@@ -23,6 +23,7 @@ None, and W7 does not provide any: W7 uses this source, it does not compare sour
 alternatives (legacy `col01` retrained, another frozen primitive, all earlier primitives) are not
 measured. The experiment that would settle the choice is the empirical row "Lateral sources" in
 [`open-questions.md`](../open-questions.md), which is only worth running if W7 shows transfer.
+Experiment that used this source: W7 ([`results.md`](../results.md), row of 2026-11-15); it is not evidence for the choice.
 
 ## Affects
 v2 §7 [F23], §10, §12 and §13 wording (corrected in the same PR as this file); open-questions

@@ -25,7 +25,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 
-from train_w7_lateral import BUDGET, OUT, TRAINING_SEEDS  # noqa: E402
+from train_w7_lateral import BUDGET, EVAL_EVERY, OUT, TRAINING_SEEDS  # noqa: E402
 
 ALPHA = 0.05
 MAX_RATIO = 0.80
@@ -114,9 +114,115 @@ def arm_summary(runs: dict[int, dict]) -> dict:
     }
 
 
+def outcome(tests: dict) -> dict:
+    """The plan's four exclusive rows, then the C-as-candidate rewording."""
+    b_a, b_c, a_b = (tests[k]["beats"] for k in ("B_vs_A", "B_vs_C", "A_vs_B"))
+    if a_b:
+        row = "Negative transfer"
+    elif b_a and b_c:
+        row = "Forward transfer shown"
+    elif b_a:
+        row = "Faster, but not transfer"
+        if tests["C_vs_B"]["beats"]:
+            row += " (the trained source was slower than an untrained one)"
+    else:
+        row = "No measurable benefit"
+    return {"row": row, "B_beats_A": b_a, "B_beats_C": b_c, "A_beats_B": a_b}
+
+
+def _quantize(steps):
+    """Steps to STABLE as this design reports them: a multiple of EVAL_EVERY, censored at BUDGET."""
+    import numpy as np
+    q = np.ceil(np.asarray(steps) / EVAL_EVERY) * EVAL_EVERY
+    return np.minimum(q, BUDGET)
+
+
+def power(median: float, sd_log: float, *, reductions=(0.0, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5),
+          n_pairs: int = 10, n_sims: int = 4000, seed: int = 0) -> dict:
+    """
+    How often "candidate beats A" passes, if steps to STABLE are log-normal with
+    arm A's measured median and spread (sd of log steps) and the candidate's median
+    is (1 - r) x A's. Arms independent, as in the plan's own simulation; steps are
+    quantised to EVAL_EVERY and censored at BUDGET; the exact test and the ratio
+    rule are the ones above.
+    """
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    out = {}
+    for r in reductions:
+        passes = 0
+        for _ in range(n_sims):
+            a = _quantize(np.exp(rng.normal(math.log(median), sd_log, n_pairs)))
+            x = _quantize(np.exp(rng.normal(math.log(median * (1 - r)), sd_log, n_pairs)))
+            res = beats(dict(enumerate(x.tolist())), dict(enumerate(a.tolist())))
+            passes += res["beats"]
+        out[f"{r:.2f}"] = round(passes / n_sims, 3)
+    return out
+
+
+ARM_STYLE = {   # dataviz reference palette, categorical slots 1-3 (validated, light surface)
+    "A": dict(color="#2a78d6", ls="-", label="A: no lateral"),
+    "B": dict(color="#eb6834", ls="--", label="B: frozen open_door"),
+    "C": dict(color="#1baf7a", ls=":", label="C: untrained source"),
+}
+
+
+def figure(data: dict[str, dict[int, dict]], path: Path) -> None:
+    """Success rate on the stopping seeds against env steps, and the share of runs STABLE."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    grid = np.arange(EVAL_EVERY, BUDGET + 1, EVAL_EVERY)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2), dpi=150)
+    for arm, runs in data.items():
+        st = ARM_STYLE[arm]
+        curves = []
+        for r in runs.values():
+            sr = [v for _, v in r["success_series"]]
+            # A run stops at STABLE; its last evaluation is carried forward.
+            curves.append(sr + [sr[-1]] * (len(grid) - len(sr)))
+        c = np.array(curves)
+        ax1.fill_between(grid, c.min(0), c.max(0), color=st["color"], alpha=0.12, lw=0)
+        ax1.plot(grid, np.median(c, 0), color=st["color"], ls=st["ls"], lw=2, label=st["label"])
+        stop = np.array([r["metric_steps"] if r["stable"] else np.inf for r in runs.values()])
+        share = [(stop <= g).mean() for g in grid]
+        ax2.step(grid, share, where="post", color=st["color"], ls=st["ls"], lw=2, label=st["label"])
+    ax1.axhline(0.90, color="#8a8a85", lw=1, ls=(0, (2, 3)))
+    ax1.text(4_000, 0.905, "0.90 bar", ha="left", va="bottom", fontsize=8, color="#5f5e5a")
+    ax1.set(xlabel="env steps", ylabel="success rate (50 stopping seeds, argmax)",
+            ylim=(0, 1.02), xlim=(0, BUDGET),
+            title="Median and range over 10 seeds (last value carried after STABLE)")
+    ax2.set(xlabel="env steps", ylabel="share of runs STABLE", ylim=(0, 1.02), xlim=(0, BUDGET),
+            title="Runs STABLE by env step")
+    for ax in (ax1, ax2):
+        ax.grid(True, color="#e6e5e0", lw=0.6)
+        ax.set_axisbelow(True)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v / 1000:.0f}k"))
+        ax.title.set_fontsize(9.5)
+    ax2.legend(loc="lower right", frameon=False, fontsize=8.5)
+    fig.suptitle("W7: go_to_goal on DoorKey-6x6, steps to STABLE by lateral source", fontsize=11)
+    fig.tight_layout()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+def load_scores(arm: str) -> dict[int, dict] | None:
+    p = OUT / "scores" / f"{arm}.json"
+    if not p.exists():
+        return None
+    return {m["seed"]: m for m in json.loads(p.read_text(encoding="utf-8"))["models"]}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--arms", nargs="+", default=["A", "B", "C"])
+    ap.add_argument("--write", action="store_true",
+                    help="write runs/v2/w7/w7_lateral.json and the figure (needs all 30 runs and scores)")
     args = ap.parse_args()
 
     data = {arm: load_arm(arm) for arm in args.arms}
@@ -146,6 +252,39 @@ def main() -> int:
             print(f"{x} beats {y}? p={t['p']:.4f} (m={t['m']}, W+={t['w_plus']}) "
                   f"median ratio {t['median_ratio']:.3f} -> {t['beats']}")
     out["tests"] = tests
+    if not args.write:
+        return 0
+
+    out["outcome"] = outcome(tests)
+    print(f"\noutcome row: {out['outcome']['row']}")
+    a = out["arms"]["A"]
+    out["power"] = {
+        "model": "log-normal, arm A's median and sd of log steps, arms independent, "
+                 "quantised to eval_every and censored at the budget, exact test + ratio rule",
+        "median": a["median_steps"], "sd_log": round(a["sd_log_steps"], 4), "n_pairs": 10,
+        "n_sims": 4000, "pass_rate_by_reduction": power(a["median_steps"], a["sd_log_steps"]),
+    }
+    print(f"power (pass rate by true reduction): {out['power']['pass_rate_by_reduction']}")
+    for arm in data:
+        scores = load_scores(arm)
+        if scores is None or len(scores) != len(TRAINING_SEEDS):
+            raise SystemExit(f"final scores for arm {arm} missing; run eval_w7_lateral.py")
+        rates = [m["score"]["success_rate"] for m in scores.values()]
+        out["arms"][arm]["final_score"] = {
+            "env_seeds": "60000-60499",
+            "per_seed": {s: m["score"]["success_rate"] for s, m in sorted(scores.items())},
+            "median": statistics.median(rates), "min": min(rates), "max": max(rates),
+        }
+        print(f"final score arm {arm}: median {statistics.median(rates):.3f} "
+              f"range {min(rates):.3f}-{max(rates):.3f}")
+    total = sum(r["steps_trained"] for runs in data.values() for r in runs.values())
+    out["cost"] = {"training_env_steps_30_runs": total,
+                   "evaluation_episodes_not_counted": True}
+    fig = OUT / "w7_lateral_curves.png"
+    figure(data, fig)
+    out["figure"] = fig.relative_to(REPO).as_posix()
+    (OUT / "w7_lateral.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
+    print(f"wrote {(OUT / 'w7_lateral.json').relative_to(REPO)} and {out['figure']}")
     return 0
 
 
