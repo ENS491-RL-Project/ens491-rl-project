@@ -231,3 +231,7 @@ CLAUDE.local.md
 
 # macOS
 .DS_Store
+
+# GRU rollout datasets and model checkpoints (local; results go to runs/v2/gru/)
+data/
+models/
