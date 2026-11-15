@@ -26,6 +26,7 @@ Migrated from `ENS491_Project_State.md` on 2026-11-15; its last full text is in
 
 - Emir sets [0009](decisions/0009-max-decisions-per-frame.md)'s status (PR #15 merged with the per-frame design).
 - Owner of the strict-mask dead-end row in [open-questions](open-questions.md).
+- Emir sets [0014](decisions/0014-freeze-without-live-stable.md)'s status (freezing a primitive that never met 0004; first use `pickup_box` spec 3, seed 45). Its experiment is [W1b-1](../plans/2026-11-15_W1b-1_unlock_pickup_plan.md), not run yet; it runs while 0014 is `Proposed`.
 
 ## Roadmap
 
