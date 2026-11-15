@@ -18,7 +18,9 @@ When several models meet (a) and (b), the smallest-numbered training seed is tak
 node was accepted in and its weak rows are written to its `meta.json` (`met_0004: false`,
 `frozen_under`, `execution_mode: argmax`).
 
-Scope: **primitives only, argmax only.** A stopping rule under sampling is 0012's (reserved, not
+Scope: **primitives only, argmax only.** The acceptance is per parent: (b) is measured from one
+parent's handoff (here `{2,2} unlock_pickup`), recorded in `meta.json`. Using the node under a
+different parent needs its own (b) row first. A stopping rule under sampling is 0012's (reserved, not
 written) and is not decided here. No code under `src/` changes: `freeze()` still requires STABLE,
 and the freezing script sets STABLE itself in one line that cites this file.
 
@@ -77,6 +79,8 @@ and the seed it selects are not blind. Every `unlock_pickup` result is still uns
   [W1b-1](../../plans/2026-11-15_W1b-1_unlock_pickup_plan.md): with this child frozen, does
   `{2,2} unlock_pickup` reach STABLE under 0004 unchanged on at least 2 of 3 seeds, each with a
   fresh row ≥ 0.90 on env seeds 54000–54499? A ceiling gate below 46/50 reads "chain" and fails it.
+  Only the "chain" reading counts against this rule; a "selector" reading (gate passed, parent
+  not STABLE) says nothing about it either way.
 - Behind the selection, in [`results.md`](../results.md): W1a spec 3 (7/10),
   `runs/v2/w1a_spec3_sampled.json` and `w1a_spec3_sampled_ext.json`.
 

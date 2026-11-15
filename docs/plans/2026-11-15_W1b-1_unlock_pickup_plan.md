@@ -115,7 +115,8 @@ searched.
   - Set STABLE (one line, citing 0014), `freeze()`,
     `registry.save(run_dir=runs/w1b/0-4_pickup_box_spec3_s45)` (**git-ignored**). Meta carries:
     source `run_id`, sha, `steps_trained` 1,001,472, chain steps in training resets 372,063,
-    `met_0004: false`, `frozen_under: "0014 (Proposed)"`, `execution_mode: argmax`, the table above.
+    `met_0004: false`, `frozen_under: "0014 (Proposed)"`, `execution_mode: argmax`,
+    `accepted_for_parent: "{2,2} unlock_pickup"` (0014: acceptance is per parent), the table above.
   - The checkpoint is git-ignored, so its identity goes into a **tracked** file,
     `runs/v2/w1b_pickup_box_freeze.json`: source `run_id`, `policy_sha256`, `spec_hash`, the rule
     computed over all ten seeds, and the results of gates P1–P3.
