@@ -84,7 +84,7 @@ searched.
   executor at Emir's instruction in the session, merged by Emir ("7/10, at the threshold" and
   "generality reduced" under Evidence). 0011's text says no spec-3 model is frozen
   while it is open, so **step 1 does not start until this is merged**. The session pulls `main`.
-- [ ] **0b. Decision file `0014-freeze-without-live-stable.md`, `Proposed`.** (0012 stays reserved
+- [x] **0b. Decision file `0014-freeze-without-live-stable.md`, `Proposed`.** (0012 stays reserved
   for the stopping rule under sampling, as 0011, `status.md`, the roadmap and both W1a plans say;
   0013 is taken.) It must contain:
   - the rule: a primitive whose training never met 0004 may be frozen from its fixed-budget final
@@ -104,7 +104,7 @@ searched.
   - the sentence "This experiment runs while 0014 is `Proposed`, with Emir's go-ahead, under
     `scripts/` only."
   **Stop. Continue only after Emir says so in the session.**
-- [ ] **1. Promote the model.** New `scripts/w1b_freeze_pickup_box.py`, `--smoke` included.
+- [x] **1. Promote the model.** New `scripts/w1b_freeze_pickup_box.py`, `--smoke` included.
   - Load seed 45 the way `eval_w1a_spec3.load_spec3_model` does (spec equality, sha, held-out
     reproduces).
   - **Gate P1:** its handoff rows on 53000–53499 reproduce the record episode for episode
@@ -124,7 +124,7 @@ searched.
     `registry.load_into(run_dir=…)` (`load_frozen_primitive` takes no `run_dir`): FROZEN, same
     sha and `spec_hash`, 50 handoff episodes identical.
   - `runs/v2/0-4_pickup_box/` (spec 2, seed 42, TRAINING) is not touched; other scripts load it.
-- [ ] **2. Composite script and ceiling gate.** New `scripts/w1b_unlock_pickup.py`.
+- [x] **2. Composite script and ceiling gate.** New `scripts/w1b_unlock_pickup.py`.
   - Loads `unlock_door` and `drop_held` from the canonical registry and `pickup_box` as in gate
     P3 (not `load_h7_primitive("pickup_box")`, which loads spec 2); all must be FROZEN; builds T7;
     prints its new `spec_hash`.
@@ -140,7 +140,7 @@ searched.
     argmax, on the stopping seeds 10000–10049 and the held-out seeds 20000–20049. If the stopping
     set gives fewer than 46/50, **stop: W1b-1 fails with reading "chain"**, and nothing is trained.
   - `--smoke`, then measured decisions/s and env steps per decision with a wall-time estimate.
-- [ ] **3. Train and score in one process.** Seeds 43, 44, 45, outputs
+- [x] **3. Train and score in one process.** Seeds 43, 44, 45, outputs
   `runs/v2/w1b_unlock_pickup_s<seed>.json`. Record `run_id`, `policy_sha256`, `stable`,
   `decisions_to_stable`, `env_steps_own`, held-out 50.
   The fresh-seed row is scored **in the same process, right after `run` returns**, on the node
@@ -154,7 +154,7 @@ searched.
   only if its stopping-evaluation history and `policy_sha256` equal the first run's exactly; the
   fresh row is then scored from it. If they differ, or it dies again, that seed is "not
   determined" and counts as not passing. Nothing is overwritten.
-- [ ] **4. Write-up.** `docs/plans/2026-11-15_W1b-1_summary.md`, rows in `results.md` and
+- [x] **4. Write-up.** `docs/plans/2026-11-15_W1b-1_summary.md`, rows in `results.md` and
   `status.md`, the cost table below. Then stop. 0014 stays `Proposed`.
 
 ## Criterion
